@@ -1,9 +1,9 @@
-﻿@using Zeon.Blazor.InputContainer
-@namespace Zeon.Blazor.ItemChooser
+﻿@using Zeon.Blazor.ZInputContainer
+@namespace Zeon.Blazor.ZItemChooser
 @typeparam TModel
 @typeparam KeyType
 
-<InputContainer IsLoading="_isloading" Id="@Name" Width="100%" TModel="TModel" For="@For" Icon="@Icon">
+<ZInputContainer IsLoading="_isloading" Id="@Name" Width="100%" TModel="TModel" For="@For" Icon="@Icon">
     <div class="row m-auto p-0">
         <div class="col m-auto p-1">
             <input id="@_inputId" class="form-control container-fluid p-0" type="text" @onkeydown="(e)=> InputOnKeyDown(e)" @bind="_displayValue" @oninput="OnInput" />
@@ -50,4 +50,4 @@
         </div>
     }
 
-</InputContainer>
+</ZInputContainer>

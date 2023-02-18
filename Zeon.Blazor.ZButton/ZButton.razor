@@ -1,0 +1,21 @@
+﻿@namespace Zeon.Blazor.ZButton
+
+@if (IsWaiting)
+    IsDisabled = true;
+
+<button id="@ButtonId" type="button" class="btn @ButtonClass @_disabled zeon-button-btn  align-items-stretch d-flex" @onclick="OnClick" style="--btn-Display:@Display; --btn-Width:@Width ; --btn-Height:@Height">
+
+    <div class="icon icon-left d-flex align-items-center justify-content-center w-auto p-2">
+        @if (IsWaiting)
+        {
+            <span class="spinner-border text-primary zeon-button-spinner" role="status"></span>
+        }
+        else
+        {
+            <i class="@Icon zeon-button-icon"></i>
+        }
+    </div>
+    <div class="text m-auto zeon-button-text">
+        @Text
+    </div>
+</button>

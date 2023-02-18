@@ -19,8 +19,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Zeon.Blazor.InputContainer\Zeon.Blazor.InputContainer.csproj" />
 		<ProjectReference Include="..\Zeon.Blazor.JSRuntime\Zeon.Blazor.JSRuntime.csproj" />
+		<ProjectReference Include="..\Zeon.Blazor.ZInputContainer\Zeon.Blazor.ZInputContainer.csproj" />
 	</ItemGroup>
 
 </Project>

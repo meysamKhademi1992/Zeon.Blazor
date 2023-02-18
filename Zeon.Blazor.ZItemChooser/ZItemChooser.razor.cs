@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Zeon.Blazor.ItemChooser;
+namespace Zeon.Blazor.ZItemChooser;
 
-public partial class ItemChooser<TModel, KeyType> : ComponentBase where TModel : class where KeyType : IEquatable<KeyType>
+public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel : class where KeyType : IEquatable<KeyType>
 {
     private bool _isloading = false;
     private bool _showItems = false;
@@ -61,7 +61,7 @@ public partial class ItemChooser<TModel, KeyType> : ComponentBase where TModel :
     [Inject]
     protected JSRuntime.ElementHelper ElementHelper { get; set; } = null!;
 
-    public ItemChooser()
+    public ZItemChooser()
     {
         _dataSource = new();
         _setSelectedItemTypes = new Dictionary<BehaviorModeAfterItemSelection, SelectedItemTypesDelegate>();

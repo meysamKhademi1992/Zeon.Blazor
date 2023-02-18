@@ -59,3 +59,24 @@
     width: 20px;
     height: 20px;
 }
+
+.zeon-button-btn {
+    border: solid 1px;
+    border-radius: 6px;
+    display: var(--btn-Display !important);
+    width: var(--btn-Width !important);
+    height: var(--btn-Height !important);
+}
+
+.zeon-button-spinner {
+    width: 15px;
+    height: 15px;
+}
+
+.zeon-button-icon {
+    font-size: small;
+}
+
+.zeon-button-text {
+    font-size: 12px;
+}

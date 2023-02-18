@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Reflection;
 
-namespace Zeon.Blazor.InputContainer
+namespace Zeon.Blazor.ZInputContainer
 {
-    public partial class InputContainer<TModel> : ComponentBase
+    public partial class ZInputContainer<TModel> : ComponentBase
     {
         private string DisplayMember => GetDisplayName(For);
 
