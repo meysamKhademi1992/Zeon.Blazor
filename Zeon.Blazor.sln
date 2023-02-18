@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeon.Blazor.InputContainer", "Zeon.Blazor.InputContainer\Zeon.Blazor.InputContainer.csproj", "{FF95C886-B30B-4E03-AF78-D4CD8C3CA287}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeon.Blazor.ItemChooser", "Zeon.Blazor.ItemChooser\Zeon.Blazor.ItemChooser.csproj", "{4CE7DE19-E2B0-4B34-8114-CDFC425C6D27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeon.Blazor.JSRuntime", "Zeon.Blazor.JSRuntime\Zeon.Blazor.JSRuntime.csproj", "{E6426DA1-C9BF-41CE-80B8-4611EC479123}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wwwroot", "wwwroot", "{726AD064-84C8-4D6C-A12E-7AC92262F1A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSS", "CSS", "{7AC8E4EA-7F14-42CC-8B7C-1B29F6891A02}"
+	ProjectSection(SolutionItems) = preProject
+		Zeon.css = Zeon.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{C9D1E3FB-6F09-4608-BEF2-655070FD0A1D}"
+	ProjectSection(SolutionItems) = preProject
+		Zeon.js = Zeon.js
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF95C886-B30B-4E03-AF78-D4CD8C3CA287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF95C886-B30B-4E03-AF78-D4CD8C3CA287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF95C886-B30B-4E03-AF78-D4CD8C3CA287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF95C886-B30B-4E03-AF78-D4CD8C3CA287}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CE7DE19-E2B0-4B34-8114-CDFC425C6D27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CE7DE19-E2B0-4B34-8114-CDFC425C6D27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CE7DE19-E2B0-4B34-8114-CDFC425C6D27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CE7DE19-E2B0-4B34-8114-CDFC425C6D27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6426DA1-C9BF-41CE-80B8-4611EC479123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6426DA1-C9BF-41CE-80B8-4611EC479123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6426DA1-C9BF-41CE-80B8-4611EC479123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6426DA1-C9BF-41CE-80B8-4611EC479123}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7AC8E4EA-7F14-42CC-8B7C-1B29F6891A02} = {726AD064-84C8-4D6C-A12E-7AC92262F1A2}
+		{C9D1E3FB-6F09-4608-BEF2-655070FD0A1D} = {726AD064-84C8-4D6C-A12E-7AC92262F1A2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6B994C33-BF58-4A56-87FF-456F889E0448}
+	EndGlobalSection
+EndGlobal

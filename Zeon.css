@@ -1,0 +1,61 @@
+﻿.zeon-ItemChooser-listItems {
+    height: 200px;
+    background-color: #f3f3f3;
+    border: solid 0.5px #bbb;
+    border-radius: 6px;
+    position: relative;
+    z-index: 999
+}
+
+.zeon-ItemChooser-Item {
+    padding-right: 3px padding-left:3px;
+    display: inline-block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+    .zeon-ItemChooser-Item:focus {
+        background-color: lightblue !important;
+    }
+
+    .zeon-ItemChooser-Item:hover {
+        background-color: lightgray !important;
+    }
+
+
+.zeon-inputContainer-container {
+    padding-top: 1px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 4px;
+    width: var(--container-Width !important);
+    height: var(--container-Height !important);
+    display: var(--container-Display !important);
+}
+
+.zeon-inputContainer-Label {
+    font-size: 12px;
+    color: rgba(0,0,0,0.7);
+    margin-left: 2px !important;
+    margin-right: 2px !important
+}
+
+.zeon-inputContainer-sideBox {
+    text-align: end !important
+}
+
+.zeon-inputContainer-spinner {
+    width: 15px;
+    height: 15px;
+}
+
+.zeon-inputContainer-icon {
+    width: 20px;
+    height: 20px;
+}
