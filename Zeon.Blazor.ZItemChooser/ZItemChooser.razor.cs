@@ -29,7 +29,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
     public EventCallback<KeyType> OnKeyChanged { get; set; }
 
     [Parameter]
-    public string IdDisplayText { get; set; } = "شناسه";
+    public string KeyDisplayText { get; set; } = "شناسه";
 
     [Parameter]
     public string OddItemColor { get; set; } = "#f5f5f5";
