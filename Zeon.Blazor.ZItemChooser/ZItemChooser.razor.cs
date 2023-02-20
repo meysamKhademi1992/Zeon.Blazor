@@ -16,15 +16,23 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
     private Dictionary<KeyType, string> _dataSource;
     private readonly Dictionary<BehaviorModeAfterItemSelection, SelectedItemTypesDelegate> _setSelectedItemTypes;
     private delegate Task SelectedItemTypesDelegate(int index);
-    [Parameter]
-    public string For { get; set; } = null!;
 
-    [Parameter]
+    /// <summary>
+    /// Label Or Set Property Name For Show Display Name Property Attribute
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string For { get; set; } = null!;
+    /// <summary>
+    /// Component Name 
+    /// </summary>
+    [Parameter, EditorRequired]
     public string Name { get; set; } = null!;
 
     [Parameter]
     public Func<string, Task<Dictionary<KeyType, string>>> FetchData { get; set; } = null!;
-
+    /// <summary>
+    /// Event Callback After Selected Item Or Changed
+    /// </summary>
     [Parameter]
     public EventCallback<KeyType> OnKeyChanged { get; set; }
 
@@ -42,7 +50,9 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
 
     [Parameter]
     public string NotFoundRecordBackgroundColor { get; set; } = "lightblue";
-
+    /// <summary>
+    /// Use Icon Classes Like fa fa-plus
+    /// </summary>
     [Parameter]
     public string? Icon { get; set; }
 

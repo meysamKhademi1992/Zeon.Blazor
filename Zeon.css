@@ -80,3 +80,20 @@
 .zeon-button-text {
     font-size: 12px;
 }
+
+.zeon-checkBoxButton-container {
+    width: var(--container-Width);
+}
+
+.zeon-checkBoxButton-label {
+    padding: 1px;
+    display: inline-block;
+    width: 100%;
+    line-height: var(--label-Height);
+    box-shadow: 1px 1px 2px gray
+}
+
+.zeon-checkBoxButton-icon {
+    margin-left: 3px;
+    margin-right: 3px
+}
