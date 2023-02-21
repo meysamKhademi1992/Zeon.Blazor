@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeon.Blazor.ZItemChooser", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeon.Blazor.ZButton", "Zeon.Blazor.ZButton\Zeon.Blazor.ZButton.csproj", "{BA6F0390-DA41-4D80-8358-E44E17A41933}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeon.Blazor.ZCheckBoxButton", "Zeon.Blazor.ZCheckBoxButton\Zeon.Blazor.ZCheckBoxButton.csproj", "{FA0180ED-178B-4E41-8503-B243B0CD38F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeon.Blazor.ZCheckBoxButton", "Zeon.Blazor.ZCheckBoxButton\Zeon.Blazor.ZCheckBoxButton.csproj", "{FA0180ED-178B-4E41-8503-B243B0CD38F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeon.Blazor.ZDateTimePicker", "Zeon.Blazor.ZDateTimePicker\Zeon.Blazor.ZDateTimePicker.csproj", "{15DAD9AA-E5AE-41D2-9DB1-6E8F69CADF5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{FA0180ED-178B-4E41-8503-B243B0CD38F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA0180ED-178B-4E41-8503-B243B0CD38F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA0180ED-178B-4E41-8503-B243B0CD38F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15DAD9AA-E5AE-41D2-9DB1-6E8F69CADF5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15DAD9AA-E5AE-41D2-9DB1-6E8F69CADF5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15DAD9AA-E5AE-41D2-9DB1-6E8F69CADF5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15DAD9AA-E5AE-41D2-9DB1-6E8F69CADF5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

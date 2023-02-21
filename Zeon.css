@@ -97,3 +97,86 @@
     margin-left: 3px;
     margin-right: 3px
 }
+
+.zeon-dateTimePicker-btnOpenClose {
+    cursor: pointer;
+    position: relative;
+    z-index: 1000;
+    font-size: 20px;
+    margin-right: 50px;
+    margin-top: 0px
+}
+
+.zeon-dateTimePicker-input {
+    text-align: center;
+    border-radius: 5px;
+    direction: ltr
+}
+
+.zeon-dateTimePicker-datePickerCard {
+    display: var(--datePickerCard-display) !important;
+    margin-top: 5px;
+    background-color: white;
+    width: 250px;
+    position: absolute;
+    z-index: 1000;
+}
+
+.zeon-dateTimePicker-datePickerCard-panel {
+    display: var(--panel-display) !important;
+}
+
+.zeon-dateTimePicker-datePickerCard-panel-header {
+    margin-top: 0px !important;
+    direction: ltr
+}
+
+.zeon-dateTimePicker-datePickerCard-panel-header-date {
+    background-color: rgb(115,0,0);
+    border-radius: 6px;
+}
+
+.zeon-dateTimePicker-datePickerCard-panel-header-time {
+    margin-top: 10px !important;
+    background-color: rgb(115,0,0);
+    border-radius: 6px;
+}
+
+.zeon-dateTimePicker-datePickerCard-panel-header-time-h {
+    text-align: center;
+    border-radius: 5px;
+}
+
+.zeon-dateTimePicker-datePickerCard-panel-header-time-m {
+    text-align: center;
+    border-radius: 5px;
+}
+
+.zeon-dateTimePicker-datePickerCard-panel-footer {
+    bottom: 0px;
+    background-color: black
+}
+
+.zeon-dateTimePicker-datePickerCard-header {
+    align-self: center !important;
+    background-color: white
+}
+
+.zeon-dateTimePicker-datePickerCard-body {
+    background-color: maroon;
+    margin-bottom: 8px;
+    border-radius: 3px;
+}
+
+.zeon-dateTimePicker-datePickerCard-body-button {
+    margin: 1px;
+    width: 30px;
+    height: 30px;
+    border: solid 1px;
+    border-color: var(--btn-border-color);
+}
+
+.zeon-dateTimePicker-datePickerCard-footer {
+    margin-top: 3px;
+    background-color: white
+}
