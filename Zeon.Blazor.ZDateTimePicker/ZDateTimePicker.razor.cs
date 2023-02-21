@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Zeon.Blazor.ZDateTimePicker.Abstractions;
 using Zeon.Blazor.ZDateTimePicker.Constants;
 using Zeon.Blazor.ZDateTimePicker.Extensions;
 
@@ -49,7 +50,7 @@ public partial class ZDateTimePicker : ComponentBase
             int.TryParse(value, out hour);
             if (hour >= 0 && hour <= 23)
             {
-                PickerDateTime = ChangeHour(PickerDateTime, hour);
+                PickerDateTime = PickerDateTime.ChangeHour(hour);
                 ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
 
             }
@@ -68,7 +69,7 @@ public partial class ZDateTimePicker : ComponentBase
 
             if (int.TryParse(value, out var minute) && minute >= 0 && minute <= 59)
             {
-                PickerDateTime = ChangeMinute(PickerDateTime, minute);
+                PickerDateTime = PickerDateTime.ChangeMinute(minute);
                 ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
             }
         }
@@ -83,7 +84,21 @@ public partial class ZDateTimePicker : ComponentBase
         {
             _inputDate = value;
             DateSpliter = value.Contains('/') ? '/' : '-';
+            InvokeAsync(async () => await ParseInput(CalendarType, value, InputPickerType));
+
+            if (ChangedDateTime.HasDelegate)
+                ChangedDateTime.InvokeAsync(CurrentDateTime);
+
+            if (ChangedTime.HasDelegate)
+                ChangedTime.InvokeAsync(CurrentTime);
+
+            PickerDateTime = CurrentDateTime;
+            _displayMonth = PickerDateTime.GetMonthName(CalendarType);
+            CurrentHourPicker = CurrentDateTime.Hour.ToString().PadLeft(2, '0');
+            CurrentMinutePicker = CurrentDateTime.Minute.ToString().PadLeft(2, '0');
+
             switch (CalendarType)
+
             {
                 case DatePickerType.Jalali:
                     {
@@ -92,8 +107,7 @@ public partial class ZDateTimePicker : ComponentBase
                             case InputType.DateTime:
                                 {
 
-                                    CurrentDateTime = value.JalaliToGregorian(DateType.DateTime, DateSpliter, ref _isValid);
-                                    CurrentTime = new TimeSpan(CurrentDateTime.Hour, CurrentDateTime.Minute, 0);
+                                   
                                     IsValid = _isValid;
                                     break;
                                 }
@@ -149,17 +163,21 @@ public partial class ZDateTimePicker : ComponentBase
                     }
             }
 
-            if (ChangedDateTime.HasDelegate)
-                ChangedDateTime.InvokeAsync(CurrentDateTime);
-
-            if (ChangedTime.HasDelegate)
-                ChangedTime.InvokeAsync(CurrentTime);
-
-            PickerDateTime = CurrentDateTime;
-            _displayMonth = PickerDateTime.GetMonthName(CalendarType);
-            CurrentHourPicker = CurrentDateTime.Hour.ToString().PadLeft(2, '0');
-            CurrentMinutePicker = CurrentDateTime.Minute.ToString().PadLeft(2, '0');
         }
+    }
+
+    private async Task ParseInput(DatePickerType datePickerType, string value, InputType inputType)
+    {
+        var result = await _dateTimeParser.Parse(datePickerType, value, inputType);
+        IsValid = result.isValid;
+        CurrentDateTime = result.dateTime;
+        CurrentTime = result.timeSpan;
+    }
+
+    private readonly IDateTimeParser _dateTimeParser;
+    public ZDateTimePicker(IDateTimeParser dateTimeParser)
+    {
+        _dateTimeParser = dateTimeParser;
     }
 
     [Parameter]
@@ -207,12 +225,12 @@ public partial class ZDateTimePicker : ComponentBase
                     {
                         case InputType.DateTime:
                             {
-                                InputDate = input != null && input.Length >= 16 ? GregorianToJalali(DateTime.Parse(input.Substring(0, 16)), DateSpliter, DateType.DateTime) : "";
+                                InputDate = input != null && input.Length >= 16 ? (DateTime.Parse(input.Substring(0, 16))).GregorianToJalali(DateSpliter, DateType.DateTime) : "";
                                 break;
                             }
                         case InputType.Date:
                             {
-                                InputDate = input != null && input.Length >= 10 ? GregorianToJalali(DateTime.Parse(input.Substring(0, 10)), DateSpliter, DateType.Date) : "";
+                                InputDate = input != null && input.Length >= 10 ? (DateTime.Parse(input.Substring(0, 10))).GregorianToJalali(DateSpliter, DateType.Date) : "";
 
                                 break;
                             }
@@ -263,12 +281,12 @@ public partial class ZDateTimePicker : ComponentBase
     }
     private void Year_Onclick(int value)
     {
-        PickerDateTime = ChangeYear(PickerDateTime, value, CalendarType);
+        PickerDateTime = PickerDateTime.ChangeYear(value, CalendarType);
         ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
     private void Month_Onclick(int value)
     {
-        PickerDateTime = ChangeMonth(PickerDateTime, value, CalendarType);
+        PickerDateTime = PickerDateTime.ChangeMonth(value, CalendarType);
         ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
 
     }
@@ -297,7 +315,7 @@ public partial class ZDateTimePicker : ComponentBase
                         case InputType.Date:
                             {
 
-                                SelectedDateTime = GregorianToJalali(selectedDatePicker, DateSpliter, DateType.Date);
+                                SelectedDateTime = selectedDatePicker.GregorianToJalali(DateSpliter, DateType.Date);
 
                                 break;
 
@@ -319,7 +337,7 @@ public partial class ZDateTimePicker : ComponentBase
                 break;
         }
         PickerDateTime = selectedDatePicker;
-        _displayMonth = GetMonthName(PickerDateTime, CalendarType);
+        _displayMonth = PickerDateTime.GetMonthName(CalendarType);
 
     }
     public void NextMonth_Onclick()
