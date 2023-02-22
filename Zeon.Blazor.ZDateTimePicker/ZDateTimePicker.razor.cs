@@ -84,94 +84,27 @@ public partial class ZDateTimePicker : ComponentBase
         {
             _inputDate = value;
             DateSpliter = value.Contains('/') ? '/' : '-';
-            InvokeAsync(async () => await ParseInput(CalendarType, value, InputPickerType));
-
-            if (ChangedDateTime.HasDelegate)
-                ChangedDateTime.InvokeAsync(CurrentDateTime);
-
-            if (ChangedTime.HasDelegate)
-                ChangedTime.InvokeAsync(CurrentTime);
-
-            PickerDateTime = CurrentDateTime;
-            _displayMonth = PickerDateTime.GetMonthName(CalendarType);
-            CurrentHourPicker = CurrentDateTime.Hour.ToString().PadLeft(2, '0');
-            CurrentMinutePicker = CurrentDateTime.Minute.ToString().PadLeft(2, '0');
-
-            switch (CalendarType)
-
-            {
-                case DatePickerType.Jalali:
-                    {
-                        switch (InputPickerType)
-                        {
-                            case InputType.DateTime:
-                                {
-
-                                   
-                                    IsValid = _isValid;
-                                    break;
-                                }
-                            case InputType.Date:
-                                {
-                                    CurrentDateTime = value.JalaliToGregorian(DateType.Date, DateSpliter, ref _isValid);
-                                    CurrentTime = new TimeSpan(CurrentDateTime.Hour, CurrentDateTime.Minute, 0);
-                                    IsValid = _isValid;
-
-                                    break;
-                                }
-                            case InputType.TimeSpan:
-                                {
-                                    CurrentDateTime = new DateTime();
-                                    CurrentTime = value.TimeParse(ref _isValid);
-                                    IsValid = _isValid;
-
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                case DatePickerType.Gregorian:
-                    {
-                        switch (InputPickerType)
-                        {
-                            case InputType.DateTime:
-                                {
-                                    CurrentDateTime = value.ParseGregorian(DateType.DateTime, ref _isValid);
-                                    CurrentTime = new TimeSpan(CurrentDateTime.Hour, CurrentDateTime.Minute, 0);
-                                    IsValid = _isValid;
-
-                                    break;
-                                }
-                            case InputType.Date:
-                                {
-                                    CurrentDateTime = value.ParseGregorian(DateType.Date, ref _isValid);
-                                    CurrentTime = new TimeSpan(CurrentDateTime.Hour, CurrentDateTime.Minute, 0);
-                                    IsValid = _isValid;
-
-                                    break;
-                                }
-                            case InputType.TimeSpan:
-                                {
-                                    CurrentDateTime = new DateTime();
-                                    CurrentTime = value.TimeParse(ref _isValid);
-                                    IsValid = _isValid;
-
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-            }
-
+            InvokeAsync(async () => await ParseInput(CalendarType, value, DateSpliter, InputPickerType));
         }
     }
 
-    private async Task ParseInput(DatePickerType datePickerType, string value, InputType inputType)
+    private async Task ParseInput(DatePickerType datePickerType, string value, char dateSpliter, InputType inputType)
     {
-        var result = await _dateTimeParser.Parse(datePickerType, value, inputType);
+        var result = await _dateTimeParser.Parse(datePickerType, value, dateSpliter, inputType);
         IsValid = result.isValid;
         CurrentDateTime = result.dateTime;
         CurrentTime = result.timeSpan;
+
+        if (ChangedDateTime.HasDelegate)
+            await ChangedDateTime.InvokeAsync(CurrentDateTime);
+
+        if (ChangedTime.HasDelegate)
+            await ChangedTime.InvokeAsync(CurrentTime);
+
+        PickerDateTime = CurrentDateTime;
+        _displayMonth = PickerDateTime.GetMonthName(CalendarType);
+        CurrentHourPicker = CurrentDateTime.Hour.ToString().PadLeft(2, '0');
+        CurrentMinutePicker = CurrentDateTime.Minute.ToString().PadLeft(2, '0');
     }
 
     private readonly IDateTimeParser _dateTimeParser;
