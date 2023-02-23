@@ -12,7 +12,7 @@ public static class ZeonServices
     }
     public static void AddZeonDatePickerServices(this IServiceCollection services)
     {
-        services.AddScoped<IDateTimeParser, DateTimeParserService>();
+        services.AddScoped<IDateTimePickerParser, DateTimePickerParser>();
     }
 }
 

@@ -2,13 +2,20 @@
 using Zeon.Blazor.ZDateTimePicker.Abstractions;
 using Zeon.Blazor.ZDateTimePicker.Constants;
 using Zeon.Blazor.ZDateTimePicker.Extensions;
+using Zeon.Blazor.ZDateTimePicker.Services;
 
 namespace Zeon.Blazor.ZDateTimePicker;
 
 public partial class ZDateTimePicker : ComponentBase
 {
+    private const DatePickerType DEFAULT_DATE_PICKER_TYPE = DatePickerType.Jalali;
     private const string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+    private const string TIME_FORMAT = "HH:mm";
 
+    private readonly Dictionary<DatePickerType, DatePicker> _datePickerTypes;
+
+    private DatePickerType _datePickerType = DEFAULT_DATE_PICKER_TYPE;
+    private DatePicker _datePicker;
     private string _datePickerCardDisplay = "none";
     private string _panelDisplay = "none";
     private string _inputDate = string.Empty;
@@ -34,7 +41,7 @@ public partial class ZDateTimePicker : ComponentBase
         set
         {
             _isValid = value;
-            ChangedIsValid.InvokeAsync(IsValid);
+            DateTimeIsValid.InvokeAsync(IsValid);
         }
     }
     private string CurrentHourPicker
@@ -51,8 +58,7 @@ public partial class ZDateTimePicker : ComponentBase
             if (hour >= 0 && hour <= 23)
             {
                 PickerDateTime = PickerDateTime.ChangeHour(hour);
-                ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
-
+                InvokeAsync(async () => await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT)));
             }
 
         }
@@ -70,7 +76,7 @@ public partial class ZDateTimePicker : ComponentBase
             if (int.TryParse(value, out var minute) && minute >= 0 && minute <= 59)
             {
                 PickerDateTime = PickerDateTime.ChangeMinute(minute);
-                ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
+                InvokeAsync(async () => await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT)));
             }
         }
     }
@@ -83,36 +89,40 @@ public partial class ZDateTimePicker : ComponentBase
         set
         {
             _inputDate = value;
-            DateSpliter = value.Contains('/') ? '/' : '-';
-            InvokeAsync(async () => await ParseInput(CalendarType, value, DateSpliter, InputPickerType));
+            InvokeAsync(async () => await ParseInput(value));
         }
     }
 
-    private async Task ParseInput(DatePickerType datePickerType, string value, char dateSpliter, InputType inputType)
+
+    public ZDateTimePicker()
     {
-        var result = await _dateTimeParser.Parse(datePickerType, value, dateSpliter, inputType);
+        _datePickerTypes = new();
+        _datePickerTypes.Add(DatePickerType.Jalali, new JalaliDatePicker(CreateNumberOfYears));
+        _datePickerTypes.Add(DatePickerType.Gregorian, new GregorianDatePicker(CreateNumberOfYears));
+        _datePicker = GetDatePickerInstance(DEFAULT_DATE_PICKER_TYPE);
+    }
+
+    private async Task ParseInput(string dateTime)
+    {
+        var result = await _datePicker.Convert(dateTime);
         IsValid = result.isValid;
         CurrentDateTime = result.dateTime;
-        CurrentTime = result.timeSpan;
+        await ChangeDateTime();
+    }
 
+    private async Task ChangeDateTime()
+    {
         if (ChangedDateTime.HasDelegate)
             await ChangedDateTime.InvokeAsync(CurrentDateTime);
 
-        if (ChangedTime.HasDelegate)
-            await ChangedTime.InvokeAsync(CurrentTime);
-
         PickerDateTime = CurrentDateTime;
-        _displayMonth = PickerDateTime.GetMonthName(CalendarType);
+        _displayMonth = _datePicker.GetMonthName(PickerDateTime);
         CurrentHourPicker = CurrentDateTime.Hour.ToString().PadLeft(2, '0');
         CurrentMinutePicker = CurrentDateTime.Minute.ToString().PadLeft(2, '0');
     }
 
-    private readonly IDateTimeParser _dateTimeParser;
-    public ZDateTimePicker(IDateTimeParser dateTimeParser)
-    {
-        _dateTimeParser = dateTimeParser;
-    }
-
+    [Parameter]
+    public int CreateNumberOfYears { get; set; } = 60;
     [Parameter]
     public string OkText { get; set; } = "ثبت";
     [Parameter]
@@ -130,78 +140,39 @@ public partial class ZDateTimePicker : ComponentBase
     [Parameter]
     public string PrevMonthLabel { get; set; } = "ماه بعد";
     [Parameter]
-    public DateTime? DefaultDateTime { get; set; }
+    public string Format { get; set; } = "yyyy-MM-dd HH:mm";
+
     [Parameter]
-    public TimeSpan? DefaultTime { get; set; }
-    [Parameter]
-    public DatePickerType CalendarType { get; set; } = DatePickerType.Jalali;
+    public DatePickerType DatePickerType { get => _datePickerType; set => SetDatePickerType(value); }
+
+    private void SetDatePickerType(DatePickerType value)
+    {
+        _datePickerType = value;
+        _datePicker = GetDatePickerInstance(value);
+    }
+
+    private DatePicker GetDatePickerInstance(DatePickerType value)
+    {
+        return _datePickerTypes.Single(q => q.Key == value).Value;
+    }
+
     [Parameter]
     public InputType InputPickerType { get; set; } = InputType.Date;
+
+    [Parameter]
+    public DateTime? DefaultDateTime { get; set; }
+
     [Parameter]
     public EventCallback<DateTime> ChangedDateTime { get; set; }
+
     [Parameter]
-    public EventCallback<TimeSpan> ChangedTime { get; set; }
-    [Parameter]
-    public EventCallback<bool> ChangedIsValid { get; set; }
+    public EventCallback<bool> DateTimeIsValid { get; set; }
 
 
-    protected override void OnInitialized()
+    protected async override void OnInitialized()
     {
-        var input = InputPickerType != InputType.TimeSpan ? DefaultDateTime?.ToString(DATE_TIME_FORMAT) : DefaultTime?.ToString("HH:mm");
-        DateSpliter = input != null ? input.Contains('/') ? '/' : '-' : '-';
-
-        switch (CalendarType)
-        {
-            case DatePickerType.Jalali:
-                {
-                    switch (InputPickerType)
-                    {
-                        case InputType.DateTime:
-                            {
-                                InputDate = input != null && input.Length >= 16 ? (DateTime.Parse(input.Substring(0, 16))).GregorianToJalali(DateSpliter, DateType.DateTime) : "";
-                                break;
-                            }
-                        case InputType.Date:
-                            {
-                                InputDate = input != null && input.Length >= 10 ? (DateTime.Parse(input.Substring(0, 10))).GregorianToJalali(DateSpliter, DateType.Date) : "";
-
-                                break;
-                            }
-                        case InputType.TimeSpan:
-                            {
-                                InputDate = input != null && input.Length >= 12 ? input.Substring(0, 5) : "";
-
-                                break;
-                            }
-                    }
-                    break;
-                }
-            case DatePickerType.Gregorian:
-                {
-                    switch (InputPickerType)
-                    {
-                        case InputType.DateTime:
-                            {
-                                InputDate = input != null && input.Length >= 16 ? input.Substring(0, 16) : "";
-
-                                break;
-                            }
-                        case InputType.Date:
-                            {
-                                InputDate = input != null && input.Length >= 10 ? input.Substring(0, 10) : "";
-
-                                break;
-                            }
-                        case InputType.TimeSpan:
-                            {
-                                InputDate = input != null && input.Length >= 12 ? input.Substring(0, 5) : "";
-
-                                break;
-                            }
-                    }
-                    break;
-                }
-        }
+        var dateTimeFormat = await _datePicker.Convert((DateTime)DefaultDateTime!, Format);
+        var dateTime = await _datePicker.Convert((DateTime)DefaultDateTime!, DATE_TIME_FORMAT);
     }
 
     public void OpenClose_Onclick()
@@ -212,86 +183,46 @@ public partial class ZDateTimePicker : ComponentBase
     {
         _panelDisplay = "block";
     }
-    private void Year_Onclick(int value)
+    private async void Year_Onclick(int value)
     {
-        PickerDateTime = PickerDateTime.ChangeYear(value, CalendarType);
-        ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
+        PickerDateTime = _datePicker.ChangeYear(PickerDateTime, value);
+        await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
-    private void Month_Onclick(int value)
+    private async void Month_Onclick(int value)
     {
-        PickerDateTime = PickerDateTime.ChangeMonth(value, CalendarType);
-        ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
-
+        PickerDateTime = _datePicker.ChangeMonth(PickerDateTime, value);
+        await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
     private void ChangeDateInPanel_Onclick()
     {
         _panelDisplay = "none";
     }
-    public void ChangeDateTimePicker_Onclick(string value)
+    public async Task ChangeDateTimePicker_Onclick(string value)
     {
         var selectedDatePicker = DateTime.Parse(value);
-        switch (CalendarType)
-        {
-            case DatePickerType.Jalali:
-                {
-
-                    switch (InputPickerType)
-                    {
-                        case InputType.DateTime:
-                            {
-
-                                SelectedDateTime = selectedDatePicker.GregorianToJalali(DateSpliter, DateType.DateTime);
-
-                                break;
-
-                            }
-                        case InputType.Date:
-                            {
-
-                                SelectedDateTime = selectedDatePicker.GregorianToJalali(DateSpliter, DateType.Date);
-
-                                break;
-
-                            }
-                        case InputType.TimeSpan:
-                            {
-                                SelectedDateTime = value;
-                                break;
-                            }
-                    }
-                }
-                break;
-
-            case DatePickerType.Gregorian:
-                {
-                    break;
-                }
-            default:
-                break;
-        }
+        SelectedDateTime = await _datePicker.Convert(selectedDatePicker, Format);
         PickerDateTime = selectedDatePicker;
-        _displayMonth = PickerDateTime.GetMonthName(CalendarType);
+        _displayMonth = _datePicker.GetMonthName(PickerDateTime);
+    }
+    public async void NextMonth_Onclick()
+    {
+        PickerDateTime = _datePicker.GetNextMonth(PickerDateTime);
+        await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
+    }
+    public async void PrevMonth_Onclick()
+    {
+        PickerDateTime = _datePicker.GetPrevMonth(PickerDateTime);
+        await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
 
     }
-    public void NextMonth_Onclick()
-    {
-        PickerDateTime = PickerDateTime.GetNextMonth(CalendarType);
-        ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
-    }
-    public void PrevMonth_Onclick()
-    {
-        PickerDateTime = PickerDateTime.GetPrevMonth(CalendarType);
-        ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
-
-    }
-    public void SetToday_Onclick()
+    public async void SetToday_Onclick()
     {
         PickerDateTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, PickerDateTime.Hour, PickerDateTime.Minute, 0);
-        ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
+        await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
-    public void Ok_Onclick()
+    public async void Ok_Onclick()
     {
-        InputDate = SelectedDateTime;
+        InputDate = SelectedDateTime = await _datePicker.Convert(PickerDateTime, DATE_TIME_FORMAT);
         _datePickerCardDisplay = "none";
     }
 }

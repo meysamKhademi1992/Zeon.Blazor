@@ -30,12 +30,12 @@
                                     <div class="DateSelectorPanel-box">
                                         <ul style="list-style:none;padding: 0px;">
                                             @{
-                                                var currentYear = PickerDateTime.GetYear(CalendarType);
+                                                var currentYear = _datePicker.GetYear(PickerDateTime);
                                             }
-                                            @for (int i = 1900; i <= 2050; i++)
+                                            @for (int i = 0; i <= CreateNumberOfYears; i++)
                                             {
                                                 string selected = "";
-                                                var year = i.GetYear(CalendarType);
+                                                var year = _datePicker.GetYearItem(i);
                                                 if (@year == @currentYear)
                                                 {
                                                     selected = "selected";
@@ -55,7 +55,7 @@
                                     <div class="DateSelectorPanel-box">
                                         <ul style="list-style:none;padding:0px;">
                                             @{
-                                                var currentMonth = PickerDateTime.GetMonth(CalendarType);
+                                                var currentMonth = _datePicker.GetMonth(PickerDateTime);
                                             }
                                             @for (int i = 1; i <= 12; i++)
                                             {
@@ -135,7 +135,7 @@
                 <div class="row m-auto w-100 text-center ">
                     @for (int i = 0; i < 7; i++)
                     {
-                        var week = i.GetWeekChar(CalendarType);
+                        var week = _datePicker.GetWeekChar(i);
                         <div class="col m-1" style="padding:1px;">@week</div>
                     }
 
@@ -144,8 +144,8 @@
 
             <table class="w-100 p-0" style="min-height: 170px;">
                 @{
-                    var firstDayOfMonth = PickerDateTime.GetFirstDayOfMonth(CalendarType);
-                    var addDay = PickerDateTime.GetCountDayOfMonth(CalendarType);
+                    var firstDayOfMonth = _datePicker.GetFirstDayOfMonth(PickerDateTime);
+                    var addDay = _datePicker.GetCountDayOfMonth(PickerDateTime);
                     var lastDayOfMonth = firstDayOfMonth.AddDays(addDay);
                     int day = 1;
                 }

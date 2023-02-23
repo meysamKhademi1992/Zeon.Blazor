@@ -4,12 +4,12 @@ using Zeon.Blazor.ZDateTimePicker.Extensions;
 
 namespace Zeon.Blazor.ZDateTimePicker.Services
 {
-    public class DateTimeParserService : IDateTimeParser
+    public class DateTimePickerParserService : IDateTimePickerParser
     {
         private readonly Dictionary<DatePickerType, DatePickerTypeDelegate> _datePickerTypes;
         private readonly Dictionary<InputType, InputEventHandlerDelegate> _jalaliInputTypes;
         private readonly Dictionary<InputType, InputEventHandlerDelegate> _gregorianInputTypes;
-        public DateTimeParserService()
+        public DateTimePickerParserService()
         {
             _datePickerTypes = new(); _jalaliInputTypes = new(); _gregorianInputTypes = new();
 
