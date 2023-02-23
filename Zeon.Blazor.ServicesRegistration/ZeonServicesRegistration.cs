@@ -10,8 +10,5 @@ public static class ZeonServices
     {
         services.AddScoped<JSRuntime.ElementHelper>();
     }
-    public static void AddZeonDatePickerServices(this IServiceCollection services)
-    {
-    }
 }
 

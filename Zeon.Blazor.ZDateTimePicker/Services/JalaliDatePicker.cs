@@ -6,7 +6,6 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 {
     public class JalaliDatePicker : DatePicker
     {
-        private const string ALLOW_CHARACTERS = "yMdHhm-/:";
         private const char DATE_SPLITER = '-';
         private const string YEAR_yyyy = "yyyy";
         private const string MONTH_MM = "MM";
@@ -15,11 +14,13 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         private const string HOUR_HH = "HH";
         private const string HOUR_hh = "hh";
         private const string MINUTE_mm = "mm";
+        private const string TIME_TYPE_tt = "tt";
+
         public JalaliDatePicker(int createNumberOfYears)
         {
             CreateNumberOfYears = createNumberOfYears;
         }
-        public override int CreateNumberOfYears { get; set; }
+
 
         private string Hour24Label(int hour)
         {
@@ -35,7 +36,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         private (string yyyy, string MM, string dd, string HH, string mm) jalaliDateTimeSpliter(string jalaliDateTime)
         {
-            return (jalaliDateTime[0..4], jalaliDateTime[5..7], jalaliDateTime[8..2], jalaliDateTime[11..2], jalaliDateTime[14..16]);
+            return (jalaliDateTime[0..4], jalaliDateTime[5..7], jalaliDateTime[8..10], jalaliDateTime[11..13], jalaliDateTime[14..16]);
         }
 
         private string GregorianToJalali(DateTime value, char dateSpliter, DateType toType)
@@ -89,6 +90,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         private DateTime JalaliToGregorian(string value, DateType toType, char dateSpliter, ref bool isValid)
         {
+            value = PersianNumberToEnglish(value);
             var outDateTime = new DateTime();
             try
             {
@@ -145,26 +147,71 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         }
 
+        private string EnglishNumberToPersian(string text)
+        {
+            Dictionary<char, char> LettersDictionary = new Dictionary<char, char>
+            {
+                ['0'] = '۰',
+                ['1'] = '۱',
+                ['2'] = '۲',
+                ['3'] = '۳',
+                ['4'] = '۴',
+                ['5'] = '۵',
+                ['6'] = '۶',
+                ['7'] = '۷',
+                ['8'] = '۸',
+                ['9'] = '۹'
+            };
+            foreach (var item in text)
+            {
+                if (LettersDictionary.Any(q => q.Key == item))
+                    text = text.Replace(item, LettersDictionary[item]);
+            }
+            return text;
+        }
+
+        private string PersianNumberToEnglish(string text)
+        {
+            Dictionary<char, char> LettersDictionary = new Dictionary<char, char>
+            {
+                ['۰'] = '0',
+                ['۱'] = '1',
+                ['۲'] = '2',
+                ['۳'] = '3',
+                ['۴'] = '4',
+                ['۵'] = '5',
+                ['۶'] = '6',
+                ['۷'] = '7',
+                ['۸'] = '8',
+                ['۹'] = '9'
+            };
+            foreach (var item in text)
+            {
+                if (LettersDictionary.Any(q => q.Key == item))
+                    text = text.Replace(item, LettersDictionary[item]);
+            }
+            return text;
+        }
+
+        public override int CreateNumberOfYears { get; set; }
+
         public override Task<string> Convert(DateTime dateTime, string format)
         {
-            var isValid = format.All(q => ALLOW_CHARACTERS.Contains(q));
-            if (!isValid)
-                throw new FormatException(format);
-
             var jalaliFormat = format;
             var jalaliDateTime = GregorianToJalali(dateTime, DATE_SPLITER, DateType.DateTime);
             var jalaliDateTimeSplited = jalaliDateTimeSpliter(jalaliDateTime);
 
-            jalaliFormat.Replace(YEAR_yyyy, jalaliDateTimeSplited.yyyy);
-            jalaliFormat.Replace(MONTH_MM, jalaliDateTimeSplited.MM);
-            jalaliFormat.Replace(MONTH_MMM, GetMonthName(dateTime));
-            jalaliFormat.Replace(DAY_dd, jalaliDateTimeSplited.dd);
-            jalaliFormat.Replace(HOUR_HH, jalaliDateTimeSplited.HH);
-            jalaliFormat.Replace(HOUR_hh, Hour24To12(int.Parse(jalaliDateTimeSplited.HH)));
-            jalaliFormat.Replace(MINUTE_mm, jalaliDateTimeSplited.mm);
+            jalaliFormat = jalaliFormat.Replace(YEAR_yyyy, jalaliDateTimeSplited.yyyy);
+            jalaliFormat = jalaliFormat.Replace(MONTH_MMM, GetMonthName(dateTime));
+            jalaliFormat = jalaliFormat.Replace(MONTH_MM, jalaliDateTimeSplited.MM);
+            jalaliFormat = jalaliFormat.Replace(DAY_dd, jalaliDateTimeSplited.dd);
+            jalaliFormat = jalaliFormat.Replace(HOUR_HH, jalaliDateTimeSplited.HH);
+            jalaliFormat = jalaliFormat.Replace(HOUR_hh, Hour24To12(int.Parse(jalaliDateTimeSplited.HH)));
+            jalaliFormat = jalaliFormat.Replace(MINUTE_mm, jalaliDateTimeSplited.mm);
+            jalaliFormat = jalaliFormat.Replace(TIME_TYPE_tt, Hour24Label(int.Parse(jalaliDateTimeSplited.HH)));
 
-            jalaliFormat += format.Contains(HOUR_hh) ? " " + Hour24Label(int.Parse(jalaliDateTimeSplited.HH)) : "";
-            return Task.FromResult(jalaliDateTime);
+            var persianjalaliFormat = EnglishNumberToPersian(jalaliFormat);
+            return Task.FromResult(persianjalaliFormat);
         }
 
         public override Task<(DateTime dateTime, bool isValid)> Convert(string dateTime)
