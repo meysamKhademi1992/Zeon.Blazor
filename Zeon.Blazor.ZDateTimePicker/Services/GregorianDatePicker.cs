@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using Zeon.Blazor.ZDateTimePicker.Abstractions;
 using Zeon.Blazor.ZDateTimePicker.Constants;
-using Zeon.Blazor.ZDateTimePicker.Extensions;
 
 namespace Zeon.Blazor.ZDateTimePicker.Services
 {
@@ -90,6 +89,11 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         public override string GetWeekChar(int dayOfWeek)
         {
             return dayOfWeek == 0 ? "Sa" : dayOfWeek == 1 ? "Su" : dayOfWeek == 2 ? "Mo" : dayOfWeek == 3 ? "Tu" : dayOfWeek == 4 ? "We" : dayOfWeek == 5 ? "Th" : dayOfWeek == 6 ? "Fr" : dayOfWeek.ToString();
+        }
+
+        public override DateTime GetFirstDayOfMonth(DateTime dateTime)
+        {
+            return new DateTime(dateTime.Year, dateTime.Month, 1, dateTime.Hour, dateTime.Minute, dateTime.Second);
         }
     }
 }

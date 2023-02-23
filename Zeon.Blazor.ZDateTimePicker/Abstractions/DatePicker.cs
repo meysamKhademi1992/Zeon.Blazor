@@ -12,6 +12,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Abstractions
         public abstract Task<string> Convert(DateTime dateTime, string format);
         public abstract Task<(DateTime dateTime, bool isValid)> Convert(string dateTime);
         public abstract string GetMonthName(DateTime dateTime);
+        public abstract DateTime GetFirstDayOfMonth(DateTime dateTime);
         public abstract DateTime GetNextMonth(DateTime dateTime);
         public abstract DateTime GetPrevMonth(DateTime dateTime);
         public abstract DateTime ChangeMonth(DateTime dateTime, int month);

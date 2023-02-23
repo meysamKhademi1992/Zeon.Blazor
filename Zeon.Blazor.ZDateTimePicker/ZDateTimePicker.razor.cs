@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Zeon.Blazor.ZDateTimePicker.Abstractions;
 using Zeon.Blazor.ZDateTimePicker.Constants;
-using Zeon.Blazor.ZDateTimePicker.Extensions;
 using Zeon.Blazor.ZDateTimePicker.Services;
 
 namespace Zeon.Blazor.ZDateTimePicker;
@@ -57,7 +56,7 @@ public partial class ZDateTimePicker : ComponentBase
             int.TryParse(value, out hour);
             if (hour >= 0 && hour <= 23)
             {
-                PickerDateTime = PickerDateTime.ChangeHour(hour);
+                PickerDateTime = _datePicker.ChangeHour(PickerDateTime, hour);
                 InvokeAsync(async () => await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT)));
             }
 
@@ -75,7 +74,7 @@ public partial class ZDateTimePicker : ComponentBase
 
             if (int.TryParse(value, out var minute) && minute >= 0 && minute <= 59)
             {
-                PickerDateTime = PickerDateTime.ChangeMinute(minute);
+                PickerDateTime = _datePicker.ChangeMinute(PickerDateTime, minute);
                 InvokeAsync(async () => await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT)));
             }
         }

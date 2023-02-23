@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using Zeon.Blazor.ZDateTimePicker.Abstractions;
 using Zeon.Blazor.ZDateTimePicker.Constants;
-using Zeon.Blazor.ZDateTimePicker.Extensions;
 
 namespace Zeon.Blazor.ZDateTimePicker.Services
 {
@@ -39,7 +38,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return (jalaliDateTime[0..4], jalaliDateTime[5..7], jalaliDateTime[8..2], jalaliDateTime[11..2], jalaliDateTime[14..16]);
         }
 
-        private static string GregorianToJalali(DateTime value, char dateSpliter, DateType toType)
+        private string GregorianToJalali(DateTime value, char dateSpliter, DateType toType)
         {
             string stringValue = "-";
             try
@@ -88,6 +87,64 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         }
 
+        private DateTime JalaliToGregorian(string value, DateType toType, char dateSpliter, ref bool isValid)
+        {
+            var outDateTime = new DateTime();
+            try
+            {
+
+                switch (toType)
+                {
+                    case DateType.DateTime:
+                        {
+                            if (value.Length == 16)
+                            {
+                                var datetime = value.Split(" ");
+                                var date = datetime[0];
+                                var time = datetime[1];
+                                var ymd = date.Split(dateSpliter);
+                                var hm = time.Split(":");
+                                int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0;
+                                int.TryParse(ymd[0], out yyyy);
+                                int.TryParse(ymd[1], out MM);
+                                int.TryParse(ymd[2], out dd);
+                                int.TryParse(hm[0], out HH);
+                                int.TryParse(hm[1], out mm);
+
+                                PersianCalendar pc = new PersianCalendar();
+                                outDateTime = pc.ToDateTime(yyyy, MM, dd, HH, mm, 0, 0);
+                                isValid = true;
+                            }
+                            break;
+                        }
+                    case DateType.Date:
+                        {
+                            if (value.Length == 10)
+                            {
+                                var date = value.Split(dateSpliter);
+                                int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0;
+                                int.TryParse(date[0], out yyyy);
+                                int.TryParse(date[1], out MM);
+                                int.TryParse(date[2], out dd);
+
+                                PersianCalendar pc = new PersianCalendar();
+                                outDateTime = pc.ToDateTime(yyyy, MM, dd, HH, mm, 0, 0);
+                                isValid = true;
+
+                            }
+                            break;
+                        }
+
+                }
+                return outDateTime;
+            }
+            catch (Exception)
+            {
+                return outDateTime;
+            }
+
+        }
+
         public override Task<string> Convert(DateTime dateTime, string format)
         {
             var isValid = format.All(q => ALLOW_CHARACTERS.Contains(q));
@@ -113,7 +170,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         public override Task<(DateTime dateTime, bool isValid)> Convert(string dateTime)
         {
             bool isValid = false;
-            var dateTimeResult = dateTime.JalaliToGregorian(DateType.DateTime, DATE_SPLITER, ref isValid);
+            var dateTimeResult = JalaliToGregorian(dateTime, DateType.DateTime, DATE_SPLITER, ref isValid);
             return Task.FromResult((dateTimeResult, isValid));
         }
 
@@ -286,6 +343,21 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         public override string GetWeekChar(int dayOfWeek)
         {
             return dayOfWeek == 0 ? "ش" : dayOfWeek == 1 ? "ی" : dayOfWeek == 2 ? "د" : dayOfWeek == 3 ? "س" : dayOfWeek == 4 ? "چ" : dayOfWeek == 5 ? "پ" : dayOfWeek == 6 ? "ج" : dayOfWeek.ToString();
+        }
+
+        public override DateTime GetFirstDayOfMonth(DateTime dateTime)
+        {
+            if (dateTime < new DateTime().AddYears(623))
+                throw new ArgumentOutOfRangeException(nameof(dateTime));
+
+            PersianCalendar pc = new PersianCalendar();
+            int yyyy = pc.GetYear(dateTime);
+            int MM = pc.GetMonth(dateTime);
+            int dd = pc.GetDayOfMonth(dateTime);
+            int HH = pc.GetHour(dateTime);
+            int mm = pc.GetMinute(dateTime);
+            var newDateTime = pc.ToDateTime(yyyy, MM, 1, HH, mm, 0, 0);
+            return newDateTime;
         }
     }
 }
