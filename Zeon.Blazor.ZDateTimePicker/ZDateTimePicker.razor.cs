@@ -45,7 +45,7 @@ public partial class ZDateTimePicker : ComponentBase
     {
         get
         {
-            return _currentHourPicker;
+            return _datePicker.GetHourDisplayItem(int.Parse(_currentHourPicker));
         }
         set
         {
@@ -64,7 +64,7 @@ public partial class ZDateTimePicker : ComponentBase
     {
         get
         {
-            return _currentMinutePicker;
+            return _datePicker.GetMinuteDisplayItem(int.Parse(_currentMinutePicker));
         }
         set
         {

@@ -34,9 +34,9 @@
     padding-left: 3px;
     padding-right: 3px;
     padding-bottom: 4px;
-    width: var(--container-Width !important);
-    height: var(--container-Height !important);
-    display: var(--container-Display !important);
+    width: var(--container-Width ) !important;
+    height: var(--container-Height ) !important;
+    display: var(--container-Display ) !important;
 }
 
 .zeon-inputContainer-Label {
@@ -63,9 +63,9 @@
 .zeon-button-btn {
     border: solid 1px;
     border-radius: 6px;
-    display: var(--btn-Display !important);
-    width: var(--btn-Width !important);
-    height: var(--btn-Height !important);
+    display: var(--btn-display ) !important;
+    width: var(--btn-width ) !important;
+    height: var(--btn-height ) !important;
 }
 
 .zeon-button-spinner {
@@ -110,7 +110,8 @@
 .zeon-dateTimePicker-input {
     text-align: center;
     border-radius: 5px;
-    direction: ltr
+    direction: ltr;
+    cursor: pointer;
 }
 
 .zeon-dateTimePicker-datePickerCard {
@@ -124,12 +125,56 @@
 
 .zeon-dateTimePicker-datePickerCard-panel {
     display: var(--panel-display) !important;
+    width: 100%;
+    height: 100%;
+    min-height: 354px;
+    background-color: rgb(125,0,0);
+    align-items: center;
+    display: inline-grid;
+    color: whitesmoke;
+    text-align: center;
+    border-radius: 3px;
+    position: absolute;
+    z-index: 1000;
 }
 
 .zeon-dateTimePicker-datePickerCard-panel-header {
     margin-top: 0px !important;
-    direction: ltr
+    direction: ltr;
 }
+
+.zeon-dateTimePicker-datePickerCard-panel-box {
+    -ms-overflow-style: thin; /* for Internet Explorer, Edge */
+    scrollbar-width: thin; /* for Firefox */
+    overflow-y: scroll;
+    width: 80%;
+    height: 160px;
+    text-align: center;
+    cursor: pointer;
+    margin: auto;
+    padding: 0;
+    background-color: whitesmoke;
+    border-radius: 5px;
+    color: rgb(3,3,3,0.7);
+}
+
+    .zeon-dateTimePicker-datePickerCard-panel-box::-webkit-scrollbar {
+        display: none; /* for Chrome, Safari, and Opera */
+    }
+
+    .zeon-dateTimePicker-datePickerCard-panel-box > ul > li:hover {
+        background-color: rgba(3,3,3,0.78);
+        color: whitesmoke;
+    }
+
+.zeon-dateTimePicker-datePickerCard-panel .zeon-dateTimePicker-datePickerCard-panel-box .selected {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    bottom: 0;
+    background-color: darkorange;
+}
+
 
 .zeon-dateTimePicker-datePickerCard-panel-header-date {
     background-color: rgb(115,0,0);
@@ -159,7 +204,8 @@
 
 .zeon-dateTimePicker-datePickerCard-header {
     align-self: center !important;
-    background-color: white
+    background-color: white;
+    font-size: smaller;
 }
 
 .zeon-dateTimePicker-datePickerCard-body {
@@ -173,10 +219,33 @@
     width: 30px;
     height: 30px;
     border: solid 1px;
-    border-color: var(--btn-border-color);
+    border-color: var(--btn-border-color) !important;
+    overflow: auto;
+    font-size: small;
+    padding: 0;
 }
 
 .zeon-dateTimePicker-datePickerCard-footer {
     margin-top: 3px;
     background-color: white
+}
+
+.zf {
+    font-size: small;
+}
+
+.zf-arrow-alt-right::before {
+    content: '\276F';
+}
+
+.zf-arrow-alt-left::before {
+    content: '\276E';
+}
+
+.zf-check::before {
+    content: '\2714';
+}
+
+.zf-circle-arrow::before {
+    content: '\21BB';
 }

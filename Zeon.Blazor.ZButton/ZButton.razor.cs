@@ -29,13 +29,13 @@ namespace Zeon.Blazor.ZButton
         public string ButtonClass { get; set; } = "btn-outline-primary";
 
         [Parameter]
-        public string? Icon { get; set; }
+        public string? Icon { get; set; } = "zf zf-check";
 
         [Parameter]
         public string? Display { get; set; } = "flex";
 
         [Parameter]
-        public string Width { get; set; } = "120px";
+        public string Width { get; set; } = "100%";
 
         [Parameter]
         public string Height { get; set; } = "auto";

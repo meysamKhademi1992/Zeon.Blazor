@@ -3,9 +3,9 @@
 @if (IsWaiting)
     IsDisabled = true;
 
-<button id="@ButtonId" type="button" class="btn @ButtonClass @_disabled zeon-button-btn  align-items-stretch d-flex" @onclick="OnClick" style="--btn-Display:@Display; --btn-Width:@Width ; --btn-Height:@Height">
+<button id="@ButtonId" type="button" class="btn @ButtonClass @_disabled zeon-button-btn  align-items-stretch d-flex" @onclick="OnClick" style="--btn-display:@Display; --btn-width:@Width ; --btn-height:@Height">
 
-    <div class="icon icon-left d-flex align-items-center justify-content-center w-auto p-2">
+    <div class="icon icon-left d-flex align-items-center justify-content-center w-auto">
         @if (IsWaiting)
         {
             <span class="spinner-border text-primary zeon-button-spinner" role="status"></span>

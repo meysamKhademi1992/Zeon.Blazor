@@ -6,8 +6,6 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 {
     public class GregorianDatePicker : DatePicker
     {
-
-
         public GregorianDatePicker(int createNumberOfYears)
         {
             CreateNumberOfYears = createNumberOfYears;
@@ -83,9 +81,33 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         public override int GetYearItem(int index)
         {
-            return DateTime.Now.Year - CreateNumberOfYears + index;
+            return DateTime.Now.Year - CreateNumberOfYears / 2 + index;
         }
 
+        public override string GetYearDisplayItem(int year)
+        {
+            return year.ToString();
+        }
+
+        public override string GetMonthDisplayItem(int month)
+        {
+            return month.ToString();
+        }
+
+        public override string GetDayDisplayItem(int day)
+        {
+            return day.ToString();
+        }
+
+        public override string GetHourDisplayItem(int hour)
+        {
+            return hour.ToString();
+        }
+
+        public override string GetMinuteDisplayItem(int minute)
+        {
+            return minute.ToString();
+        }
         public override string GetWeekChar(int dayOfWeek)
         {
             return dayOfWeek == 0 ? "Sa" : dayOfWeek == 1 ? "Su" : dayOfWeek == 2 ? "Mo" : dayOfWeek == 3 ? "Tu" : dayOfWeek == 4 ? "We" : dayOfWeek == 5 ? "Th" : dayOfWeek == 6 ? "Fr" : dayOfWeek.ToString();
@@ -95,5 +117,6 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         {
             return new DateTime(dateTime.Year, dateTime.Month, 1, dateTime.Hour, dateTime.Minute, dateTime.Second);
         }
+
     }
 }

@@ -292,6 +292,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         public override DateTime ChangeMonth(DateTime dateTime, int month)
         {
+            month = int.Parse(PersianNumberToEnglish(month.ToString()));
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
             if (month > 12 || month < 1)
@@ -306,6 +307,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         public override DateTime ChangeYear(DateTime dateTime, int year)
         {
+            year = int.Parse(PersianNumberToEnglish(year.ToString()));
+
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
             if (year > 9999 || year < 623)
@@ -357,15 +360,15 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
-
-            int jalaliMonth = 0;
             PersianCalendar pc = new PersianCalendar();
-            jalaliMonth = pc.GetMonth(dateTime);
+            int jalaliMonth = pc.GetMonth(dateTime);
             return jalaliMonth;
         }
 
         public override DateTime ChangeHour(DateTime dateTime, int hour)
         {
+            hour = int.Parse(PersianNumberToEnglish(hour.ToString()));
+
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
 
@@ -375,6 +378,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         public override DateTime ChangeMinute(DateTime dateTime, int minute)
         {
+            minute = int.Parse(PersianNumberToEnglish(minute.ToString()));
+
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
 
@@ -384,7 +389,31 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         public override int GetYearItem(int index)
         {
-            return GetYear(DateTime.Now) - CreateNumberOfYears + index;
+            return GetYear(DateTime.Now) - CreateNumberOfYears / 2 + index;
+        }
+
+        public override string GetYearDisplayItem(int year)
+        {
+            return EnglishNumberToPersian(year.ToString());
+        }
+
+        public override string GetMonthDisplayItem(int month)
+        {
+            return EnglishNumberToPersian(month.ToString());
+        }
+        public override string GetDayDisplayItem(int day)
+        {
+            return EnglishNumberToPersian(day.ToString());
+        }
+
+        public override string GetHourDisplayItem(int hour)
+        {
+            return EnglishNumberToPersian(hour.ToString());
+        }
+
+        public override string GetMinuteDisplayItem(int minute)
+        {
+            return EnglishNumberToPersian(minute.ToString());
         }
 
         public override string GetWeekChar(int dayOfWeek)
