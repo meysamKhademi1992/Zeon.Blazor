@@ -98,15 +98,6 @@
     margin-right: 3px
 }
 
-.zeon-dateTimePicker-btnOpenClose {
-    cursor: pointer;
-    position: relative;
-    z-index: 1000;
-    font-size: 20px;
-    margin-right: 50px;
-    margin-top: 0px
-}
-
 .zeon-dateTimePicker-input {
     text-align: center;
     border-radius: 5px;
@@ -128,7 +119,7 @@
     width: 100%;
     height: 100%;
     min-height: 354px;
-    background-color: rgb(125,0,0);
+    background-color: whitesmoke;
     align-items: center;
     display: inline-grid;
     color: whitesmoke;
@@ -172,18 +163,20 @@
     position: sticky;
     top: 0;
     bottom: 0;
-    background-color: darkorange;
+    background-color: #00c7d0;
 }
 
 
 .zeon-dateTimePicker-datePickerCard-panel-header-date {
-    background-color: rgb(115,0,0);
+    background-color: #e3e3e3;
+    color: #242424;
     border-radius: 6px;
 }
 
 .zeon-dateTimePicker-datePickerCard-panel-header-time {
     margin-top: 10px !important;
-    background-color: rgb(115,0,0);
+    background-color: #e3e3e3;
+    color: #242424;
     border-radius: 6px;
 }
 
@@ -199,22 +192,41 @@
 
 .zeon-dateTimePicker-datePickerCard-panel-footer {
     bottom: 0px;
-    background-color: black
+    background-color: whitesmoke;
 }
 
 .zeon-dateTimePicker-datePickerCard-header {
     align-self: center !important;
     background-color: white;
-    font-size: smaller;
+    font-size: inherit;
 }
 
 .zeon-dateTimePicker-datePickerCard-body {
-    background-color: maroon;
+    background-color: #484848;
+    color: whitesmoke;
     margin-bottom: 8px;
     border-radius: 3px;
 }
 
-.zeon-dateTimePicker-datePickerCard-body-button {
+.zeon-dateTimePicker-btn-ok {
+    color: #242424;
+}
+
+
+.zeon-dateTimePicker-btn-prev-month {
+    color: darkred;
+}
+
+.zeon-dateTimePicker-btn-next-month {
+    border: none;
+    color: green;
+}
+
+.zeon-dateTimePicker-btn-show-panel {
+    background-color: whitesmoke;
+}
+
+.zeon-dateTimePicker-btn-day {
     margin: 1px;
     width: 30px;
     height: 30px;
@@ -225,9 +237,27 @@
     padding: 0;
 }
 
+.zeon-dateTimePicker-btn-today {
+    color: #242424;
+}
+
+    .zeon-dateTimePicker-btn-next-month:focus,
+    .zeon-dateTimePicker-btn-show-panel:focus,
+    .zeon-dateTimePicker-btn-prev-month:focus,
+    .zeon-dateTimePicker-btn-ok:focus,
+    .zeon-dateTimePicker-btn-day:focus,
+    .zeon-dateTimePicker-btn-today:focus {
+        outline: none !important;
+        box-shadow: none;
+    }
+
+.zeon-dateTimePicker-month-label {
+    color: #00c7d0;
+}
+
 .zeon-dateTimePicker-datePickerCard-footer {
     margin-top: 3px;
-    background-color: white
+    background-color: whitesmoke;
 }
 
 .zf {

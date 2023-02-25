@@ -96,7 +96,7 @@
                 <div class="card-footer w-100 p-1 position-absolute zeon-dateTimePicker-datePickerCard-panel-footer ">
                     <div class="row m-auto w-100 text-center ">
                         <div class="col p-1 w-100">
-                            <ZButton ButtonClass="btn-outline-success" Width="100%" Icon="zf zf-check" Text="@OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
+                            <ZButton ButtonClass="btn  zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
                         </div>
                     </div>
                 </div>
@@ -106,22 +106,22 @@
         <div class="card-header w-100 p-1 zeon-dateTimePicker-datePickerCard-header">
             <div class="row p-o m-auto">
                 <div class="col-4 p-0 ">
-                    <button type="button" class="btn btn-outline-danger w-100 h-100 p-0" style="font-size: inherit;" value="" @onclick="@(async()=> await PrevMonth_Onclick())">
+                    <button type="button" class="btn zeon-dateTimePicker-btn-prev-month  w-100 h-100 p-0" style="font-size: inherit;" value="" @onclick="@(async()=> await PrevMonth_Onclick())">
                         <span class="p-0 zf zf-arrow-alt-left"></span>
                         <span class="p-0">@PrevMonthLabel</span>
                     </button>
                 </div>
                 <div class="col-4" style="display:inline-grid; align-content:center; text-align:center;padding-left:2px;padding-right:2px">
-                    <span class="w-100 h-100 fw-bold text-primary">@_displayMonth</span>
+                    <span class="w-100 h-100 fw-bold zeon-dateTimePicker-month-label">@_displayMonth</span>
                 </div>
                 <div class="col-4 p-0">
-                    <button class="btn btn-outline-success w-100 h-100 p-0" type="button" style="font-size: inherit;" value="" @onclick="@(async()=> await NextMonth_Onclick())">
+                    <button class="btn zeon-dateTimePicker-btn-next-month  w-100 h-100 p-0" type="button" style="font-size: inherit;" value="" @onclick="@(async()=> await NextMonth_Onclick())">
                         <span class="p-0">@NextMonthLabel</span>
                         <span class="p-0 zf zf-arrow-alt-right "></span>
                     </button>
                 </div>
                 <div class="p-0" style="margin-top:2px;">
-                    <button type="button" class="w-100 btn btn-outline-danger p-0" style="padding:2px;direction:ltr ;font-size: inherit;" @onclick="@(()=> OpenPanel_Onclick())">@SelectedDateTime</button>
+                    <button type="button" class="w-100 btn zeon-dateTimePicker-btn-show-panel p-0" style="padding:2px;direction:ltr ;font-size: inherit;" @onclick="@(()=> OpenPanel_Onclick())">@SelectedDateTime</button>
                 </div>
             </div>
         </div>
@@ -155,8 +155,8 @@
                                 {
                                     string date = @firstDayOfMonth.ToString(DATE_TIME_FORMAT);
                                     string borderColor = "";
-                                    borderColor = firstDayOfMonth.Date == PickerDateTime.Date ? "darkgreen !important" : "lightgray !important";
-                                    <button type="button" class="btn btn-outline-primary zeon-dateTimePicker-datePickerCard-body-button" value="@date" @onclick="@(() => ChangeDateTimePicker_Onclick(date))" style="--btn-border-color:@borderColor;">
+                                    borderColor = firstDayOfMonth.Date == PickerDateTime.Date ? "#00c7d0 !important" : firstDayOfMonth.Date.Date == DateTime.Now.Date ? "red !important" : "lightgray !important";
+                                    <button type="button" class="btn zeon-dateTimePicker-btn-day" value="@date" @onclick="@(() => ChangeDateTimePicker_Onclick(date))" style="--btn-border-color:@borderColor;">
                                         @_datePicker.GetDayDisplayItem(@day)
                                     </button>
                                     firstDayOfMonth = firstDayOfMonth.AddDays(1);
@@ -171,10 +171,10 @@
             <div class="card-footer w-100 p-1 zeon-dateTimePicker-datePickerCard-footer">
                 <div class="row m-auto w-100 text-center ">
                     <div class="col p-1 w-100">
-                        <ZButton ButtonClass="btn-outline-success" Width="100%" Icon="zf zf-check" Text="@OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
+                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
                     </div>
                     <div class="col p-1 w-100">
-                        <ZButton ButtonClass="btn-outline-danger" Width="100%" Icon="zf-circle-arrow" Text="@SetTodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
+                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-today" Width="100%" Icon="zf-circle-arrow" Text="@SetTodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
                     </div>
                 </div>
             </div>
