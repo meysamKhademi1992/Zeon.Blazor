@@ -7,23 +7,22 @@ namespace Zeon.Blazor.ZInput;
 
 public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
 {
-    private const string DEFAULT_INPUT_TYPE = "string";
-    
+    private const string DEFAULT_INPUT_TYPE = "decimal";
+
     private readonly Input<Type> _input;
-    private Type _number;
+    private Type? _value;
     private string _eventChange = "onchange";
 
     [Parameter]
     public string Id { get; set; } = null!;
 
     [Parameter]
-    public Type DefaultValue
+    public Type? DefaultValue
     {
-        get => _number;
+        get => _value;
         set
         {
-            int Types = WithType ? 2 : 0;
-            _number = _input.Convert(value);
+            _value = value;
         }
     }
 
@@ -43,33 +42,33 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
     }
     public ZInput()
     {
+        _input = GetInputInstance();
     }
 
-    private Input<Type> GetInputInstance() =>
-
-         nameof(Type) switch
-         {
-             "decimal" => new DecimalInput() as Input<Type>,
-             "int" => new IntInput() as Input<Type>,
-             "long" => new DecimalInput() as Input<Type>,
-             "string" => new DecimalInput() as Input<Type>,
-             "String" => new DecimalInput() as Input<Type>,
-             _ => throw new NullReferenceException(string.Concat(nameof(Type), "Type Not Found"))
-         };
-
-    public string FormatValue
+    private Input<Type> GetInputInstance()
     {
-        get => WithType ? string.Format("{0:n}", _number) : string.Format("{0:n0}", _number);
+        string typeName = typeof(Type).Name.ToLower();
+        return typeName switch
+        {
+            "decimal" => (new DecimalInput() as Input<Type>)!,
+            "int32" => (new IntInput() as Input<Type>)!,
+            "int64" => (new LongInput() as Input<Type>)!,
+            "string" => (new StringInput() as Input<Type>)!,
+            _ => throw new NullReferenceException(string.Concat(typeName, " Type Not Found ")),
+        };
+    }
+
+    public string OnInput
+    {
+        get => _input.Get(_value);
         set
         {
-            Type num = 0;
-            if (Type.TryParse(value, out num) || value == "")
+            if (_input.TryParse(value, out Type result))
             {
-                if (_number == num) return;
+                if (_value?.Equals(result) ?? false) return;
 
-                _number = num;
-                DefaultValue = (_number);
-                OnValueChanged.InvokeAsync(_number);
+                _value = result;
+                this.InvokeAsync(async () => await OnValueChanged.InvokeAsync(_value));
             }
         }
     }

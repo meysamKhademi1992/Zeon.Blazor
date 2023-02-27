@@ -3,9 +3,9 @@
 
 @if (!IsDisabled)
 {
-    <input class="form-control container-fluid p-0" type="text" id="@Id" @bind="FormatValue" @bind:event="@_eventChange" />
+    <input class="form-control container-fluid p-0" type="text" id="@Id" @bind="@OnInput" @bind:event="@_eventChange" />
 }
 else
 {
-    <input disabled="disabled" class="form-control container-fluid p-0" type="text" id="@Id" @bind="FormatValue" @bind:event="@_eventChange" />
+    <input disabled="disabled" class="form-control container-fluid p-0" type="text" id="@Id" @bind="@OnInput" @bind:event="@_eventChange" />
 }
