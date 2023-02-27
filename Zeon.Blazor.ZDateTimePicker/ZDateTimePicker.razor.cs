@@ -139,7 +139,6 @@ public partial class ZDateTimePicker : ComponentBase
         await InputDate(dateTime, dateTimeFormat);
     }
 
-
     private void SetFormat(string format)
     {
         var isValid = format.All(q => ALLOW_CHARACTERS.Contains(q));

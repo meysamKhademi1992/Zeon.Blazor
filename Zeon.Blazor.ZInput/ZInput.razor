@@ -1,0 +1,11 @@
+﻿@namespace Zeon.Blazor.ZInput
+@typeparam Type
+
+@if (!IsDisabled)
+{
+    <input class="form-control container-fluid p-0" type="text" id="@Id" @bind="FormatValue" @bind:event="@_eventChange" />
+}
+else
+{
+    <input disabled="disabled" class="form-control container-fluid p-0" type="text" id="@Id" @bind="FormatValue" @bind:event="@_eventChange" />
+}
