@@ -51,6 +51,7 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
         return typeName switch
         {
             "decimal" => (new DecimalInput() as Input<Type>)!,
+            "int16" => (new Int16Input() as Input<Type>)!,
             "int32" => (new IntInput() as Input<Type>)!,
             "int64" => (new LongInput() as Input<Type>)!,
             "string" => (new StringInput() as Input<Type>)!,

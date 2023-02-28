@@ -241,19 +241,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             int yyyy = pc.GetMonth(dateTime) == 1 ? pc.GetYear(dateTime) - 1 : pc.GetYear(dateTime);
             int MM = pc.GetMonth(dateTime) == 1 ? 12 : pc.GetMonth(dateTime) - 1;
 
-            bool isLeapYear = false;
-            if (MM == 12)
-            {
-                try
-                {
-                    pc.ToDateTime(yyyy, 12, 30, 0, 0, 0, 0);
-                    isLeapYear = true;
-                }
-                catch
-                {
-                    isLeapYear = false;
-                }
-            }
+            bool isLeapYear = pc.IsLeapYear(yyyy);
+           
             var monthCount = MM >= 1 && MM <= 6 ? 31 : MM >= 7 && MM <= 11 ? 30 : MM == 12 && !isLeapYear ? 29 : MM == 12 && isLeapYear ? 30 : 0;
 
             int dd = monthCount >= pc.GetDayOfMonth(dateTime) ? pc.GetDayOfMonth(dateTime) : monthCount == 30 ? 30 : 29;
@@ -270,19 +259,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             int yyyy = pc.GetMonth(dateTime) == 12 ? pc.GetYear(dateTime) + 1 : pc.GetYear(dateTime);
             int MM = pc.GetMonth(dateTime) == 12 ? 1 : pc.GetMonth(dateTime) + 1;
 
-            bool isLeapYear = false;
-            if (MM == 12)
-            {
-                try
-                {
-                    pc.ToDateTime(yyyy, 12, 30, 0, 0, 0, 0);
-                    isLeapYear = true;
-                }
-                catch
-                {
-                    isLeapYear = false;
-                }
-            }
+            bool isLeapYear = pc.IsLeapYear(yyyy);
+
             var monthCount = MM >= 1 && MM <= 6 ? 31 : MM >= 7 && MM <= 11 ? 30 : MM == 12 && !isLeapYear ? 29 : MM == 12 && isLeapYear ? 30 : 0;
 
             int dd = monthCount >= pc.GetDayOfMonth(dateTime) ? pc.GetDayOfMonth(dateTime) : monthCount == 30 ? 30 : 29;
@@ -329,19 +307,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             PersianCalendar pc = new PersianCalendar();
             int yyyy = pc.GetYear(dateTime);
             int MM = pc.GetMonth(dateTime);
-            bool isLeapYear = false;
-            if (MM == 12)
-            {
-                try
-                {
-                    pc.ToDateTime(yyyy, 12, 30, 0, 0, 0, 0);
-                    isLeapYear = true;
-                }
-                catch
-                {
-                    isLeapYear = false;
-                }
-            }
+            bool isLeapYear = pc.IsLeapYear(yyyy);
+
             var count = MM >= 1 && MM <= 6 ? 31 : MM >= 7 && MM <= 11 ? 30 : MM == 12 && !isLeapYear ? 29 : MM == 12 && isLeapYear ? 30 : 0;
             return count;
         }

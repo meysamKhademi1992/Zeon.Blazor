@@ -6,7 +6,7 @@ public class DecimalInput : Input<decimal>
 {
     internal override decimal Convert(decimal value)
     {
-        return Math.Round(value, 2);  
+        return Math.Floor(value);
     }
 
     internal override string Get(decimal value)
