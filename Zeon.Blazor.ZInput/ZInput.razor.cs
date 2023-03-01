@@ -7,14 +7,14 @@ namespace Zeon.Blazor.ZInput;
 
 public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
 {
-    private const string DEFAULT_INPUT_TYPE = "decimal";
-
     private readonly Input<Type> _input;
     private Type? _value;
-    private string _eventChange = "onchange";
 
     [Parameter]
     public string Id { get; set; } = null!;
+
+    [Parameter]
+    public string? Format { get; set; }
 
     [Parameter]
     public Type? DefaultValue
@@ -32,14 +32,6 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
-    [Parameter]
-    public bool WithType { get; set; } = true;
-
-    protected override void OnInitialized()
-    {
-        _eventChange = WithType ? "onchange" : "oninput";
-        base.OnInitialized();
-    }
     public ZInput()
     {
         _input = GetInputInstance();
@@ -51,25 +43,31 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
         return typeName switch
         {
             "decimal" => (new DecimalInput() as Input<Type>)!,
+            "double" => (new DoubleInput() as Input<Type>)!,
             "int16" => (new Int16Input() as Input<Type>)!,
-            "int32" => (new IntInput() as Input<Type>)!,
-            "int64" => (new LongInput() as Input<Type>)!,
+            "int32" => (new Int32Input() as Input<Type>)!,
+            "int64" => (new Int64Input() as Input<Type>)!,
+            "uint16" => (new UInt16Input() as Input<Type>)!,
+            "uint32" => (new UInt32Input() as Input<Type>)!,
+            "uint64" => (new UInt64Input() as Input<Type>)!,
             "string" => (new StringInput() as Input<Type>)!,
+            "boolean" => (new BoolInput() as Input<Type>)!,
             _ => throw new NullReferenceException(string.Concat(typeName, " Type Not Found ")),
         };
     }
 
     public string OnInput
     {
-        get => _input.Get(_value);
+        get => _input.Get(_value, Format);
         set
         {
             if (_input.TryParse(value, out Type result))
             {
-                if (_value?.Equals(result) ?? false) return;
-
-                _value = result;
-                this.InvokeAsync(async () => await OnValueChanged.InvokeAsync(_value));
+                var valueConverted = _input.Convert(value);
+                var valueFormated = _input.Convert(_input.Get(valueConverted, Format));
+                if (_value?.Equals(valueConverted) ?? false) return;
+                _value = valueConverted;
+                this.InvokeAsync(async () => await OnValueChanged.InvokeAsync(valueFormated));
             }
         }
     }

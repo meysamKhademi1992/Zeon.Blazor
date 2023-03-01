@@ -9,9 +9,9 @@ public class StringInput : Input<string>
         return value;
     }
 
-    internal override string Get(string? value)
+    internal override string Get(string? value, string? format)
     {
-        return value?.Trim() ?? "";
+        return string.Format(format ?? "{0}", value);
     }
 
     internal override bool TryParse(string value, out string result)

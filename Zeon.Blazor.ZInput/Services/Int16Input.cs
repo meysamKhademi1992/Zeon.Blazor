@@ -4,14 +4,14 @@ namespace Zeon.Blazor.ZInput.Services;
 
 internal class Int16Input : Input<Int16>
 {
-    internal override Int16 Convert(Int16 value)
+    internal override Int16 Convert(string value)
     {
-        return value;
+        return System.Convert.ToInt16(value);
     }
 
-    internal override string Get(Int16 value)
+    internal override string Get(Int16 value, string? format)
     {
-        return value.ToString();
+        return string.Format(format ?? "{0}", value);
     }
 
     internal override bool TryParse(string value, out Int16 result)

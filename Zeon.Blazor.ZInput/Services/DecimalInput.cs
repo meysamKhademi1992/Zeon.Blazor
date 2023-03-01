@@ -4,14 +4,14 @@ namespace Zeon.Blazor.ZInput.Services;
 
 public class DecimalInput : Input<decimal>
 {
-    internal override decimal Convert(decimal value)
+    internal override decimal Convert(string value)
     {
-        return Math.Floor(value);
+        return System.Convert.ToDecimal(value);
     }
 
-    internal override string Get(decimal value)
+    internal override string Get(decimal value, string? format)
     {
-        return true ? string.Format("{0:n}", value) : string.Format("{0:n0}", value);
+        return string.Format(format ?? "{0}", System.Convert.ToDecimal(value));
     }
 
     internal override bool TryParse(string value, out decimal result)
