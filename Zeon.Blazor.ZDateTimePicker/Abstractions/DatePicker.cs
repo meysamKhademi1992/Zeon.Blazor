@@ -9,6 +9,15 @@ namespace Zeon.Blazor.ZDateTimePicker.Abstractions
     public abstract class DatePicker
     {
         public abstract int CreateNumberOfYears { get; set; }
+        public abstract string Direction { get; }
+        public abstract string NextMonthText { get; }
+        public abstract string PrevMonthText { get; }
+        public abstract string OkText { get; }
+        public abstract string TodayText { get; }
+        public abstract string YearText { get; }
+        public abstract string MonthText { get; }
+        public abstract string HourText { get; }
+        public abstract string MinuteText { get; }
         public abstract Task<string> Convert(DateTime dateTime, string format);
         public abstract Task<(DateTime dateTime, bool isValid)> Convert(string dateTime);
         public abstract DateTime GetFirstDayOfMonth(DateTime dateTime);

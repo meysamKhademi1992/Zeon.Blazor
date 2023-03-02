@@ -4,9 +4,18 @@ using Zeon.Blazor.ZDateTimePicker.Constants;
 
 namespace Zeon.Blazor.ZDateTimePicker.Services
 {
+
     public class JalaliDatePicker : DatePicker
     {
-        private const char DATE_SPLITER = '-';
+        private const string DIRECTION = "rtl";
+        private const string NEXT_MONTH_TEXT = "ماه بعد";
+        private const string PREV_MONTH_TEXT = "ماه قبل";
+        private const string TODAY_TEXT = "امروز";
+        private const string OK_TEXT = "تایید";
+        private const string YEAR_TEXT = "سال";
+        private const string MONTH_TEXT = "ماه";
+        private const string HOUR_TEXT = "ساعت";
+        private const string MINUTE_TEXT = "دقیقه";
         private const string YEAR_yyyy = "yyyy";
         private const string MONTH_MM = "MM";
         private const string MONTH_MMM = "MMM";
@@ -15,6 +24,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         private const string HOUR_hh = "hh";
         private const string MINUTE_mm = "mm";
         private const string TIME_TYPE_tt = "tt";
+        private const char DATE_SPLITER = '-';
 
         public JalaliDatePicker(int createNumberOfYears)
         {
@@ -194,15 +204,23 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         }
 
         public override int CreateNumberOfYears { get; set; }
-
+        public override string Direction { get => DIRECTION; }
+        public override string NextMonthText { get => NEXT_MONTH_TEXT; }
+        public override string PrevMonthText { get => PREV_MONTH_TEXT; }
+        public override string OkText { get => OK_TEXT; }
+        public override string TodayText { get => TODAY_TEXT; }
+        public override string YearText { get => YEAR_TEXT; }
+        public override string MonthText { get => MONTH_TEXT; }
+        public override string HourText { get => HOUR_TEXT; }
+        public override string MinuteText { get => MINUTE_TEXT; }
         public override Task<string> Convert(DateTime dateTime, string format)
         {
             var jalaliFormat = format;
-            var jalaliDateTime = GregorianToJalali(dateTime, DATE_SPLITER, DateType.DateTime);
+            var jalaliDateTime = GregorianToJalali((DateTime)dateTime, DATE_SPLITER, DateType.DateTime);
             var jalaliDateTimeSplited = jalaliDateTimeSpliter(jalaliDateTime);
 
             jalaliFormat = jalaliFormat.Replace(YEAR_yyyy, jalaliDateTimeSplited.yyyy);
-            jalaliFormat = jalaliFormat.Replace(MONTH_MMM, GetMonthName(dateTime));
+            jalaliFormat = jalaliFormat.Replace(MONTH_MMM, GetMonthName((DateTime)dateTime));
             jalaliFormat = jalaliFormat.Replace(MONTH_MM, jalaliDateTimeSplited.MM);
             jalaliFormat = jalaliFormat.Replace(DAY_dd, jalaliDateTimeSplited.dd);
             jalaliFormat = jalaliFormat.Replace(HOUR_HH, jalaliDateTimeSplited.HH);
@@ -210,7 +228,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             jalaliFormat = jalaliFormat.Replace(MINUTE_mm, jalaliDateTimeSplited.mm);
             jalaliFormat = jalaliFormat.Replace(TIME_TYPE_tt, Hour24Label(int.Parse(jalaliDateTimeSplited.HH)));
 
-            var persianjalaliFormat = EnglishNumberToPersian(jalaliFormat);
+            string persianjalaliFormat = EnglishNumberToPersian(jalaliFormat);
+
             return Task.FromResult(persianjalaliFormat);
         }
 
@@ -242,7 +261,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             int MM = pc.GetMonth(dateTime) == 1 ? 12 : pc.GetMonth(dateTime) - 1;
 
             bool isLeapYear = pc.IsLeapYear(yyyy);
-           
+
             var monthCount = MM >= 1 && MM <= 6 ? 31 : MM >= 7 && MM <= 11 ? 30 : MM == 12 && !isLeapYear ? 29 : MM == 12 && isLeapYear ? 30 : 0;
 
             int dd = monthCount >= pc.GetDayOfMonth(dateTime) ? pc.GetDayOfMonth(dateTime) : monthCount == 30 ? 30 : 29;

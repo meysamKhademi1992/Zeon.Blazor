@@ -6,12 +6,31 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 {
     public class GregorianDatePicker : DatePicker
     {
+        private const string DIRECTION = "ltr";
+        private const string NEXT_MONTH_TEXT = "Next Month";
+        private const string PREV_MONTH_TEXT = "Prev Month";
+        private const string TODAY_TEXT = "Today";
+        private const string OK_TEXT = "Ok";
+        private const string YEAR_TEXT = "Year";
+        private const string MONTH_TEXT = "Month";
+        private const string HOUR_TEXT = "Hour";
+        private const string MINUTE_TEXT = "Minute";
+
         public GregorianDatePicker(int createNumberOfYears)
         {
             CreateNumberOfYears = createNumberOfYears;
         }
 
         public override int CreateNumberOfYears { get; set; }
+        public override string Direction { get => DIRECTION; }
+        public override string NextMonthText { get => NEXT_MONTH_TEXT; }
+        public override string PrevMonthText { get => PREV_MONTH_TEXT; }
+        public override string OkText { get => OK_TEXT; }
+        public override string TodayText { get => TODAY_TEXT; }
+        public override string YearText { get => YEAR_TEXT; }
+        public override string MonthText { get => MONTH_TEXT; }
+        public override string HourText { get => HOUR_TEXT; }
+        public override string MinuteText { get => MINUTE_TEXT; }
 
         public override Task<string> Convert(DateTime dateTime, string format)
         {

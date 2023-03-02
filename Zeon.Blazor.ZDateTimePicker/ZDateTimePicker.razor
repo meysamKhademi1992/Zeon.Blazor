@@ -10,7 +10,7 @@
 
 @if (_datePickerCardDisplay != "none")
 {
-    <div class="card text-white mb-3 zeon-dateTimePicker-datePickerCard" style="--datePickerCard-display:@_datePickerCardDisplay">
+    <div class="card text-white mb-3 zeon-dateTimePicker-datePickerCard" style="--datePickerCard-display:@_datePickerCardDisplay;--datePickerCard-direction:@_datePicker.Direction">
         @if (_panelDisplay != "none")
         {
             <div class="zeon-dateTimePicker-datePickerCard-panel" style="--panel-display:@_panelDisplay">
@@ -20,7 +20,7 @@
                         <div class="row m-auto p-2 zeon-dateTimePicker-datePickerCard-panel-header-date">
                             <div class="col">
                                 <div class="col">
-                                    @YearLabel
+                                    @_datePicker.YearText
                                 </div>
                                 <div class="col">
                                     <div class="zeon-dateTimePicker-datePickerCard-panel-box">
@@ -45,7 +45,7 @@
 
                             <div class="col">
                                 <div class="col">
-                                    @MonthLabel
+                                    @_datePicker.MonthText
                                 </div>
                                 <div class="col">
                                     <div class="zeon-dateTimePicker-datePickerCard-panel-box">
@@ -75,14 +75,14 @@
                             <div class="col-2 p-1">
                             </div>
                             <div class="col-4 p-1">
-                                <span>@HourLabel</span>
+                                <span>@_datePicker.HourText</span>
                                 <div>
                                     <input type="number" maxlength="2" @bind-value="@CurrentHourPicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-h">
                                 </div>
                             </div>
 
                             <div class="col-4 p-1">
-                                <span>@MinuteLabel</span>
+                                <span>@_datePicker.MinuteText</span>
 
                                 <div>
                                     <input type="number" maxlength="2" @bind-value="@CurrentMinutePicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-m">
@@ -96,7 +96,7 @@
                 <div class="card-footer w-100 p-1 position-absolute zeon-dateTimePicker-datePickerCard-panel-footer ">
                     <div class="row m-auto w-100 text-center ">
                         <div class="col p-1 w-100">
-                            <ZButton ButtonClass="btn  zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
+                            <ZButton ButtonClass="btn  zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
                         </div>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
                 <div class="col-4 p-0 ">
                     <button type="button" class="btn zeon-dateTimePicker-btn-prev-month  w-100 h-100 p-0" style="font-size: inherit;" value="" @onclick="@(async()=> await PrevMonth_Onclick())">
                         <span class="p-0 zf zf-arrow-alt-left"></span>
-                        <span class="p-0">@PrevMonthLabel</span>
+                        <span class="p-0">@_datePicker.PrevMonthText</span>
                     </button>
                 </div>
                 <div class="col-4" style="display:inline-grid; align-content:center; text-align:center;padding-left:2px;padding-right:2px">
@@ -116,7 +116,7 @@
                 </div>
                 <div class="col-4 p-0">
                     <button class="btn zeon-dateTimePicker-btn-next-month  w-100 h-100 p-0" type="button" style="font-size: inherit;" value="" @onclick="@(async()=> await NextMonth_Onclick())">
-                        <span class="p-0">@NextMonthLabel</span>
+                        <span class="p-0">@_datePicker.NextMonthText</span>
                         <span class="p-0 zf zf-arrow-alt-right "></span>
                     </button>
                 </div>
@@ -171,10 +171,10 @@
             <div class="card-footer w-100 p-1 zeon-dateTimePicker-datePickerCard-footer">
                 <div class="row m-auto w-100 text-center ">
                     <div class="col p-1 w-100">
-                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
+                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
                     </div>
                     <div class="col p-1 w-100">
-                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-today" Width="100%" Icon="zf-circle-arrow" Text="@SetTodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
+                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-today" Width="100%" Icon="zf-circle-arrow" Text="@_datePicker.TodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
                     </div>
                 </div>
             </div>
