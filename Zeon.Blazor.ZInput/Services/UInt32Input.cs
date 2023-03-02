@@ -14,9 +14,16 @@ internal class UInt32Input : Input<UInt32>
         return string.Format(format ?? "{0}", value);
     }
 
-    internal override bool TryParse(string value, out UInt32 result)
+    internal override bool IsValid(string value, out UInt32 result)
     {
         return UInt32.TryParse(value, out result);
+    }
+    internal async override Task<(bool isValid, string message)> Validate(Func<UInt32, Task<(bool isValid, string message)>>? validate, UInt32 value)
+    {
+        if (validate is not null)
+            return await validate.Invoke(value);
+
+        return (true, string.Empty);
     }
 }
 

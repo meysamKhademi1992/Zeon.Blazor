@@ -14,9 +14,16 @@ internal class Int16Input : Input<Int16>
         return string.Format(format ?? "{0}", value);
     }
 
-    internal override bool TryParse(string value, out Int16 result)
+    internal override bool IsValid(string value, out Int16 result)
     {
         return Int16.TryParse(value, out result);
+    }
+    internal async override Task<(bool isValid, string message)> Validate(Func<Int16, Task<(bool isValid, string message)>>? validate, Int16 value)
+    {
+        if (validate is not null)
+            return await validate.Invoke(value);
+
+        return (true, string.Empty);
     }
 }
 

@@ -4,6 +4,7 @@ namespace Zeon.Blazor.ZInput.Services;
 
 public class StringInput : Input<string>
 {
+
     internal override string Convert(string value)
     {
         return value;
@@ -14,9 +15,16 @@ public class StringInput : Input<string>
         return string.Format(format ?? "{0}", value);
     }
 
-    internal override bool TryParse(string value, out string result)
+    internal override bool IsValid(string value, out string result)
     {
         result = value is not null ? value : "";
         return true;
+    }
+    internal async override Task<(bool isValid, string message)> Validate(Func<string, Task<(bool isValid, string message)>>? validate, string value)
+    {
+        if (validate is not null)
+            return await validate.Invoke(value);
+
+        return (true, string.Empty);
     }
 }

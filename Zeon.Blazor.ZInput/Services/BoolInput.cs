@@ -14,9 +14,16 @@ internal class BoolInput : Input<bool>
         return string.Format(format ?? "{0}", value);
     }
 
-    internal override bool TryParse(string value, out bool result)
+    internal override bool IsValid(string value, out bool result)
     {
         return bool.TryParse(value, out result);
+    }
+    internal async override Task<(bool isValid, string message)> Validate(Func<bool, Task<(bool isValid, string message)>>? validate, bool value)
+    {
+        if (validate is not null)
+            return await validate.Invoke(value);
+
+        return (true, string.Empty);
     }
 }
 

@@ -14,8 +14,15 @@ public class DoubleInput : Input<double>
         return string.Format(format ?? "{0}", value);
     }
 
-    internal override bool TryParse(string value, out double result)
+    internal override bool IsValid(string value, out double result)
     {
         return double.TryParse(value, out result);
+    }
+    internal async override Task<(bool isValid, string message)> Validate(Func<double, Task<(bool isValid, string message)>>? validate, double value)
+    {
+        if (validate is not null)
+            return await validate.Invoke(value);
+
+        return (true, string.Empty);
     }
 }

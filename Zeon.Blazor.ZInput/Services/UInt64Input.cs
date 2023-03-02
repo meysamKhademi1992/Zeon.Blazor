@@ -14,9 +14,16 @@ internal class UInt64Input : Input<UInt64>
         return string.Format(format ?? "{0}", value);
     }
 
-    internal override bool TryParse(string value, out UInt64 result)
+    internal override bool IsValid(string value, out UInt64 result)
     {
         return UInt64.TryParse(value, out result);
+    }
+    internal async override Task<(bool isValid, string message)> Validate(Func<UInt64, Task<(bool isValid, string message)>>? validate, UInt64 value)
+    {
+        if (validate is not null)
+            return await validate.Invoke(value);
+
+        return (true, string.Empty);
     }
 }
 

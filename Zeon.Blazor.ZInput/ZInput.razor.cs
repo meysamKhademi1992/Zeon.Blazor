@@ -9,6 +9,17 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
 {
     private readonly Input<Type> _input;
     private Type? _value;
+    private (bool isValid, string message) _validation;
+
+    public (bool isValid, string message) IsValid
+    {
+        get
+        {
+            this.InvokeAsync(async () => await CheckValidation(_value));
+            return _validation;
+        }
+    }
+
 
     [Parameter]
     public string Id { get; set; } = null!;
@@ -32,8 +43,12 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
+    [Parameter]
+    public Func<Type, Task<(bool isValid, string message)>>? Validate { get; set; }
+
     public ZInput()
     {
+        _validation = (isValid: true, message: string.Empty);
         _input = GetInputInstance();
     }
 
@@ -56,20 +71,30 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
         };
     }
 
-    public string OnInput
+    private string OnInput
     {
         get => _input.Get(_value, Format);
+
         set
         {
-            if (_input.TryParse(value, out Type result))
+            if (_input.IsValid(value, out Type result))
             {
                 var valueConverted = _input.Convert(value);
-                var valueFormated = _input.Convert(_input.Get(valueConverted, Format));
-                if (_value?.Equals(valueConverted) ?? false) return;
-                _value = valueConverted;
-                this.InvokeAsync(async () => await OnValueChanged.InvokeAsync(valueFormated));
+                this.InvokeAsync(async () => await CheckValidation(valueConverted));
+                if (_validation.isValid)
+                {
+                    var valueFormated = _input.Convert(_input.Get(valueConverted, Format));
+                    if (_value?.Equals(valueConverted) ?? false) return;
+                    _value = valueConverted;
+                    this.InvokeAsync(async () => await OnValueChanged.InvokeAsync(valueFormated));
+                }
             }
         }
+    }
+
+    private async Task CheckValidation(Type? value)
+    {
+        _validation = await _input.Validate(Validate, value);
     }
 
 }

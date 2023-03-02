@@ -1,4 +1,10 @@
 ﻿@namespace Zeon.Blazor.ZInput
 @typeparam Type
 
-<input disabled="@IsDisabled" class="form-control container-fluid p-0" type="text" id="@Id" @bind="@OnInput" @bind:event="onchange" />
+<div>
+    @if (_validation.isValid == false)
+    {
+        <div class="zeon-input-validate">@_validation.message</div>
+    }
+    <input disabled="@IsDisabled" class="form-control container-fluid p-0 zeon-input" type="text" id="@Id" @bind="@OnInput" @bind:event="onchange" />
+</div>

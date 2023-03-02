@@ -14,9 +14,16 @@ internal class Int32Input : Input<int>
         return value.ToString(format);
     }
 
-    internal override bool TryParse(string value, out int result)
+    internal override bool IsValid(string value, out int result)
     {
         return int.TryParse(value, out result);
+    }
+    internal async override Task<(bool isValid, string message)> Validate(Func<Int32, Task<(bool isValid, string message)>>? validate, Int32 value)
+    {
+        if (validate is not null)
+            return await validate.Invoke(value);
+
+        return (true, string.Empty);
     }
 }
 
