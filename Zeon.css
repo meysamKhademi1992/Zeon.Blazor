@@ -1,9 +1,15 @@
-﻿.zeon-ItemChooser-listItems {
+﻿.zeon-ItemChooser-content {
+    border-radius: 8px;
+    position: relative;
+    z-index: 999
+}
+
+.zeon-ItemChooser-listItems {
     height: 200px;
     background-color: #f3f3f3;
     border: solid 0.5px #bbb;
     border-radius: 6px;
-    position: relative;
+    position: absolute;
     z-index: 999
 }
 
@@ -200,7 +206,7 @@
     align-self: center !important;
     background-color: white;
     font-size: 12px;
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .zeon-dateTimePicker-datePickerCard-body {
