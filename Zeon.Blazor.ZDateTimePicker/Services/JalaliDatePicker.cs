@@ -23,6 +23,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         private const string HOUR_HH = "HH";
         private const string HOUR_hh = "hh";
         private const string MINUTE_mm = "mm";
+        private const string SECONDS_ss = "ss";
+        private const string MILI_SECONDS_fff = "fff";
         private const string TIME_TYPE_tt = "tt";
         private const char DATE_SPLITER = '-';
 
@@ -44,9 +46,9 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return hour > 12 ? (hour - 12).ToString().PadLeft(2, '0') : hour.ToString().PadLeft(2, '0');
         }
 
-        private (string yyyy, string MM, string dd, string HH, string mm) jalaliDateTimeSpliter(string jalaliDateTime)
+        private (string yyyy, string MM, string dd, string HH, string mm, string ss, string fff) JalaliDateTimeSpliter(string jalaliDateTime)
         {
-            return (jalaliDateTime[0..4], jalaliDateTime[5..7], jalaliDateTime[8..10], jalaliDateTime[11..13], jalaliDateTime[14..16]);
+            return (jalaliDateTime[0..4], jalaliDateTime[5..7], jalaliDateTime[8..10], jalaliDateTime[11..13], jalaliDateTime[14..16], jalaliDateTime[17..19], jalaliDateTime[20..22]);
         }
 
         private string GregorianToJalali(DateTime value, char dateSpliter, DateType toType)
@@ -61,7 +63,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
                         case DateType.DateTime:
                             {
                                 int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0, ss = 0;
-
+                                double fff = 0;
                                 PersianCalendar pc = new PersianCalendar();
                                 yyyy = pc.GetYear(value);
                                 MM = pc.GetMonth(value);
@@ -69,8 +71,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
                                 HH = pc.GetHour(value);
                                 mm = pc.GetMinute(value);
                                 ss = pc.GetSecond(value);
-
-                                stringValue = $"{yyyy}{dateSpliter}{MM.ToString().PadLeft(2, '0')}{dateSpliter}{dd.ToString().PadLeft(2, '0')} {HH.ToString().PadLeft(2, '0')}:{mm.ToString().PadLeft(2, '0')}:{ss.ToString().PadLeft(2, '0')}".Trim();
+                                fff = pc.GetMilliseconds(value);
+                                stringValue = $"{yyyy}{dateSpliter}{MM.ToString().PadLeft(2, '0')}{dateSpliter}{dd.ToString().PadLeft(2, '0')} {HH.ToString().PadLeft(2, '0')}:{mm.ToString().PadLeft(2, '0')}:{ss.ToString().PadLeft(2, '0')}:{fff.ToString().PadLeft(3, '0')}".Trim();
                                 break;
                             }
                         case DateType.Date:
@@ -109,24 +111,30 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
                 {
                     case DateType.DateTime:
                         {
-                            if (value.Length == 16)
-                            {
-                                var datetime = value.Split(" ");
-                                var date = datetime[0];
-                                var time = datetime[1];
-                                var ymd = date.Split(dateSpliter);
-                                var hm = time.Split(":");
-                                int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0;
-                                int.TryParse(ymd[0], out yyyy);
-                                int.TryParse(ymd[1], out MM);
-                                int.TryParse(ymd[2], out dd);
-                                int.TryParse(hm[0], out HH);
-                                int.TryParse(hm[1], out mm);
+                            var datetime = value.Split(" ");
+                            var date = datetime[0];
+                            var time = datetime[1];
+                            var ymd = date.Split(dateSpliter);
+                            var hms = time.Split(":");
+                            var h = hms[0];
+                            var m = hms[1];
+                            var sms = hms[2].Split(".");
+                            var s = sms[0];
+                            var ms = sms[1];
+                            int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0, ss = 0, fff = 0;
+                            int.TryParse(ymd[0], out yyyy);
+                            int.TryParse(ymd[1], out MM);
+                            int.TryParse(ymd[2], out dd);
+                            int.TryParse(h, out HH);
+                            int.TryParse(m, out mm);
+                            int.TryParse(s, out ss);
+                            int.TryParse(ms, out fff);
 
-                                PersianCalendar pc = new PersianCalendar();
-                                outDateTime = pc.ToDateTime(yyyy, MM, dd, HH, mm, 0, 0);
-                                isValid = true;
-                            }
+
+                            PersianCalendar pc = new PersianCalendar();
+                            outDateTime = pc.ToDateTime(yyyy, MM, dd, HH, mm, ss, fff);
+                            isValid = true;
+
                             break;
                         }
                     case DateType.Date:
@@ -203,29 +211,31 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return text;
         }
 
-        public override int CreateNumberOfYears { get; set; }
-        public override string Direction { get => DIRECTION; }
-        public override string NextMonthText { get => NEXT_MONTH_TEXT; }
-        public override string PrevMonthText { get => PREV_MONTH_TEXT; }
-        public override string OkText { get => OK_TEXT; }
-        public override string TodayText { get => TODAY_TEXT; }
-        public override string YearText { get => YEAR_TEXT; }
-        public override string MonthText { get => MONTH_TEXT; }
-        public override string HourText { get => HOUR_TEXT; }
-        public override string MinuteText { get => MINUTE_TEXT; }
-        public override Task<string> Convert(DateTime dateTime, string format)
+        internal override int CreateNumberOfYears { get; set; }
+        internal override string Direction { get => DIRECTION; }
+        internal override string NextMonthText { get => NEXT_MONTH_TEXT; }
+        internal override string PrevMonthText { get => PREV_MONTH_TEXT; }
+        internal override string OkText { get => OK_TEXT; }
+        internal override string TodayText { get => TODAY_TEXT; }
+        internal override string YearText { get => YEAR_TEXT; }
+        internal override string MonthText { get => MONTH_TEXT; }
+        internal override string HourText { get => HOUR_TEXT; }
+        internal override string MinuteText { get => MINUTE_TEXT; }
+        internal override Task<string> Convert(DateTime dateTime, string format)
         {
             var jalaliFormat = format;
-            var jalaliDateTime = GregorianToJalali((DateTime)dateTime, DATE_SPLITER, DateType.DateTime);
-            var jalaliDateTimeSplited = jalaliDateTimeSpliter(jalaliDateTime);
+            var jalaliDateTime = GregorianToJalali(dateTime, DATE_SPLITER, DateType.DateTime);
+            var jalaliDateTimeSplited = JalaliDateTimeSpliter(jalaliDateTime);
 
             jalaliFormat = jalaliFormat.Replace(YEAR_yyyy, jalaliDateTimeSplited.yyyy);
-            jalaliFormat = jalaliFormat.Replace(MONTH_MMM, GetMonthName((DateTime)dateTime));
+            jalaliFormat = jalaliFormat.Replace(MONTH_MMM, GetMonthName(dateTime));
             jalaliFormat = jalaliFormat.Replace(MONTH_MM, jalaliDateTimeSplited.MM);
             jalaliFormat = jalaliFormat.Replace(DAY_dd, jalaliDateTimeSplited.dd);
             jalaliFormat = jalaliFormat.Replace(HOUR_HH, jalaliDateTimeSplited.HH);
             jalaliFormat = jalaliFormat.Replace(HOUR_hh, Hour24To12(int.Parse(jalaliDateTimeSplited.HH)));
             jalaliFormat = jalaliFormat.Replace(MINUTE_mm, jalaliDateTimeSplited.mm);
+            jalaliFormat = jalaliFormat.Replace(SECONDS_ss, jalaliDateTimeSplited.ss);
+            jalaliFormat = jalaliFormat.Replace(MILI_SECONDS_fff, jalaliDateTimeSplited.fff);
             jalaliFormat = jalaliFormat.Replace(TIME_TYPE_tt, Hour24Label(int.Parse(jalaliDateTimeSplited.HH)));
 
             string persianjalaliFormat = EnglishNumberToPersian(jalaliFormat);
@@ -233,14 +243,14 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return Task.FromResult(persianjalaliFormat);
         }
 
-        public override Task<(DateTime dateTime, bool isValid)> Convert(string dateTime)
+        internal override Task<(DateTime dateTime, bool isValid)> Convert(string dateTime)
         {
             bool isValid = false;
             var dateTimeResult = JalaliToGregorian(dateTime, DateType.DateTime, DATE_SPLITER, ref isValid);
             return Task.FromResult((dateTimeResult, isValid));
         }
 
-        public override string GetMonthName(DateTime dateTime)
+        internal override string GetMonthName(DateTime dateTime)
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -251,7 +261,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return displayName;
         }
 
-        public override DateTime GetPrevMonth(DateTime dateTime)
+        internal override DateTime GetPrevMonth(DateTime dateTime)
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -265,11 +275,11 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             var monthCount = MM >= 1 && MM <= 6 ? 31 : MM >= 7 && MM <= 11 ? 30 : MM == 12 && !isLeapYear ? 29 : MM == 12 && isLeapYear ? 30 : 0;
 
             int dd = monthCount >= pc.GetDayOfMonth(dateTime) ? pc.GetDayOfMonth(dateTime) : monthCount == 30 ? 30 : 29;
-            var prevMonth = pc.ToDateTime(yyyy, MM, dd, dateTime.Hour, dateTime.Minute, 0, 0);
+            var prevMonth = pc.ToDateTime(yyyy, MM, dd, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond);
             return prevMonth;
         }
 
-        public override DateTime GetNextMonth(DateTime dateTime)
+        internal override DateTime GetNextMonth(DateTime dateTime)
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -283,11 +293,11 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             var monthCount = MM >= 1 && MM <= 6 ? 31 : MM >= 7 && MM <= 11 ? 30 : MM == 12 && !isLeapYear ? 29 : MM == 12 && isLeapYear ? 30 : 0;
 
             int dd = monthCount >= pc.GetDayOfMonth(dateTime) ? pc.GetDayOfMonth(dateTime) : monthCount == 30 ? 30 : 29;
-            var nextMonth = pc.ToDateTime(yyyy, MM, dd, dateTime.Hour, dateTime.Minute, 0, 0);
+            var nextMonth = pc.ToDateTime(yyyy, MM, dd, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond);
             return nextMonth;
         }
 
-        public override DateTime ChangeMonth(DateTime dateTime, int month)
+        internal override DateTime ChangeMonth(DateTime dateTime, int month)
         {
             month = int.Parse(PersianNumberToEnglish(month.ToString()));
             if (dateTime < new DateTime().AddYears(623))
@@ -302,7 +312,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return newDateTime;
         }
 
-        public override DateTime ChangeYear(DateTime dateTime, int year)
+        internal override DateTime ChangeYear(DateTime dateTime, int year)
         {
             year = int.Parse(PersianNumberToEnglish(year.ToString()));
 
@@ -318,7 +328,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return newDateTime;
         }
 
-        public override int GetCountDayOfMonth(DateTime dateTime)
+        internal override int GetCountDayOfMonth(DateTime dateTime)
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -332,7 +342,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return count;
         }
 
-        public override int GetYear(DateTime dateTime)
+        internal override int GetYear(DateTime dateTime)
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -342,7 +352,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return jalaliYear;
         }
 
-        public override int GetMonth(DateTime dateTime)
+        internal override int GetMonth(DateTime dateTime)
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -351,7 +361,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return jalaliMonth;
         }
 
-        public override DateTime ChangeHour(DateTime dateTime, int hour)
+        internal override DateTime ChangeHour(DateTime dateTime, int hour)
         {
             hour = int.Parse(PersianNumberToEnglish(hour.ToString()));
 
@@ -362,7 +372,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return newDateTime;
         }
 
-        public override DateTime ChangeMinute(DateTime dateTime, int minute)
+        internal override DateTime ChangeMinute(DateTime dateTime, int minute)
         {
             minute = int.Parse(PersianNumberToEnglish(minute.ToString()));
 
@@ -373,41 +383,41 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return newDateTime;
         }
 
-        public override int GetYearItem(int index)
+        internal override int GetYearItem(int index)
         {
             return GetYear(DateTime.Now) - CreateNumberOfYears / 2 + index;
         }
 
-        public override string GetYearDisplayItem(int year)
+        internal override string GetYearDisplayItem(int year)
         {
             return EnglishNumberToPersian(year.ToString());
         }
 
-        public override string GetMonthDisplayItem(int month)
+        internal override string GetMonthDisplayItem(int month)
         {
             return EnglishNumberToPersian(month.ToString());
         }
-        public override string GetDayDisplayItem(int day)
+        internal override string GetDayDisplayItem(int day)
         {
             return EnglishNumberToPersian(day.ToString());
         }
 
-        public override string GetHourDisplayItem(int hour)
+        internal override string GetHourDisplayItem(int hour)
         {
             return EnglishNumberToPersian(hour.ToString());
         }
 
-        public override string GetMinuteDisplayItem(int minute)
+        internal override string GetMinuteDisplayItem(int minute)
         {
             return EnglishNumberToPersian(minute.ToString());
         }
 
-        public override string GetWeekChar(int dayOfWeek)
+        internal override string GetWeekChar(int dayOfWeek)
         {
             return dayOfWeek == 0 ? "ش" : dayOfWeek == 1 ? "ی" : dayOfWeek == 2 ? "د" : dayOfWeek == 3 ? "س" : dayOfWeek == 4 ? "چ" : dayOfWeek == 5 ? "پ" : dayOfWeek == 6 ? "ج" : dayOfWeek.ToString();
         }
 
-        public override DateTime GetFirstDayOfMonth(DateTime dateTime)
+        internal override DateTime GetFirstDayOfMonth(DateTime dateTime)
         {
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -418,8 +428,20 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             int dd = pc.GetDayOfMonth(dateTime);
             int HH = pc.GetHour(dateTime);
             int mm = pc.GetMinute(dateTime);
-            var newDateTime = pc.ToDateTime(yyyy, MM, 1, HH, mm, 0, 0);
+            int ss = pc.GetSecond(dateTime);
+            var newDateTime = pc.ToDateTime(yyyy, MM, 1, HH, mm, ss, 0);
             return newDateTime;
+        }
+
+        internal override DateTime GetResult(DateTime dateTime, InputType inputPickerType)
+        {
+            return inputPickerType switch
+            {
+                InputType.DateTime => dateTime,
+                InputType.Date => new DateTime(dateTime.Year, dateTime.Month, dateTime.Day),
+                InputType.TimeSpan => new DateTime(1, 1, 1, dateTime.Hour, dateTime.Minute, dateTime.Second),
+                _ => dateTime,
+            };
         }
     }
 }

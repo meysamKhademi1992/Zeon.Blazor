@@ -8,14 +8,12 @@ namespace Zeon.Blazor.ZDateTimePicker;
 public partial class ZDateTimePicker : ComponentBase
 {
     private const DatePickerType DEFAULT_DATE_PICKER_TYPE = DatePickerType.Jalali;
-    private const string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
-    private const string TIME_FORMAT = "HH:mm";
-    private const string ALLOW_CHARACTERS = "yMdHhm-/ : t";
+    private const string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
+    private const string ALLOW_CHARACTERS = "yMdHhmsf-/ : . t";
 
     private readonly Dictionary<DatePickerType, DatePicker> _datePickerTypes;
 
     private DatePicker _datePicker;
-    private TaskFactory _taskFactory;
     private string _datePickerCardDisplay = "none";
     private string _panelDisplay = "none";
     private string _currentHourPicker = string.Empty;
@@ -112,8 +110,6 @@ public partial class ZDateTimePicker : ComponentBase
         _datePickerTypes.Add(DatePickerType.Gregorian, new GregorianDatePicker(CreateNumberOfYears));
         _datePicker = GetDatePickerInstance(DEFAULT_DATE_PICKER_TYPE);
         DefaultDateTime ??= DateTime.Now;
-        var token = new CancellationTokenSource();
-        _taskFactory = new TaskFactory(token.Token);
     }
 
     protected async override void OnInitialized()
@@ -122,27 +118,30 @@ public partial class ZDateTimePicker : ComponentBase
         var dateTime = await _datePicker.Convert((DateTime)DefaultDateTime!, DATE_TIME_FORMAT);
         await InputDate(dateTime, dateTimeFormat);
     }
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-            if (IsLiveTime)
-                _taskFactory.StartNew(() => SetLiveTime());
-
-        return base.OnAfterRenderAsync(firstRender);
-    }
-
-    private async Task SetLiveTime()
-    {
-
-        while (IsLiveTime)
         {
-            var now = DateTime.Now;
-            var dateTimeFormat = await _datePicker.Convert(now, Format);
-            var dateTime = await _datePicker.Convert(now, DATE_TIME_FORMAT);
-            await InputDate(dateTime, dateTimeFormat);
-            await Task.Delay(1000);
+            var taskFactory = new TaskFactory();
+            await taskFactory.StartNew(() => SetLiveTime());
         }
 
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    private async Task SetLiveTime()
+    {
+        await InvokeAsync(async () =>
+        {
+            while (IsLiveTime)
+            {
+                var now = DateTime.Now;
+                var dateTimeFormat = await _datePicker.Convert(now, Format);
+                var dateTime = await _datePicker.Convert(now, DATE_TIME_FORMAT);
+                await InputDate(dateTime, dateTimeFormat);
+                this.StateHasChanged();
+                await Task.Delay(50);
+            }
+        });
     }
 
     private void SetFormat(string format)
@@ -169,7 +168,7 @@ public partial class ZDateTimePicker : ComponentBase
         if (IsValid)
         {
             if (ChangedDateTime.HasDelegate && !CurrentDateTime.Equals(result.dateTime))
-                await ChangedDateTime.InvokeAsync(result.dateTime);
+                await ChangedDateTime.InvokeAsync(_datePicker.GetResult(result.dateTime, InputPickerType));
 
             CurrentDateTime = result.dateTime;
             PickerDateTime = CurrentDateTime;
