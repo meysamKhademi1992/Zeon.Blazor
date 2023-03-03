@@ -66,7 +66,6 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
             "uint32" => (new UInt32Input() as Input<Type>)!,
             "uint64" => (new UInt64Input() as Input<Type>)!,
             "string" => (new StringInput() as Input<Type>)!,
-            "boolean" => (new BoolInput() as Input<Type>)!,
             _ => throw new NullReferenceException(string.Concat(typeName, " Type Not Found ")),
         };
     }

@@ -4,7 +4,8 @@ namespace Zeon.Blazor.ZInput.Services;
 
 public class DecimalInput : Input<decimal>
 {
-
+    private const string INPUT_TYPE = "number";
+    internal override string InputType { get; set; } = INPUT_TYPE;
     internal override decimal Convert(string value)
     {
         return System.Convert.ToDecimal(value);

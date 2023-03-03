@@ -4,6 +4,8 @@ namespace Zeon.Blazor.ZInput.Services;
 
 public class Int64Input : Input<long>
 {
+    private const string INPUT_TYPE = "number";
+    internal override string InputType { get; set; } = INPUT_TYPE;
     internal override Int64 Convert(string value)
     {
         return System.Convert.ToInt64(value);

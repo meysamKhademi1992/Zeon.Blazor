@@ -4,7 +4,8 @@ namespace Zeon.Blazor.ZInput.Services;
 
 public class StringInput : Input<string>
 {
-
+    private const string INPUT_TYPE = "text";
+    internal override string InputType { get; set; } = INPUT_TYPE;
     internal override string Convert(string value)
     {
         return value;

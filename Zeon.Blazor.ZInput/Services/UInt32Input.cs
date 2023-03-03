@@ -4,6 +4,8 @@ namespace Zeon.Blazor.ZInput.Services;
 
 internal class UInt32Input : Input<UInt32>
 {
+    private const string INPUT_TYPE = "number";
+    internal override string InputType { get; set; } = INPUT_TYPE;
     internal override UInt32 Convert(string value)
     {
         return System.Convert.ToUInt32(value);
