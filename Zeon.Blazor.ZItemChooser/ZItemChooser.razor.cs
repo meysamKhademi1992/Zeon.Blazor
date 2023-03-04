@@ -17,6 +17,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
     private readonly Dictionary<BehaviorModeAfterItemSelection, SelectedItemTypesDelegate> _setSelectedItemTypes;
     private delegate Task SelectedItemTypesDelegate(int index);
 
+    public bool SearchByEnter { get => WaitingTimeTyping == 0; }
     /// <summary>
     /// Label Or Set Property Name For Show Display Name Property Attribute
     /// </summary>
@@ -57,10 +58,10 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
     public string? Icon { get; set; }
 
     /// <summary>
-    ///  Waiting Time To Receive Data After Typing Default = 750 ms
+    ///  Waiting Time To Receive Data After Typing Default = 600 ms
     /// </summary>
     [Parameter]
-    public int WaitingTimeTyping { get; set; } = 750;
+    public UInt16 WaitingTimeTyping { get; set; } = 600;
 
     [Parameter]
     public bool ShowSelectedKey { get; set; } = false;
@@ -103,7 +104,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
             if (!string.IsNullOrEmpty(_displayKey))
                 await SetSelectedKey(default(KeyType));
         }
-        if (!_typingStarted)
+        if (!_typingStarted && SearchByEnter == false)
         {
             await new TaskFactory().StartNew(async () => await WaitingCompleteTypeing());
         }
@@ -165,13 +166,16 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
     }
     private async Task InputOnKeyDown(KeyboardEventArgs e)
     {
+        if (e.Key == "Enter")
+        {
+            if (SearchByEnter)
+                await SendFetchDataRequestAsync();
+            else if (_showItems)
+                await SetSelectedIndex(1);
+        }
         if (_showItems)
         {
-            if (e.Key == "Enter")
-            {
-                await SetSelectedIndex(1);
-            }
-            else if (e.Key == "ArrowDown")
+            if (e.Key == "ArrowDown")
             {
                 var elementId = Name + ("1");
                 await ElementHelper.FocusElementById(elementId);
