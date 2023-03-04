@@ -86,7 +86,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
         base.OnInitialized();
     }
 
-
+    bool _proccess = false;
     private async Task OnInput(ChangeEventArgs e)
     {
         string value = e.Value?.ToString()?.Trim() ?? "";
@@ -94,20 +94,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
         if (hasValue)
         {
             _value = value?.ToString() ?? "";
-
-            if (DateTime.Now.TimeOfDay >= _span)
-            {
-                _span = DateTime.Now.AddMilliseconds(WaitingTimeTyping).TimeOfDay;
-
-                await Task.Factory.StartNew(() => WaitingCompleteTypeing());
-                if (!string.IsNullOrEmpty(_displayKey))
-                    await SetSelectedKey(default(KeyType));
-            }
-            else
-            {
-                _span = DateTime.Now.AddMilliseconds(WaitingTimeTyping).TimeOfDay;
-            }
-
+            _span = DateTime.Now.TimeOfDay.Add(new TimeSpan(0, 0, 0, 0, WaitingTimeTyping));
         }
         else
         {
@@ -116,19 +103,26 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
             if (!string.IsNullOrEmpty(_displayKey))
                 await SetSelectedKey(default(KeyType));
         }
+        if (!_proccess)
+            await new TaskFactory().StartNew(async () => await WaitingCompleteTypeing());
     }
-    private async void WaitingCompleteTypeing()
+
+    private async Task WaitingCompleteTypeing()
     {
-        bool isBreak = false;
+        _proccess = true;
+
         while (true)
         {
-            if (DateTime.Now.TimeOfDay >= _span && !isBreak)
+            if (DateTime.Now.TimeOfDay >= _span && _proccess)
             {
-                isBreak = true;
+                _proccess = false;
+
                 await SendFetchDataRequestAsync();
                 break;
             }
+            await Task.Delay(1);
         }
+
     }
 
     private async Task SendFetchDataRequestAsync()
