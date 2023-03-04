@@ -86,7 +86,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
         base.OnInitialized();
     }
 
-    bool _proccess = false;
+    bool _typingStarted = false;
     private async Task OnInput(ChangeEventArgs e)
     {
         string value = e.Value?.ToString()?.Trim() ?? "";
@@ -103,26 +103,26 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
             if (!string.IsNullOrEmpty(_displayKey))
                 await SetSelectedKey(default(KeyType));
         }
-        if (!_proccess)
+        if (!_typingStarted)
+        {
             await new TaskFactory().StartNew(async () => await WaitingCompleteTypeing());
+        }
+
     }
 
     private async Task WaitingCompleteTypeing()
     {
-        _proccess = true;
+        _typingStarted = true;
 
         while (true)
         {
-            if (DateTime.Now.TimeOfDay >= _span && _proccess)
+            if (DateTime.Now.TimeOfDay >= _span && _typingStarted)
             {
-                _proccess = false;
-
+                _typingStarted = false;
                 await SendFetchDataRequestAsync();
                 break;
             }
-            await Task.Delay(1);
         }
-
     }
 
     private async Task SendFetchDataRequestAsync()
