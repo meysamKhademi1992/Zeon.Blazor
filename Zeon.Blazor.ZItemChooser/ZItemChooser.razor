@@ -26,7 +26,7 @@
 
         @if (_showItems)
         {
-            <div id="@_listId" class="container-fluid border-1 p-0 m-auto overflow-auto zeon-ItemChooser-listItems">
+            <div id="@_listId" class="container-fluid  p-0 m-auto zeon-ItemChooser-listItems">
                 @{
                     int i = 1;
                     var bgColor = @OddItemColor;
@@ -37,8 +37,6 @@
                     var index = i;
                     var id = Name + index.ToString();
                     <button role="listitem" class=" w-100 m-auto text-start zeon-ItemChooser-Item" style="background-color:@bgColor" id=@id @onkeydown="(e)=> ItemOnKeyPress(e,index)" @ondblclick="(e)=> ItemOnDblClick(e,index) ">@item.Value</button>
-                    <div style="padding:0px">
-                    </div>
                     i++;
                     bgColor = bgColor == @OddItemColor ? @EvenItemColor : @OddItemColor;
                 }
