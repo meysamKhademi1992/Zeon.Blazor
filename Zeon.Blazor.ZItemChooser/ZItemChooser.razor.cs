@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace Zeon.Blazor.ZItemChooser;
 
-public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel : class where KeyType : IEquatable<KeyType>
+public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEquatable<KeyType>
 {
-    private bool _isloading = false;
     private bool _showItems = false;
     private string _displayValue = "";
     private string _displayKey = "";
@@ -18,11 +17,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
     private delegate Task SelectedItemTypesDelegate(int index);
 
     public bool SearchByEnter { get => WaitingTimeTyping == 0; }
-    /// <summary>
-    /// Label Or Set Property Name For Show Display Name Property Attribute
-    /// </summary>
-    [Parameter, EditorRequired]
-    public string For { get; set; } = null!;
+
     /// <summary>
     /// Component Name 
     /// </summary>
@@ -51,11 +46,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
 
     [Parameter]
     public string NotFoundRecordBackgroundColor { get; set; } = "lightblue";
-    /// <summary>
-    /// Use Icon Classes Like fa fa-plus
-    /// </summary>
-    [Parameter]
-    public string? Icon { get; set; }
+
 
     /// <summary>
     ///  Waiting Time To Receive Data After Typing Default = 600 ms
@@ -128,9 +119,7 @@ public partial class ZItemChooser<TModel, KeyType> : ComponentBase where TModel 
 
     private async Task SendFetchDataRequestAsync()
     {
-        _isloading = true;
         _dataSource = await FetchData.Invoke(_value);
-        _isloading = false;
         _showItems = true;
         await this.InvokeAsync(() => this.StateHasChanged());
     }

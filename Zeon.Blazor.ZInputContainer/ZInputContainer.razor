@@ -1,23 +1,12 @@
 ﻿@namespace Zeon.Blazor.ZInputContainer
 @typeparam TModel
 <div class="overflow-auto">
-    <div class="container-fluid col-auto zeon-inputContainer-container" style="--container-Width:@Width ; --container-Height : @Height ; --container-Display:@Display">
-        <div class="row m-auto">
-            <div class="col-10 text-nowrap overflow-hidden">
-                <label for="@Id" class="container-fluid p-0 zeon-inputContainer-Label">@DisplayMember</label>
-            </div>
-            <div class="col-2 text-nowrap overflow-hidden p-0 zeon-inputContainer-sideBox">
-                @if (@IsLoading ?? false)
-                {
-                    <span class="spinner-border text-primary zeon-inputContainer-spinner" role="status"></span>
-                }
-                else
-                {
-                    <span class="@Icon zeon-inputContainer-icon"></span>
-                }
-            </div>
+    <div class="container-fluid zeon-inputContainer-container" style="--container-Width:@Width ; --container-Height : @Height ; --container-Display:@Display">
+        <div class="text-nowrap overflow-hidden zeon-inputContainer-info">
+            <span class="@Icon zeon-inputContainer-icon text-primary"></span>
+            <label for="@Id" class="container-fluid p-0 zeon-inputContainer-label">@DisplayMember</label>
         </div>
-        <div class="col-auto">
+        <div>
             @ChildContent
         </div>
     </div>

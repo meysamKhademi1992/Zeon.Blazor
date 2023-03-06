@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Zeon.Blazor.ZInputContainer
 {
-    public partial class ZInputContainer<TModel> : ComponentBase
+    public partial class ZInputContainer<TModel> : ComponentBase where TModel : class
     {
         private string DisplayMember => GetDisplayName(For);
 
@@ -15,9 +15,6 @@ namespace Zeon.Blazor.ZInputContainer
 
         [Parameter]
         public string? Icon { get; set; }
-
-        [Parameter]
-        public bool? IsLoading { get; set; }
 
         [Parameter] public string For { get; set; } = null!;
 

@@ -52,25 +52,19 @@
     display: var(--container-Display ) !important;
 }
 
-.zeon-inputContainer-Label {
-    font-size: 12px;
+.zeon-inputContainer-info {
+    font-size: inherit;
+    font-weight: bold;
     color: rgba(0,0,0,0.7);
-    margin-left: 2px !important;
-    margin-right: 2px !important
+    padding-inline: 3px;
 }
 
-.zeon-inputContainer-sideBox {
-    text-align: end !important
-}
-
-.zeon-inputContainer-spinner {
-    width: 15px;
-    height: 15px;
+.zeon-inputContainer-label {
+    padding-inline: 3px;
 }
 
 .zeon-inputContainer-icon {
-    width: 20px;
-    height: 20px;
+    padding-inline: 3px;
 }
 
 .zeon-button-btn {
