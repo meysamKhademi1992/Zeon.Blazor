@@ -4,17 +4,17 @@
 
 <div class="zeon-ItemChooser-content">
     <div class="row m-auto p-0">
-        <div class="col m-auto p-1">
+        <div class="col m-auto p-0">
             <input id="@_inputId" class="form-control container-fluid p-0" type="text" @onkeydown="(e)=> InputOnKeyDown(e)" @bind="_displayValue" @oninput="OnInput" />
         </div>
         @if (ShowSelectedKey)
         {
             <div class="col-4 p-0 m-auto">
                 <div class="row p-0 m-auto">
-                    <div class="col-auto m-auto p-1">
+                    <div class="col-auto m-auto p-0">
                         <span>@KeyDisplayText</span>
                     </div>
-                    <div class="col m-auto p-1">
+                    <div class="col m-auto p-0">
                         <input readonly="readonly" class="form-control container-fluid p-0 text-center" type="text" @bind="_displayKey" />
                     </div>
                 </div>
@@ -34,7 +34,7 @@
             {
                 var index = i;
                 var id = Name + index.ToString();
-                <button role="listitem" class=" w-100 m-auto text-start zeon-ItemChooser-Item" style="background-color:@bgColor" id=@id @onkeydown="(e)=> ItemOnKeyPress(e,index)" @ondblclick="(e)=> ItemOnDblClick(e,index) ">@item.Value</button>
+                <button role="listitem" class="m-auto zeon-ItemChooser-Item" style="background-color:@bgColor" id=@id @onkeydown="(e)=> ItemOnKeyPress(e,index)" @ondblclick="(e)=> ItemOnDblClick(e,index) ">@item.Value</button>
                 i++;
                 bgColor = bgColor == @OddItemColor ? @EvenItemColor : @OddItemColor;
             }

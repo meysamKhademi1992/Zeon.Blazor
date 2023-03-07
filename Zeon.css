@@ -1,7 +1,6 @@
 ﻿.zeon-ItemChooser-content {
     border-radius: 8px;
     position: relative;
-    z-index: 999
 }
 
 .zeon-ItemChooser-listItems {
@@ -20,9 +19,13 @@
 
 
 .zeon-ItemChooser-Item {
+    direction: inherit;
+    text-align: start;
+    width:100%;
     padding-right: 3px;
     padding-left: 3px;
-    display: inline-block cursor: pointer;
+    display: inline-block;
+    cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
@@ -47,24 +50,30 @@
     padding-left: 3px;
     padding-right: 3px;
     padding-bottom: 4px;
-    width: var(--container-Width ) !important;
-    height: var(--container-Height ) !important;
-    display: var(--container-Display ) !important;
+    width: var(--container-width ) !important;
+    height: var(--container-height ) !important;
+    display: var(--container-display ) !important;
 }
 
 .zeon-inputContainer-info {
     font-size: inherit;
     font-weight: bold;
     color: rgba(0,0,0,0.7);
-    padding-inline: 3px;
+    display: flex;
+    align-items: center;
+}
+
+.zeon-inputContainer-Input {
+    width: 100%;
+    height: 100%;
 }
 
 .zeon-inputContainer-label {
-    padding-inline: 3px;
+    margin-inline: 8px;
 }
 
 .zeon-inputContainer-icon {
-    padding-inline: 3px;
+    margin-bottom: 7px;
 }
 
 .zeon-button-btn {
