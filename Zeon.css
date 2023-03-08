@@ -1,11 +1,11 @@
-﻿.zeon-ItemChooser-content {
+﻿.zeon-item-chooser-content {
     border-radius: 8px;
     position: relative;
 }
 
-.zeon-ItemChooser-listItems {
+.zeon-item-chooser-listItems {
     height: 200px;
-    background-color: #f3f3f3;
+    background-color: #fcfcfc;
     border: solid 0.5px #bbb;
     border-radius: 6px;
     position: absolute;
@@ -13,15 +13,37 @@
     z-index: 999
 }
 
-    .zeon-ItemChooser-listItems button:focus-visible {
+    .zeon-item-chooser-listItems button:focus-visible {
         outline: none !important;
     }
 
+.zeon-item-chooser-not-found {
+    width: 100%;
+    display: block;
+    margin: auto;
+    padding: 1px;
+    background-color: lightpink;
+}
 
-.zeon-ItemChooser-Item {
+.zeon-item-chooser-waiting {
+    font-size: 12px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .zeon-item-chooser-waiting > spiner {
+        color: dodgerblue;
+        width: 70px;
+        height: 70px;
+    }
+
+.zeon-item-chooser-item {
     direction: inherit;
     text-align: start;
-    width:100%;
+    width: 100%;
     padding-right: 3px;
     padding-left: 3px;
     display: inline-block;
@@ -35,12 +57,20 @@
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
-    .zeon-ItemChooser-Item:focus {
+    .zeon-item-chooser-item:nth-child(1n) {
+        background-color: #fafafa;
+    }
+
+    .zeon-item-chooser-item:nth-child(2n) {
+        background-color: #fcfcfc;
+    }
+
+    .zeon-item-chooser-item:focus {
         background-color: lightblue !important;
         box-shadow: none !important;
     }
 
-    .zeon-ItemChooser-Item:hover {
+    .zeon-item-chooser-item:hover {
         background-color: lightgray !important;
     }
 
@@ -61,6 +91,7 @@
     color: rgba(0,0,0,0.7);
     display: flex;
     align-items: center;
+    overflow: clip !important;
 }
 
 .zeon-inputContainer-Input {

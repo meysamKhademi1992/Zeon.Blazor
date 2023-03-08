@@ -5,9 +5,11 @@ namespace Zeon.Blazor.ZItemChooser;
 
 public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEquatable<KeyType>
 {
+    private bool _typingStarted = false;
     private bool _showItems = false;
+    private bool _isWaiting = false;
+    private int _requestCount = 0;
     private string _displayValue = "";
-    private string _displayKey = "";
     private string _value = "";
     private string _inputId = "";
     private string _listId = "";
@@ -33,19 +35,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     public EventCallback<KeyType> OnKeyChanged { get; set; }
 
     [Parameter]
-    public string KeyDisplayText { get; set; } = "شناسه";
-
-    [Parameter]
-    public string OddItemColor { get; set; } = "#f5f5f5";
-
-    [Parameter]
-    public string EvenItemColor { get; set; } = "#f1f1f1";
-
-    [Parameter]
     public string NotFoundRecordText { get; set; } = "رکوردی یافت نشد!";
-
-    [Parameter]
-    public string NotFoundRecordBackgroundColor { get; set; } = "lightblue";
 
 
     /// <summary>
@@ -54,8 +44,6 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     [Parameter]
     public UInt16 WaitingTimeTyping { get; set; } = 600;
 
-    [Parameter]
-    public bool ShowSelectedKey { get; set; } = false;
 
     [Parameter]
     public BehaviorModeAfterItemSelection BehaviorModeAfterItemSelection { get; set; } = BehaviorModeAfterItemSelection.Normal;
@@ -78,7 +66,6 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         base.OnInitialized();
     }
 
-    bool _typingStarted = false;
     private async Task OnInput(ChangeEventArgs e)
     {
         string value = e.Value?.ToString()?.Trim() ?? "";
@@ -91,9 +78,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         else
         {
             _showItems = false;
-
-            if (!string.IsNullOrEmpty(_displayKey))
-                await SetSelectedKey(default(KeyType));
+            await SetSelectedKey(default(KeyType));
         }
         if (!_typingStarted && SearchByEnter == false)
         {
@@ -119,15 +104,21 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
 
     private async Task SendFetchDataRequestAsync()
     {
-        _dataSource = await FetchData.Invoke(_value);
-        _showItems = true;
-        await this.InvokeAsync(() => this.StateHasChanged());
+        if (!string.IsNullOrWhiteSpace(_value))
+        {
+            _showItems = true;
+            _isWaiting = true;
+            _requestCount++;
+            _dataSource = await FetchData.Invoke(_value);
+            _requestCount--;
+            _isWaiting = _requestCount > 0;
+            await this.InvokeAsync(() => this.StateHasChanged());
+        }
     }
 
     private async Task SetSelectedKey(KeyType? key)
     {
         await OnKeyChanged.InvokeAsync(key);
-        _displayKey = key?.ToString() ?? "";
     }
     private void SetDisplayValue(string value)
     {
@@ -152,6 +143,9 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
             await ElementHelper.FocusElementById(elementId);
             await ElementHelper.ScrollToElementById(elementId, false);
         }
+        else if (e.Key == "Escape")
+            _showItems = false;
+
     }
     private async Task InputOnKeyDown(KeyboardEventArgs e)
     {
@@ -174,6 +168,9 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
                 var elementId = Name + (_dataSource.Count.ToString());
                 await ElementHelper.FocusElementById(elementId);
             }
+            else if (e.Key == "Escape")
+                _showItems = false;
+
         }
     }
     private async Task ItemOnDblClick(MouseEventArgs e, int index)
@@ -220,7 +217,6 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     private void Clear()
     {
         _displayValue = "";
-        _displayKey = "";
     }
 }
 
