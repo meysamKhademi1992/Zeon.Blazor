@@ -102,7 +102,6 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         private DateTime JalaliToGregorian(string value, DateType toType, char dateSpliter, ref bool isValid)
         {
-            value = PersianNumberToEnglish(value);
             var outDateTime = new DateTime();
             try
             {
@@ -165,52 +164,6 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         }
 
-        private string EnglishNumberToPersian(string text)
-        {
-            Dictionary<char, char> LettersDictionary = new Dictionary<char, char>
-            {
-                ['0'] = '۰',
-                ['1'] = '۱',
-                ['2'] = '۲',
-                ['3'] = '۳',
-                ['4'] = '۴',
-                ['5'] = '۵',
-                ['6'] = '۶',
-                ['7'] = '۷',
-                ['8'] = '۸',
-                ['9'] = '۹'
-            };
-            foreach (var item in text)
-            {
-                if (LettersDictionary.Any(q => q.Key == item))
-                    text = text.Replace(item, LettersDictionary[item]);
-            }
-            return text;
-        }
-
-        private string PersianNumberToEnglish(string text)
-        {
-            Dictionary<char, char> LettersDictionary = new Dictionary<char, char>
-            {
-                ['۰'] = '0',
-                ['۱'] = '1',
-                ['۲'] = '2',
-                ['۳'] = '3',
-                ['۴'] = '4',
-                ['۵'] = '5',
-                ['۶'] = '6',
-                ['۷'] = '7',
-                ['۸'] = '8',
-                ['۹'] = '9'
-            };
-            foreach (var item in text)
-            {
-                if (LettersDictionary.Any(q => q.Key == item))
-                    text = text.Replace(item, LettersDictionary[item]);
-            }
-            return text;
-        }
-
         internal override int CreateNumberOfYears { get; set; }
         internal override string Direction { get => DIRECTION; }
         internal override string NextMonthText { get => NEXT_MONTH_TEXT; }
@@ -238,9 +191,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             jalaliFormat = jalaliFormat.Replace(MILI_SECONDS_fff, jalaliDateTimeSplited.fff);
             jalaliFormat = jalaliFormat.Replace(TIME_TYPE_tt, Hour24Label(int.Parse(jalaliDateTimeSplited.HH)));
 
-            string persianjalaliFormat = EnglishNumberToPersian(jalaliFormat);
-
-            return Task.FromResult(persianjalaliFormat);
+            return Task.FromResult(jalaliFormat);
         }
 
         internal override Task<(DateTime dateTime, bool isValid)> Convert(string dateTime)
@@ -299,7 +250,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override DateTime ChangeMonth(DateTime dateTime, int month)
         {
-            month = int.Parse(PersianNumberToEnglish(month.ToString()));
+            month = int.Parse(month.ToString());
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
             if (month > 12 || month < 1)
@@ -314,7 +265,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override DateTime ChangeYear(DateTime dateTime, int year)
         {
-            year = int.Parse(PersianNumberToEnglish(year.ToString()));
+            year = int.Parse(year.ToString());
 
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -363,7 +314,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override DateTime ChangeHour(DateTime dateTime, int hour)
         {
-            hour = int.Parse(PersianNumberToEnglish(hour.ToString()));
+            hour = int.Parse(hour.ToString());
 
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -374,7 +325,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override DateTime ChangeMinute(DateTime dateTime, int minute)
         {
-            minute = int.Parse(PersianNumberToEnglish(minute.ToString()));
+            minute = int.Parse(minute.ToString());
 
             if (dateTime < new DateTime().AddYears(623))
                 throw new ArgumentOutOfRangeException(nameof(dateTime));
@@ -390,26 +341,26 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override string GetYearDisplayItem(int year)
         {
-            return EnglishNumberToPersian(year.ToString());
+            return year.ToString();
         }
 
         internal override string GetMonthDisplayItem(int month)
         {
-            return EnglishNumberToPersian(month.ToString());
+            return month.ToString();
         }
         internal override string GetDayDisplayItem(int day)
         {
-            return EnglishNumberToPersian(day.ToString());
+            return day.ToString();
         }
 
         internal override string GetHourDisplayItem(int hour)
         {
-            return EnglishNumberToPersian(hour.ToString());
+            return hour.ToString();
         }
 
         internal override string GetMinuteDisplayItem(int minute)
         {
-            return EnglishNumberToPersian(minute.ToString());
+            return minute.ToString();
         }
 
         internal override string GetWeekChar(int dayOfWeek)

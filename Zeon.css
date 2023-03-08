@@ -1,4 +1,9 @@
-﻿.zeon-item-chooser-content {
+﻿.zeon {
+    font-size: inherit;
+    font-family: var(--zeon-font-family);
+}
+
+.zeon-item-chooser-content {
     border-radius: 8px;
     position: relative;
 }
@@ -13,6 +18,7 @@
     z-index: 999;
     scrollbar-width: thin;
     scrollbar-color: #0084d2 #d7d7d7;
+    -ms-overflow-style: thin;
 }
 
     .zeon-item-chooser-listItems button:focus-visible {
@@ -213,7 +219,7 @@
     position: sticky;
     top: 0;
     bottom: 0;
-    background-color: #00c7d0;
+    background-color: #0081ff;
 }
 
 
@@ -305,7 +311,7 @@
     }
 
 .zeon-dateTimePicker-month-label {
-    color: #00c7d0;
+    color: #0081ff;
 }
 
 .zeon-dateTimePicker-datePickerCard-footer {

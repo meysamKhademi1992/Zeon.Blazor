@@ -77,6 +77,23 @@ public partial class ZDateTimePicker : ComponentBase
         }
     }
 
+    private string FontFamily { get => GetFontFamily(); }
+
+    private string GetFontFamily()
+    {
+        return _datePicker.Direction switch
+        {
+            "rtl" => FontFamilyRTL,
+            "ltr" => FontFamilyLTR,
+            _ => "",
+        };
+    }
+
+    [Parameter]
+    public string FontFamilyRTL { get; set; } = "inherit";
+
+    [Parameter]
+    public string FontFamilyLTR { get; set; } = "inherit";
 
     [Parameter]
     public int CreateNumberOfYears { get; set; } = 60;
@@ -109,9 +126,12 @@ public partial class ZDateTimePicker : ComponentBase
         _datePickerTypes.Add(DatePickerType.Jalali, new JalaliDatePicker(CreateNumberOfYears));
         _datePickerTypes.Add(DatePickerType.Gregorian, new GregorianDatePicker(CreateNumberOfYears));
         _datePicker = GetDatePickerInstance(DEFAULT_DATE_PICKER_TYPE);
-        DefaultDateTime ??= DateTime.Now;
+        DefaultDateTime ??= GetDateTimeNow(InputPickerType);
     }
-
+    private DateTime GetDateTimeNow(InputType inputType)
+    {
+        return inputType == InputType.DateTime ? DateTime.Now : DateTime.Now.Date;
+    }
     protected async override void OnInitialized()
     {
         var dateTimeFormat = await _datePicker.Convert((DateTime)DefaultDateTime!, Format);
@@ -134,7 +154,7 @@ public partial class ZDateTimePicker : ComponentBase
         {
             while (IsLiveTime)
             {
-                var now = DateTime.Now;
+                var now = GetDateTimeNow(InputPickerType);
                 var dateTimeFormat = await _datePicker.Convert(now, Format);
                 var dateTime = await _datePicker.Convert(now, DATE_TIME_FORMAT);
                 await InputDate(dateTime, dateTimeFormat);

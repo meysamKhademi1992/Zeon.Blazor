@@ -4,13 +4,13 @@
 
 <div class="row m-auto p-0">
     <div class="col-12 p-0">
-        <input class="form-control w-100 zeon-dateTimePicker-input" readonly @bind-value="@_dateTimeDisplay" @onmousedown="@(()=>OpenClose_Onclick())" />
+        <input class="form-control w-100 zeon zeon-dateTimePicker-input" style="--zeon-font-family:@FontFamily;" readonly @bind-value="@_dateTimeDisplay" @onmousedown="@(()=>OpenClose_Onclick())" />
     </div>
 </div>
 
 @if (_datePickerCardDisplay != "none")
 {
-    <div class="card text-white mb-3 zeon-dateTimePicker-datePickerCard" style="--datePickerCard-display:@_datePickerCardDisplay;--datePickerCard-direction:@_datePicker.Direction">
+    <div class="card text-white mb-3 zeon zeon-dateTimePicker-datePickerCard" style="--zeon-font-family:@FontFamily;--datePickerCard-display:@_datePickerCardDisplay;--datePickerCard-direction:@_datePicker.Direction">
         @if (_panelDisplay != "none")
         {
             <div class="zeon-dateTimePicker-datePickerCard-panel" style="--panel-display:@_panelDisplay">
@@ -77,7 +77,7 @@
                             <div class="col-4 p-1">
                                 <span>@_datePicker.HourText</span>
                                 <div>
-                                    <input type="number" maxlength="2" @bind-value="@CurrentHourPicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-h">
+                                    <input type="number" maxlength="2" @bind="@CurrentHourPicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-h">
                                 </div>
                             </div>
 
@@ -85,7 +85,7 @@
                                 <span>@_datePicker.MinuteText</span>
 
                                 <div>
-                                    <input type="number" maxlength="2" @bind-value="@CurrentMinutePicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-m">
+                                    <input type="number" maxlength="2" @bind="@CurrentMinutePicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-m">
                                 </div>
                             </div>
                             <div class="col-2 p-1">
@@ -155,7 +155,7 @@
                                 {
                                     string date = @firstDayOfMonth.ToString(DATE_TIME_FORMAT);
                                     string borderColor = "";
-                                    borderColor = firstDayOfMonth.Date == PickerDateTime.Date ? "#00c7d0 !important" : firstDayOfMonth.Date.Date == DateTime.Now.Date ? "red !important" : "lightgray !important";
+                                    borderColor = firstDayOfMonth.Date == PickerDateTime.Date ? "#0081ff !important" : firstDayOfMonth.Date.Date == DateTime.Now.Date ? "red !important" : "lightgray !important";
                                     <button type="button" class="btn zeon-dateTimePicker-btn-day" value="@date" @onclick="@(() => ChangeDateTimePicker_Onclick(date))" style="--btn-border-color:@borderColor;">
                                         @_datePicker.GetDayDisplayItem(@day)
                                     </button>
