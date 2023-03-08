@@ -439,7 +439,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             {
                 InputType.DateTime => dateTime,
                 InputType.Date => new DateTime(dateTime.Year, dateTime.Month, dateTime.Day),
-                InputType.TimeSpan => new DateTime(1, 1, 1, dateTime.Hour, dateTime.Minute, dateTime.Second),
+                //InputType.TimeSpan => new DateTime(1, 1, 1, dateTime.Hour, dateTime.Minute, dateTime.Second),
                 _ => dateTime,
             };
         }
