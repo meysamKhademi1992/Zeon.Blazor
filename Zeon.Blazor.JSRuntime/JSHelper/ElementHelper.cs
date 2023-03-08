@@ -16,9 +16,9 @@ namespace Zeon.Blazor.JSRuntime
             await _jsRuntime.InvokeVoidAsync("ZeonFocusElementById", id);
         }
 
-        public async Task ScrollToElementById(string id, bool isTop)
+        public async Task ScrollToElementById(string elementId, string itemId)
         {
-            await _jsRuntime.InvokeVoidAsync("ZeonScrollToElementById", id, isTop);
+            await _jsRuntime.InvokeVoidAsync("ZeonScrollToElementById", elementId, itemId);
         }
     }
 }

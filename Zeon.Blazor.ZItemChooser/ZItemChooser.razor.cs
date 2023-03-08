@@ -133,15 +133,15 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         }
         else if (e.Key == "ArrowDown")
         {
-            var elementId = Name + (_dataSource.Count > index ? index + 1 : 1);
-            await ElementHelper.FocusElementById(elementId);
-            await ElementHelper.ScrollToElementById(elementId, true);
+            var itemId = Name + (_dataSource.Count > index ? index + 1 : 1);
+            await ElementHelper.FocusElementById(itemId);
+            await ElementHelper.ScrollToElementById(_listId, itemId);
         }
         else if (e.Key == "ArrowUp")
         {
-            var elementId = Name + (index > 1 ? index - 1 : _dataSource.Count);
-            await ElementHelper.FocusElementById(elementId);
-            await ElementHelper.ScrollToElementById(elementId, false);
+            var itemId = Name + (index > 1 ? index - 1 : _dataSource.Count);
+            await ElementHelper.FocusElementById(itemId);
+            await ElementHelper.ScrollToElementById(_listId, itemId);
         }
         else if (e.Key == "Escape")
             _showItems = false;

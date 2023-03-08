@@ -8,8 +8,9 @@ function ZeonFocusElementById(id) {
     }
 };
 
-function ZeonScrollToElementById(id, isTop) {
+function ZeonScrollToElementById(elementId, itemId) {
 
-    const element = document.getElementById(id);
-    element.scrollIntoView(isTop);
+    const element = document.getElementById(elementId);
+    const item = document.getElementById(itemId);
+    element.scrollTo({ top: item.offsetTop, behavior: 'smooth' });
 }
