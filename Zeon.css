@@ -11,19 +11,44 @@
 .zeon-item-chooser-listItems {
     height: 200px;
     background-color: #fcfcfc;
-    border: solid 0.5px #bbb;
-    border-radius: 6px;
+    border: solid 2px whitesmoke;
+    border-radius: 2px;
     position: absolute;
     overflow-y: scroll !important;
     z-index: 999;
     scrollbar-width: thin;
     scrollbar-color: #0084d2 #d7d7d7;
     -ms-overflow-style: thin;
+    animation-name: show-fade-in;
+    animation-duration: 0.15s;
+    background-image: linear-gradient(#fafafa, #f3f3f3);
 }
 
     .zeon-item-chooser-listItems button:focus-visible {
         outline: none !important;
     }
+
+@keyframes show-fade-in {
+    0% {
+        opacity: 0.1;
+    }
+
+    25% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    75% {
+        opacity: 0.75;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
 
 .zeon-item-chooser-not-found {
     width: 100%;
@@ -61,8 +86,8 @@
     user-select: none;
     background-color: transparent;
     border: 1px solid transparent;
-    border-radius: .25rem;
-    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    border-radius: 1px;
+    transition: background-color 0.5s;
 }
 
     .zeon-item-chooser-item:nth-child(1n) {

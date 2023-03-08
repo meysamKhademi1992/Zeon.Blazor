@@ -77,6 +77,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         }
         else
         {
+            _value = string.Empty;
             _showItems = false;
             await SetSelectedKey(default(KeyType));
         }
