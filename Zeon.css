@@ -356,6 +356,31 @@
     display: inline list-item;
 }
 
+.zeon-alert-dialog-content {
+    background-image: linear-gradient(#fafafa, #f3f3f3);
+}
+
+.zeon-alert-dialog-header {
+    color: maroon;
+    padding: 2px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+    .zeon-alert-dialog-header > div > icon {
+        color: black;
+        font-size: 16px;
+    }
+
+.zeon-alert-dialog-body {
+    color: #242424;
+}
+
+.zeon-alert-dialog-footer {
+    padding: 2px;
+}
+
+
 .form-control:focus {
     border-color: #1cc1ff;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 2px #007aff;
@@ -363,6 +388,14 @@
 
 .zf {
     font-size: small;
+}
+
+.zf-info::before {
+    content: '\2755';
+}
+
+.zf-question::before {
+    content: '\2754';
 }
 
 .zf-arrow-alt-right::before {
@@ -375,6 +408,14 @@
 
 .zf-check::before {
     content: '\2714';
+}
+
+.zf-ballot::before {
+    content: '\2716';
+}
+
+.zf-anti-clockwise-dir-semicircular-arrow::before {
+    content: '\21B6';
 }
 
 .zf-circle-arrow::before {

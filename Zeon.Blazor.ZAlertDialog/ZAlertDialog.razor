@@ -1,0 +1,63 @@
+﻿@using Zeon.Blazor.ZButton
+@namespace Zeon.Blazor.ZAlertDialog
+
+@if (_showBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+    _modalClass = "show";
+    _modalDisplay = "block";
+}
+else
+{
+    _modalClass = "";
+    _modalDisplay = "none";
+}
+
+<div class="modal @_modalClass" tabindex="-1" role="dialog" style="display:@_modalDisplay !important; ">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content zeon-alert-dialog-content">
+            <div class="modal-header zeon-alert-dialog-header">
+                <div class="col-1 m-auto" style="padding-inline:15px;">
+                    <icon class="@AlertDialogIcon"></icon>
+                </div>
+                <div class="col-10 overflow-hidden">
+                    <div class="modal-title">@Caption</div>
+                </div>
+                <div class="col-1 m-auto" style="align-content: center;display: flex;justify-content: center;">
+                    <button @onclick="Close_OnClick" class="btn btn-close m-auto"></button>
+                </div>
+            </div>
+            <div class="modal-body zeon-alert-dialog-body">
+                <p>@Text</p>
+            </div>
+            <div class="modal-footer p-2 zeon-alert-dialog-footer">
+                <div style="display:inline-flex; width:100%">
+                    @if (AlertDialogButtons == Constants.AlertDialogButtons.Ok || AlertDialogButtons == Constants.AlertDialogButtons.OkCancel)
+                    {
+                        <div style="margin-inline:5px; width:@_buttonsSize["BtnOkWidth"]; height:@_buttonsSize["BtnOkHeight"]">
+                            <ZButton ButtonClass="btn-outline-primary" Height="100%" Icon="@BtnOkIcon" Text="@BtnOkText" Onclick="Ok_OnClick"></ZButton>
+                        </div>
+                    }
+                    @if (AlertDialogButtons == Constants.AlertDialogButtons.Yes || AlertDialogButtons == Constants.AlertDialogButtons.YesNo || AlertDialogButtons == Constants.AlertDialogButtons.YesNoCancel)
+                    {
+                        <div style="margin-inline:5px; width:@_buttonsSize["BtnYesWidth"]; height:@_buttonsSize["BtnYesHeight"]">
+                            <ZButton ButtonClass="btn-outline-success" Height="100%" Icon="@BtnYesIcon" Text="@BtnYesText" Onclick="Yes_OnClick"></ZButton>
+                        </div>
+                    }
+                    @if (AlertDialogButtons == Constants.AlertDialogButtons.YesNo || AlertDialogButtons == Constants.AlertDialogButtons.YesNoCancel)
+                    {
+                        <div style="margin-inline:5px;  width:@_buttonsSize["BtnNoWidth"]; height:@_buttonsSize["BtnNoHeight"]">
+                            <ZButton ButtonClass="btn-outline-danger" Height="100%" Icon="@BtnNoIcon" Text="@BtnNoText" Onclick="No_OnClick"></ZButton>
+                        </div>
+                    }
+                    @if (AlertDialogButtons == Constants.AlertDialogButtons.OkCancel || AlertDialogButtons == Constants.AlertDialogButtons.YesNoCancel)
+                    {
+                        <div style="margin-inline:5px; width:@_buttonsSize["BtnCancelWidth"]; height:@_buttonsSize["BtnCancelHeight"]">
+                            <ZButton ButtonClass="btn-outline-secondary" Height="100%" Icon="@BtnCancelIcon" Text="@BtnCancelText" Onclick="Cancel_OnClick"></ZButton>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
