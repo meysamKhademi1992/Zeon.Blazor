@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeon.Blazor.ServicesRegistr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeon.Blazor.ZInput", "Zeon.Blazor.ZInput\Zeon.Blazor.ZInput.csproj", "{AF81FF1A-C578-4397-ADA0-81E529B29DC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeon.Blazor.ZAlertDialog", "Zeon.Blazor.ZAlertDialog\Zeon.Blazor.ZAlertDialog.csproj", "{385707A2-D460-4600-93D3-5F9E07CD91C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zeon.Blazor.ZAlertDialog", "Zeon.Blazor.ZAlertDialog\Zeon.Blazor.ZAlertDialog.csproj", "{385707A2-D460-4600-93D3-5F9E07CD91C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeon.Blazor.ZTreeView", "Zeon.Blazor.ZTreeView\Zeon.Blazor.ZTreeView.csproj", "{E8D946E5-F597-4D48-85B5-31DA35D1DA1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{385707A2-D460-4600-93D3-5F9E07CD91C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{385707A2-D460-4600-93D3-5F9E07CD91C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{385707A2-D460-4600-93D3-5F9E07CD91C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8D946E5-F597-4D48-85B5-31DA35D1DA1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8D946E5-F597-4D48-85B5-31DA35D1DA1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8D946E5-F597-4D48-85B5-31DA35D1DA1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8D946E5-F597-4D48-85B5-31DA35D1DA1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
