@@ -15,4 +15,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Zeon.Blazor.JSRuntime\Zeon.Blazor.JSRuntime.csproj" />
+  </ItemGroup>
+
 </Project>

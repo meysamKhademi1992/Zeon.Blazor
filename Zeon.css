@@ -380,6 +380,42 @@
     padding: 2px;
 }
 
+.zeon-tree-view-content {
+    background-color: whitesmoke;
+    border: 1px;
+    border-radius: 6px;
+}
+
+    .zeon-tree-view-content > ul, li {
+        list-style-type: none;
+    }
+
+.zeon-tree-view-item {
+}
+
+.zeon-tree-view-item-box::before {
+    content: "\2610";
+    color: black;
+    display: inline-block;
+}
+
+.zeon-tree-view-item-checked::before {
+    content: "\2611";
+    color: dodgerblue;
+    display: inline-block;
+}
+
+.zeon-tree-view-item-expandable:before {
+    content: "\2795";
+    color: dimgray;
+    display: inline-block;
+}
+
+.zeon-tree-view-item-collapsible:before {
+    content: "\2796";
+    color: dimgray;
+    display: inline-block;
+}
 
 .form-control:focus {
     border-color: #1cc1ff;
