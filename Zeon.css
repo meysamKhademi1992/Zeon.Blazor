@@ -406,15 +406,23 @@
 }
 
 .zeon-tree-view-item-expandable:before {
-    content: "\2795";
+    content: "\276f";
     color: dimgray;
     display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-inline: 5px;
 }
 
 .zeon-tree-view-item-collapsible:before {
-    content: "\2796";
-    color: dimgray;
+    content: "\276f";
     display: inline-block;
+    color: #ca4141;
+    font-size: 16px;
+    font-weight: bold;
+    margin-inline: 5px;
+    transform: rotate(-90deg);
+    transition-duration: 0.3s;
 }
 
 .form-control:focus {

@@ -9,13 +9,13 @@ namespace Zeon.Blazor.ZTreeView
             _fieldsMapSettings = fieldsMapSettings;
         }
 
-        public List<Model> CreateMap(IEnumerable<Source> sourceList)
+        public List<TreeViewModel> CreateMap(IEnumerable<Source> sourceList)
         {
-            var mapList = new List<Model>();
+            var mapList = new List<TreeViewModel>();
             foreach (var source in sourceList)
             {
                 var sourceType = source!.GetType();
-                var newInstance = (Model)Activator.CreateInstance(typeof(Model))!;
+                var newInstance = (TreeViewModel)Activator.CreateInstance(typeof(TreeViewModel))!;
                 var newInstanceType = newInstance.GetType();
                 foreach (var newInstancePI in newInstanceType.GetProperties())
                 {
@@ -35,7 +35,7 @@ namespace Zeon.Blazor.ZTreeView
 
         private bool FieldIsMappedByAnotherName(string sourceFieldName, string destinationFieldName)
         {
-            return _fieldsMapSettings?.Any(q => q.Key == sourceFieldName).ToString() == destinationFieldName;
+            return _fieldsMapSettings?.FirstOrDefault(q => q.Key == destinationFieldName).Value?.ToString() == sourceFieldName;
         }
 
     }

@@ -15,10 +15,10 @@ namespace Zeon.Blazor.ZTreeView
         public EventCallback<int> ExpandedOnClick { get; set; }
 
         [Parameter]
-        public IEnumerable<Model> DataSource { get; set; }
+        public IEnumerable<TreeViewModel> DataSource { get; set; }
 
         [Parameter]
-        public IEnumerable<Model> Items { get; set; }
+        public IEnumerable<TreeViewModel> Items { get; set; }
 
     }
 }
