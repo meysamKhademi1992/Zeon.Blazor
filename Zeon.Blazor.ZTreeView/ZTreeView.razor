@@ -4,21 +4,19 @@
 <div class="zeon-tree-view-content">
     @foreach (var item in Data.Where(q => q.ParentId == null).ToList())
     {
-        string checkBoxClass = item.IsChecked ? "zeon-tree-view-item-checked" : "zeon-tree-view-item-box";
-        string expandedClass = Data.Where(q => q.ParentId == item.Id).Any() ? item.Expanded ? "zeon-tree-view-item-collapsible" : "zeon-tree-view-item-expandable" : "";
+        string checkBoxClass = GetCheckBoxClassMode(Data, item);
+        string expandedClass = GetExpandedClassMode(Data, item);
         <ul>
-            <li id="@GetItemId(item.Id)" class="zeon-tree-view-item ">
-                <span @onclick="()=> ExpandedOnClick(item.Id)" class="@expandedClass">
-                    <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick(item.Id)" class="@checkBoxClass">
-                        @item.Text
-                        @if (item.Expanded)
-                        {
-                            <ChildrenTree GetItemId="GetItemId" DataSource="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick"></ChildrenTree>                          
-                        }
-                    </span>
-                </span>
+            <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
+                <span @onclick="()=> ExpandedOnClick(item.Id)" class="@expandedClass"></span>
+                <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick(item.Id)" class="@checkBoxClass"></span>
+                <span>@item.Text</span>
+                @if (item.Expanded)
+                {
+                    <ChildrenTree GetItemId="GetItemId" GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" DataSource="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick"></ChildrenTree>
+                }
             </li>
         </ul>
     }
-    
+
 </div>

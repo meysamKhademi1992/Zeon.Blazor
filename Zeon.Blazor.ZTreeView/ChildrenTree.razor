@@ -1,19 +1,17 @@
 ﻿@namespace Zeon.Blazor.ZTreeView
 @foreach (var item in Items)
 {
-    string checkBoxClass = item.IsChecked ? "zeon-tree-view-item-checked" : "zeon-tree-view-item-box";
-    string expandedClass = DataSource.Where(q => q.ParentId == item.Id).Any() ? item.Expanded ? "zeon-tree-view-item-collapsible" : "zeon-tree-view-item-expandable" : "";
+    string checkBoxClass = GetCheckBoxClassMode(DataSource, item);
+    string expandedClass = GetExpandedClassMode(DataSource, item);
     <ul>
         <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
-            <span @onclick:stopPropagation=true @onclick="()=> ExpandedOnClick.InvokeAsync(item.Id)" class="@expandedClass">
-                <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" class="@checkBoxClass">
-                    @item.Text
-                    @if (item.Expanded)
-                    {
-                        <ChildrenTree GetItemId="GetItemId" DataSource="DataSource" Items="DataSource.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick"></ChildrenTree>
-                    }
-                </span>
-            </span>
+            <span @onclick:stopPropagation=true @onclick="()=> ExpandedOnClick.InvokeAsync(item.Id)" class="@expandedClass"></span>
+            <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" class="@checkBoxClass"></span>
+            <span>@item.Text</span>
+            @if (item.Expanded)
+            {
+                <ChildrenTree GetItemId="GetItemId" GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" DataSource="DataSource" Items="DataSource.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick"></ChildrenTree>
+            }
         </li>
     </ul>
 }

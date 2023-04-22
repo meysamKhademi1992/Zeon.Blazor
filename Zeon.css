@@ -384,25 +384,68 @@
     background-color: whitesmoke;
     border: 1px;
     border-radius: 6px;
+    padding: 4px;
 }
 
     .zeon-tree-view-content > ul, li {
         list-style-type: none;
+        margin-bottom: 4px;
+        padding-inline: 10px;
     }
 
 .zeon-tree-view-item {
+    cursor: default;
+    width: fit-content;
+    margin-inline: 1px;
+    padding-inline: 1px;
 }
 
 .zeon-tree-view-item-box::before {
-    content: "\2610";
+    content: "";
     color: black;
-    display: inline-block;
+    display: inline-grid;
+    cursor: pointer;
+    min-width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 5px;
+    vertical-align: middle;
+    border: 1px solid black;
+    text-align: center;
+    font-size: 16px;
+    align-content: center;
 }
 
 .zeon-tree-view-item-checked::before {
-    content: "\2611";
-    color: dodgerblue;
-    display: inline-block;
+    content: "\2714";
+    color: #0060b5;
+    display: inline-grid;
+    cursor: pointer;
+    min-width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 5px;
+    vertical-align: middle;
+    border: 1px solid #0060b5;
+    text-align: center;
+    font-size: 16px;
+    align-content: center;
+}
+
+.zeon-tree-view-item-children-checked-any::before {
+    content: "\2212";
+    color: #0060b5;
+    display: inline-grid;
+    cursor: pointer;
+    min-width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 5px;
+    vertical-align: middle;
+    border: 1px solid #0060b5;
+    text-align: center;
+    font-size: 16px;
+    align-content: center;
 }
 
 .zeon-tree-view-item-expandable:before {
@@ -412,17 +455,28 @@
     font-size: 16px;
     font-weight: bold;
     margin-inline: 5px;
+    cursor: pointer;
 }
 
 .zeon-tree-view-item-collapsible:before {
     content: "\276f";
     display: inline-block;
-    color: #ca4141;
+    color: dimgray;
     font-size: 16px;
     font-weight: bold;
     margin-inline: 5px;
+    cursor: pointer;
     transform: rotate(-90deg);
-    transition-duration: 0.3s;
+    transition-duration: 0.5s;
+}
+
+.zeon-tree-view-item-noChildren:before {
+    content: "\276f";
+    display: inline-block;
+    color: transparent;
+    font-size: 16px;
+    font-weight: bold;
+    margin-inline: 5px;
 }
 
 .form-control:focus {

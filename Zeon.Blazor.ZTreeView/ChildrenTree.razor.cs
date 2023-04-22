@@ -6,7 +6,13 @@ namespace Zeon.Blazor.ZTreeView
     public partial class ChildrenTree : ComponentBase
     {
         [Parameter]
-        public Func<int, string> GetItemId { get; set; }
+        public Func<int, string> GetItemId { get; set; } = null!;
+
+        [Parameter]
+        public Func<IEnumerable<TreeViewModel>, TreeViewModel, string> GetCheckBoxClassMode { get; set; } = null!;
+
+        [Parameter]
+        public Func<IEnumerable<TreeViewModel>, TreeViewModel, string> GetExpandedClassMode { get; set; } = null!;
 
         [Parameter]
         public EventCallback<int> CheckedOnClick { get; set; }

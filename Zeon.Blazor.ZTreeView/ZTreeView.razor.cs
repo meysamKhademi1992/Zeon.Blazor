@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
-using Zeon.Blazor.JSRuntime;
 
 namespace Zeon.Blazor.ZTreeView
 {
@@ -54,26 +51,66 @@ namespace Zeon.Blazor.ZTreeView
             return elementId;
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        private string GetCheckBoxClassMode(IEnumerable<TreeViewModel> data, TreeViewModel item)
         {
-            if (firstRender)
+            if (AutoCheckedChildren)
             {
-                if (FieldsMapSettings is not null)
-                {
-                    if (false == string.IsNullOrEmpty(FieldsMapSettings.Id))
-                        _fieldsSetting.Add(nameof(FieldsMapSettings.Id), FieldsMapSettings.Id);
-                    if (false == string.IsNullOrEmpty(FieldsMapSettings.ParentId))
-                        _fieldsSetting.Add(nameof(FieldsMapSettings.ParentId), FieldsMapSettings.ParentId);
-                    if (false == string.IsNullOrEmpty(FieldsMapSettings.Text))
-                        _fieldsSetting.Add(nameof(FieldsMapSettings.Text), FieldsMapSettings.Text);
-                    if (false == string.IsNullOrEmpty(FieldsMapSettings.IsChecked))
-                        _fieldsSetting.Add(nameof(FieldsMapSettings.IsChecked), FieldsMapSettings.IsChecked);
-                    if (false == string.IsNullOrEmpty(FieldsMapSettings.Expanded))
-                        _fieldsSetting.Add(nameof(FieldsMapSettings.Expanded), FieldsMapSettings.Expanded);
-
-                }
+                return item.IsChecked && AllChildrenIsChecked(data, item) ? "zeon-tree-view-item-checked" : ChildrenHasCheckedItem(data, item) ? "zeon-tree-view-item-children-checked-any" : "zeon-tree-view-item-box";
             }
-            base.OnAfterRender(firstRender);
+            else
+            {
+                return item.IsChecked ? "zeon-tree-view-item-checked" : "zeon-tree-view-item-box";
+            }
+        }
+        private string GetExpandedClassMode(IEnumerable<TreeViewModel> data, TreeViewModel item)
+        {
+            return Data.Where(q => q.ParentId == item.Id).Any() ? item.Expanded ? "zeon-tree-view-item-collapsible" : "zeon-tree-view-item-expandable" : "zeon-tree-view-item-noChildren";
+        }
+
+        private bool ChildrenHasCheckedItem(IEnumerable<TreeViewModel> data, TreeViewModel item)
+        {
+            foreach (var childItem in data.Where(q => q.ParentId == item.Id).ToList())
+            {
+                if (childItem.IsChecked == true)
+                    return true;
+                else
+                   if (ChildrenHasCheckedItem(data, childItem))
+                    return true;
+            }
+            return false;
+        }
+
+        private bool AllChildrenIsChecked(IEnumerable<TreeViewModel> data, TreeViewModel item)
+        {
+            foreach (var childItem in data.Where(q => q.ParentId == item.Id).ToList())
+            {
+                if (childItem.IsChecked == false)
+                    return false;
+                else
+                    if (false == AllChildrenIsChecked(data, childItem))
+                    return false;
+            }
+            return true;
+        }
+
+        protected override void OnInitialized()
+        {
+            if (FieldsMapSettings is not null)
+            {
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.Id))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.Id), FieldsMapSettings.Id);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.ParentId))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.ParentId), FieldsMapSettings.ParentId);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.Text))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.Text), FieldsMapSettings.Text);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.IsChecked))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.IsChecked), FieldsMapSettings.IsChecked);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.Expanded))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.Expanded), FieldsMapSettings.Expanded);
+
+            }
+
+            base.OnInitialized();
         }
 
         public int[] GetCheckedItems()
@@ -100,11 +137,13 @@ namespace Zeon.Blazor.ZTreeView
 
         public string GetDataJson()
         {
+            var idName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Id)).FirstOrDefault().Value ?? nameof(TreeViewModel.Id);
+            var isCheckedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.IsChecked)).FirstOrDefault().Value ?? nameof(TreeViewModel.IsChecked);
+            var expandedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Expanded)).FirstOrDefault().Value ?? nameof(TreeViewModel.Expanded);
             foreach (var item in Data)
             {
-                //GenericListChangeValue<TValue>(DataSource,)
-                //GenericListChangeValue<TValue>(DataSource,)
-                //GenericListChangeValue<TValue>(DataSource,)
+                GenericListChangeValue<TValue>(DataSource, idName, item.Id, isCheckedName, item.IsChecked);
+                GenericListChangeValue<TValue>(DataSource, idName, item.Id, expandedName, item.Expanded);
             }
             return System.Text.Json.JsonSerializer.Serialize(DataSource);
         }
@@ -134,6 +173,34 @@ namespace Zeon.Blazor.ZTreeView
             {
                 var childData = Data.Where(q => q.ParentId == id).ToList();
                 CheckedChildren(childData, Data, isChecked);
+
+                var parentId = Data.Where(q => q.Id == id).First().ParentId;
+                if (isChecked)
+                    CheckedParent(Data, parentId, isChecked);
+                else
+                    UnCheckedParent(Data, parentId, isChecked);
+            }
+        }
+
+        private void UnCheckedParent(IEnumerable<TreeViewModel> data, int? parentId, bool isChecked)
+        {
+            if (parentId.HasValue)
+            {
+                var item = data.Where(q => q.Id == parentId).First();
+                if (false == ChildrenHasCheckedItem(data, item))
+                    item.IsChecked = isChecked;
+
+                UnCheckedParent(data, item.ParentId, isChecked);
+            }
+        }
+
+        private void CheckedParent(IEnumerable<TreeViewModel> data, int? parentId, bool isChecked)
+        {
+            if (parentId.HasValue)
+            {
+                var item = data.Where(q => q.Id == parentId).First();
+                item.IsChecked = isChecked;
+                CheckedParent(data, item.ParentId, isChecked);
             }
         }
 
