@@ -8,7 +8,7 @@ namespace Zeon.Blazor.ZButton
         private bool _isDisabled = false;
 
         [Parameter]
-        public string? ButtonId { get; set; }
+        public string? Id { get; set; }
 
         [Parameter]
         public bool IsWaiting { get; set; } = false;
@@ -16,23 +16,17 @@ namespace Zeon.Blazor.ZButton
         [Parameter]
         public bool IsDisabled { get => _isDisabled; set => SetIsDisabled(value); }
 
-        private void SetIsDisabled(bool value)
-        {
-            _isDisabled = value;
-            _disabled = value ? " disabled " : "";
-        }
-
         [Parameter]
         public string? Text { get; set; }
 
         [Parameter]
-        public string ButtonClass { get; set; } = "btn-outline-primary";
+        public string CssClass { get; set; } = "btn-outline-primary";
 
         [Parameter]
-        public string? Icon { get; set; } = "zf zf-check";
+        public string CssIcon { get; set; } = "zf zf-check";
 
         [Parameter]
-        public string? Display { get; set; } = "flex";
+        public string Display { get; set; } = "flex";
 
         [Parameter]
         public string Width { get; set; } = "100%";
@@ -43,9 +37,15 @@ namespace Zeon.Blazor.ZButton
         [Parameter]
         public EventCallback<string?> Onclick { get; set; }
 
+        private void SetIsDisabled(bool value)
+        {
+            _isDisabled = value;
+            _disabled = value ? " disabled " : "";
+        }
+
         private async void OnClick()
         {
-            await Onclick.InvokeAsync(ButtonId);
+            await Onclick.InvokeAsync(Id);
         }
     }
 }

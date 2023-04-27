@@ -16,10 +16,10 @@ public partial class ZCheckBoxButton<TModel> : ComponentBase
     /// Default : btn-outline-primary
     /// </summary>
     [Parameter]
-    public string CheckBoxButtonClass { get; set; } = "btn-outline-primary";
+    public string CssClass { get; set; } = "btn-outline-primary";
 
     [Parameter]
-    public string? Icon { get; set; }
+    public string? CssIcon { get; set; }
 
     [Parameter, EditorRequired]
     public string For { get; set; } = null!;

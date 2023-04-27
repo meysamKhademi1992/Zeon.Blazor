@@ -96,7 +96,7 @@
                 <div class="card-footer w-100 p-1 position-absolute zeon-dateTimePicker-datePickerCard-panel-footer ">
                     <div class="row m-auto w-100 text-center ">
                         <div class="col p-1 w-100">
-                            <ZButton ButtonClass="btn  zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
+                            <ZButton CssClass="btn  zeon-dateTimePicker-btn-ok" Width="100%" CssIcon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
                         </div>
                     </div>
                 </div>
@@ -171,10 +171,10 @@
             <div class="card-footer w-100 p-1 zeon-dateTimePicker-datePickerCard-footer">
                 <div class="row m-auto w-100 text-center ">
                     <div class="col p-1 w-100">
-                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-ok" Width="100%" Icon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
+                        <ZButton CssClass="btn zeon-dateTimePicker-btn-ok" Width="100%" CssIcon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
                     </div>
                     <div class="col p-1 w-100">
-                        <ZButton ButtonClass="btn zeon-dateTimePicker-btn-today" Width="100%" Icon="zf-circle-arrow" Text="@_datePicker.TodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
+                        <ZButton CssClass="btn zeon-dateTimePicker-btn-today" Width="100%" CssIcon="zf-circle-arrow" Text="@_datePicker.TodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
                     </div>
                 </div>
             </div>

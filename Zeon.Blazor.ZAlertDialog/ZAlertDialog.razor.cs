@@ -31,30 +31,30 @@ namespace Zeon.Blazor.ZAlertDialog
         public string? Text { get; set; }
 
         [Parameter]
-        public string? AlertDialogIcon { get; set; } = "zf zf-info";
+        public string? AlertDialogCssIcon { get; set; } = "zf zf-info";
 
         [Parameter]
         public string? BtnOkText { get; set; } = "تایید";
 
         [Parameter]
-        public string? BtnOkIcon { get; set; } = "zf zf-check";
+        public string? BtnOkCssIcon { get; set; } = "zf zf-check";
 
         [Parameter]
         public string? BtnCancelText { get; set; } = "لغو";
 
         [Parameter]
-        public string? BtnCancelIcon { get; set; } = "zf zf-anti-clockwise-dir-semicircular-arrow";
+        public string? BtnCancelCssIcon { get; set; } = "zf zf-anti-clockwise-dir-semicircular-arrow";
 
         [Parameter]
         public string? BtnYesText { get; set; } = "بله";
 
         [Parameter]
-        public string? BtnYesIcon { get; set; } = "zf zf-check";
+        public string? BtnYesCssIcon { get; set; } = "zf zf-check";
 
         [Parameter]
         public string? BtnNoText { get; set; } = "خیر";
         [Parameter]
-        public string? BtnNoIcon { get; set; } = "zf zf-ballot";
+        public string? BtnNoCssIcon { get; set; } = "zf zf-ballot";
 
         [Parameter]
         public Dictionary<string, string> ButtonsSize { get => _buttonsSize; set => OverrideButtonSize(value); }

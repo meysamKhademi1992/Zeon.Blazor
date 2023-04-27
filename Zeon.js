@@ -15,6 +15,12 @@ function zeonScrollToElementById(elementId, itemId) {
     element.scrollTo({ top: item.offsetTop, behavior: 'smooth' });
 }
 
+function zeonScrollToElementById(elementId) {
+
+    const element = document.getElementById(elementId);
+    element.scrollIntoView({ behavior: 'smooth' });
+}
+
 function zeonAddClassById(elementId, className) {
 
     const element = document.getElementById(elementId);

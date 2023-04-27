@@ -3,7 +3,7 @@
 @if (IsWaiting)
     IsDisabled = true;
 
-<button id="@ButtonId" type="button" class="btn @ButtonClass @_disabled zeon-button-btn  align-items-stretch d-flex" @onclick="OnClick" style="--btn-display:@Display; --btn-width:@Width ; --btn-height:@Height">
+<button id="@Id" type="button" class="btn @CssClass @_disabled zeon-button-btn  align-items-stretch d-flex" @onclick="OnClick" style="--btn-display:@Display; --btn-width:@Width ; --btn-height:@Height">
 
     <div class="icon icon-left d-flex align-items-center justify-content-center w-auto">
         @if (IsWaiting)
@@ -12,7 +12,7 @@
         }
         else
         {
-            <i class="@Icon zeon-button-icon"></i>
+            <i class="@CssIcon zeon-button-icon"></i>
         }
     </div>
     <div class="text m-auto zeon-button-text">

@@ -15,11 +15,16 @@ namespace Zeon.Blazor.JSRuntime
         {
             await _jsRuntime.InvokeVoidAsync("zeonFocusElementById", id);
         }
+        public async Task ScrollToElementById(string elementId)
+        {
+            await _jsRuntime.InvokeVoidAsync("zeonScrollToElementById", elementId);
+        }
 
         public async Task ScrollToElementById(string elementId, string itemId)
         {
             await _jsRuntime.InvokeVoidAsync("zeonScrollToElementById", elementId, itemId);
         }
+
         public async Task AddClassById(string elementId, string className)
         {
             await _jsRuntime.InvokeVoidAsync("zeonAddClassById", elementId, className);
