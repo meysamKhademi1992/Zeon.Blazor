@@ -2,6 +2,8 @@
 
 @if (IsWaiting)
     IsDisabled = true;
+else
+    IsDisabled = false;
 
 <button id="@Id" type="button" class="btn @CssClass @_disabled zeon-button-btn  align-items-stretch d-flex" @onclick="OnClick" style="--btn-display:@Display; --btn-width:@Width ; --btn-height:@Height">
 

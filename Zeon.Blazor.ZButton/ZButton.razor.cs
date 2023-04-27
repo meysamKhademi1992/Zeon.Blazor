@@ -34,7 +34,7 @@ namespace Zeon.Blazor.ZButton
         [Parameter]
         public string Height { get; set; } = "auto";
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public EventCallback<string?> Onclick { get; set; }
 
         private void SetIsDisabled(bool value)
