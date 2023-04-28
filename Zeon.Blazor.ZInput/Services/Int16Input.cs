@@ -4,7 +4,7 @@ namespace Zeon.Blazor.ZInput.Services;
 
 internal class Int16Input : Input<Int16>
 {
-    private const string INPUT_TYPE = "number";
+    private const string INPUT_TYPE = "text";
     internal override string InputType { get; set; } = INPUT_TYPE;
     internal override Int16 Convert(string value)
     {

@@ -4,7 +4,7 @@ namespace Zeon.Blazor.ZInput.Services;
 
 internal class UInt64Input : Input<UInt64>
 {
-    private const string INPUT_TYPE = "number";
+    private const string INPUT_TYPE = "text";
     internal override string InputType { get; set; } = INPUT_TYPE;
     internal override UInt64 Convert(string value)
     {

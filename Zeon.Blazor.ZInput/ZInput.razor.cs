@@ -22,10 +22,13 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
 
 
     [Parameter]
-    public string Id { get; set; } = null!;
+    public string? Id { get; set; } = null;
 
     [Parameter]
     public string? Format { get; set; }
+
+    [Parameter]
+    public string? CssClass { get; set; }
 
     [Parameter]
     public Type? DefaultValue

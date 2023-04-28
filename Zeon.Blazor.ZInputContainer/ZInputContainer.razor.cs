@@ -11,12 +11,13 @@ namespace Zeon.Blazor.ZInputContainer
         /// Lable For Id
         /// </summary>
         [Parameter]
-        public string Id { get; set; } = null!;
+        public string? Id { get; set; } = null;
 
         [Parameter]
-        public string? Icon { get; set; }
+        public string? CssIcon { get; set; }
 
-        [Parameter] public string For { get; set; } = null!;
+        [Parameter, EditorRequired]
+        public string For { get; set; } = null!;
 
         /// <summary>
         /// Display Mode block Or flex Default = block 
@@ -35,7 +36,7 @@ namespace Zeon.Blazor.ZInputContainer
         ///  Default = 100% 
         /// </summary>
         [Parameter]
-        public string Height { get; set; } = "100%";
+        public string Height { get; set; } = "auto";
 
         [Parameter]
         public RenderFragment ChildContent { get; set; } = null!;

@@ -4,7 +4,7 @@ namespace Zeon.Blazor.ZInput.Services;
 
 public class DoubleInput : Input<double>
 {
-    private const string INPUT_TYPE = "number";
+    private const string INPUT_TYPE = "text";
     internal override string InputType { get; set; } = INPUT_TYPE;
     internal override double Convert(string value)
     {
