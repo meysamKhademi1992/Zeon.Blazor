@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Reflection;
+
 
 namespace Zeon.Blazor.ZCheckBoxButton;
 
-public partial class ZCheckBoxButton<TModel> : ComponentBase
+public partial class ZCheckBoxButton : ComponentBase
 {
     private bool _value = false;
-    private string DisplayName => GetDisplayName(For);
-
 
     [Parameter, EditorRequired]
     public string Id { get; set; } = null!;
@@ -21,14 +19,14 @@ public partial class ZCheckBoxButton<TModel> : ComponentBase
     [Parameter]
     public string? CssIcon { get; set; }
 
-    [Parameter, EditorRequired]
-    public string For { get; set; } = null!;
+    [Parameter]
+    public string Text { get; set; } = null!;
 
     [Parameter]
     public string Width { get; set; } = "100%";
 
     [Parameter]
-    public string Height { get; set; } = "100%";
+    public string Height { get; set; } = "auto";
 
 
     [Parameter]
@@ -50,20 +48,6 @@ public partial class ZCheckBoxButton<TModel> : ComponentBase
     public EventCallback<bool> OnValueChanged { get; set; }
 
 
-    private string GetDisplayName(string propertyName)
-    {
-        try
-        {
-            MemberInfo? myProperty = typeof(TModel).GetProperty(propertyName) as MemberInfo;
-            var displayNameAttribute = myProperty?.GetCustomAttribute(typeof(System.ComponentModel.DisplayNameAttribute)) as System.ComponentModel.DisplayNameAttribute;
-            return displayNameAttribute?.DisplayName ?? propertyName;
-        }
-        catch
-        {
-            return propertyName;
-        }
-
-    }
 
 }
 

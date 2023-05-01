@@ -1,12 +1,11 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using System.Reflection
 @namespace Zeon.Blazor.ZCheckBoxButton
-@typeparam TModel
 
 <div class="container-fluid p-2 m-auto zeon-checkBoxButton-container" style="--container-Width:@Width">
     <input @bind="@Value" type="checkbox" class="btn-check" id="@Id" autocomplete="off">
     <label class="p-2 m-auto btn @CssClass zeon-checkBoxButton-label" for="@Id" style="--label-Height:@Height">
         <span class="@CssIcon zeon-checkBoxButton-icon">
-        </span>@DisplayName
+        </span>@Text
     </label>
 </div>
