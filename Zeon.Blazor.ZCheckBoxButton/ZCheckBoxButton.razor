@@ -2,10 +2,10 @@
 @using System.Reflection
 @namespace Zeon.Blazor.ZCheckBoxButton
 
-<div class="container-fluid p-2 m-auto zeon-checkBoxButton-container" style="--container-Width:@Width">
-    <input @bind="@Value" type="checkbox" class="btn-check" id="@Id" autocomplete="off">
-    <label class="p-2 m-auto btn @CssClass zeon-checkBoxButton-label" for="@Id" style="--label-Height:@Height">
-        <span class="@CssIcon zeon-checkBoxButton-icon">
-        </span>@Text
+<div class="container-fluid p-2 m-auto zeon-checkBoxButton-container" style="display:block; --container-width:@Width;--container-height:@Height">
+    <input disabled="@IsDisabled" @bind="@Value" type="checkbox" class="btn-check" id="@Id" autocomplete="off">
+    <label class="p-2 m-auto btn align-items-center justify-content-center zeon-checkBoxButton-label @CssClass" for="@Id" style="--label-display:@Display;">
+        <span class="@CssIcon zeon-checkBoxButton-icon"></span>
+        <span>@Text</span>
     </label>
 </div>

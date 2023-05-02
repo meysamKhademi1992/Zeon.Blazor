@@ -7,7 +7,6 @@ public partial class ZCheckBoxButton : ComponentBase
 {
     private bool _value = false;
 
-
     protected override void OnInitialized()
     {
         Value = DefaultValue;
@@ -26,7 +25,10 @@ public partial class ZCheckBoxButton : ComponentBase
     public string? CssIcon { get; set; }
 
     [Parameter]
-    public string Text { get; set; } = null!;
+    public string Display { get; set; } = "flex";
+
+    [Parameter]
+    public string Text { get; set; } = string.Empty;
 
     [Parameter]
     public string Width { get; set; } = "100%";
@@ -49,7 +51,10 @@ public partial class ZCheckBoxButton : ComponentBase
     }
 
     [Parameter]
-    public bool DefaultValue { get; set; }
+    public bool DefaultValue { get; set; } = false;
+
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
 
     [Parameter]
     public EventCallback<bool> OnValueChanged { get; set; }

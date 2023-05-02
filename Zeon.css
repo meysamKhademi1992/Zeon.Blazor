@@ -165,15 +165,17 @@
 }
 
 .zeon-checkBoxButton-container {
-    width: var(--container-Width);
+    width: var(--container-width);
+    height: var(--container-height);
 }
 
 .zeon-checkBoxButton-label {
+    display: var(--label-display ) !important;
     padding: 1px;
-    display: inline-block;
     width: 100%;
-    line-height: var(--label-Height);
-    box-shadow: 1px 1px 2px gray
+    height: 100%;
+    box-shadow: 1px 1px 2px gray;
+    overflow: hidden;
 }
 
 .zeon-checkBoxButton-icon {
