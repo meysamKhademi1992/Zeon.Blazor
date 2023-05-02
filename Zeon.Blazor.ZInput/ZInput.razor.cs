@@ -10,6 +10,14 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
     private readonly Input<Type> _input;
     private Type? _value;
     private (bool isValid, string message) _validation;
+    protected override void OnInitialized()
+    {
+        if (DefaultValue is not null)
+        {
+            OnInput = DefaultValue.ToString()!;
+        }
+        base.OnInitialized();
+    }
 
     public (bool isValid, string message) IsValid
     {
@@ -31,14 +39,8 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
     public string? CssClass { get; set; }
 
     [Parameter]
-    public Type? DefaultValue
-    {
-        get => _value;
-        set
-        {
-            _value = value;
-        }
-    }
+    public Type? DefaultValue { get; set; }
+
 
     [Parameter]
     public EventCallback<Type> OnValueChanged { get; set; }

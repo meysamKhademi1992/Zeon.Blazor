@@ -7,6 +7,12 @@ public partial class ZCheckBoxButton : ComponentBase
 {
     private bool _value = false;
 
+
+    protected override void OnInitialized()
+    {
+        Value = DefaultValue;
+        base.OnInitialized();
+    }
     [Parameter, EditorRequired]
     public string Id { get; set; } = null!;
 
@@ -29,8 +35,7 @@ public partial class ZCheckBoxButton : ComponentBase
     public string Height { get; set; } = "auto";
 
 
-    [Parameter]
-    public bool Value
+    private bool Value
     {
         get
         {
@@ -43,6 +48,9 @@ public partial class ZCheckBoxButton : ComponentBase
             InvokeAsync(async () => await OnValueChanged.InvokeAsync(_value));
         }
     }
+
+    [Parameter]
+    public bool DefaultValue { get; set; }
 
     [Parameter]
     public EventCallback<bool> OnValueChanged { get; set; }
