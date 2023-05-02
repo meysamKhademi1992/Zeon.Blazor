@@ -34,7 +34,6 @@ public partial class ZCheckBoxButton : ComponentBase
     [Parameter]
     public string Height { get; set; } = "auto";
 
-
     private bool Value
     {
         get

@@ -28,7 +28,6 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
         }
     }
 
-
     [Parameter]
     public string? Id { get; set; } = null;
 
@@ -40,7 +39,6 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
 
     [Parameter]
     public Type? DefaultValue { get; set; }
-
 
     [Parameter]
     public EventCallback<Type> OnValueChanged { get; set; }
