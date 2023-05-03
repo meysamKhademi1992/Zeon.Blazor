@@ -60,7 +60,7 @@ namespace Zeon.Blazor.ZAlertDialog
         public Dictionary<string, string> ButtonsSize { get => _buttonsSize; set => OverrideButtonSize(value); }
 
         [Parameter]
-        public Constants.AlertDialogButtons AlertDialogButtons { get; set; }
+        public Constants.AlertDialogButtons AlertDialogButtons { get; set; } = Constants.AlertDialogButtons.Ok;
 
         [Parameter]
         public EventCallback<Constants.DialogResult> BtnOnclick { get; set; }
