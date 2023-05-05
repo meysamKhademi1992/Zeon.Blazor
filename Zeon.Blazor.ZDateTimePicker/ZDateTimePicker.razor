@@ -4,7 +4,7 @@
 <div style="position:relative !important">
     <div class="row m-auto p-0">
         <div class="col-12 p-0">
-            <input class="form-control w-100 zeon zeon-dateTimePicker-input" style="--zeon-font-family:@FontFamily;" readonly @bind-value="@_dateTimeDisplay" @onmousedown="@(()=>OpenClose_Onclick())" />
+            <input class="form-control w-100 zeon zeon-dateTimePicker-input" style="--zeon-font-family:@FontFamily;--datePickerCard-direction:@_datePicker.Direction" readonly @bind-value="@_dateTimeDisplay" @onmousedown="@(()=>OpenClose_Onclick())" />
         </div>
     </div>
 
@@ -14,7 +14,7 @@
             @if (_panelDisplay != "none")
             {
                 <div class="zeon-dateTimePicker-datePickerCard-panel" style="--panel-display:@_panelDisplay">
-                    <div class="row m-auto p-3 w-100 zeon-dateTimePicker-datePickerCard-panel-header">
+                    <div class="row m-auto p-3 w-100 zeon-dateTimePicker-datePickerCard-panel-header" style="direction:ltr">
                         @if (@InputPickerType == InputType.DateTime || @InputPickerType == InputType.Date)
                         {
                             <div class="row m-auto p-2 zeon-dateTimePicker-datePickerCard-panel-header-date">
@@ -31,7 +31,7 @@
                                                 @for (int i = 0; i <= CreateNumberOfYears; i++)
                                                 {
                                                     string selected = "";
-                                                    var year = _datePicker.GetYearItem(CreateNumberOfYears,i);
+                                                    var year = _datePicker.GetYearItem(CreateNumberOfYears, i);
                                                     if (@year == @currentYear)
                                                     {
                                                         selected = "selected";
@@ -121,7 +121,7 @@
                         </button>
                     </div>
                     <div class="p-0" style="margin-top:2px;">
-                        <button type="button" class="w-100 btn zeon-dateTimePicker-btn-show-panel p-0" style="padding:2px;direction:ltr ;font-size: inherit;" @onclick="@(()=> OpenPanel_Onclick())">@SelectedDateTime</button>
+                        <button type="button" class="w-100 btn zeon-dateTimePicker-btn-show-panel p-0" style="padding:2px;direction:inherit ;font-size: inherit;" @onclick="@(()=> OpenPanel_Onclick())">@SelectedDateTime</button>
                     </div>
                 </div>
             </div>

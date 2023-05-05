@@ -186,7 +186,7 @@
 .zeon-dateTimePicker-input {
     text-align: center;
     border-radius: 5px;
-    direction: ltr;
+    direction: var(--datePickerCard-direction) !important;
     cursor: pointer;
 }
 

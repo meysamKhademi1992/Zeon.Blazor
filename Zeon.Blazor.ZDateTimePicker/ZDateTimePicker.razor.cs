@@ -10,6 +10,7 @@ public partial class ZDateTimePicker : ComponentBase
     private const DatePickerType DEFAULT_DATE_PICKER_TYPE = DatePickerType.Jalali;
     private const string DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
     private const string ALLOW_CHARACTERS = "yMdHhmsf-/ : . t";
+
     private readonly Dictionary<DatePickerType, DatePicker> _datePickerTypes;
 
     private DatePickerType _datePickerType;
@@ -77,18 +78,8 @@ public partial class ZDateTimePicker : ComponentBase
             }
         }
     }
-
     private string FontFamily { get => GetFontFamily(); }
 
-    private string GetFontFamily()
-    {
-        return _datePicker.Direction switch
-        {
-            "rtl" => FontFamilyRTL,
-            "ltr" => FontFamilyLTR,
-            _ => "",
-        };
-    }
 
     [Parameter]
     public string FontFamilyRTL { get; set; } = "inherit";
@@ -119,6 +110,7 @@ public partial class ZDateTimePicker : ComponentBase
 
     [Parameter]
     public bool IsLiveTime { get; set; } = false;
+
     [Parameter]
     public int LiveTimeDelay { get; set; } = 500;
 
@@ -133,10 +125,6 @@ public partial class ZDateTimePicker : ComponentBase
             { DatePickerType.Gregorian, new GregorianDatePicker() }
         };
         _datePicker = GetDatePickerInstance(_datePickerType);
-    }
-    private DateTime GetDateTimeNow(InputType inputType)
-    {
-        return inputType == InputType.DateTime ? DateTime.Now : DateTime.Now.Date;
     }
     protected async override void OnInitialized()
     {
@@ -158,23 +146,33 @@ public partial class ZDateTimePicker : ComponentBase
             await base.OnAfterRenderAsync(firstRender);
         }
     }
+
+    private string GetFontFamily()
+    {
+        return _datePicker.Direction switch
+        {
+            "rtl" => FontFamilyRTL,
+            "ltr" => FontFamilyLTR,
+            _ => "",
+        };
+    }
+
+    private DateTime GetDateTimeNow(InputType inputType)
+    {
+        return inputType == InputType.DateTime ? DateTime.Now : DateTime.Now.Date;
+    }
+
     private async Task SetLiveTime()
     {
         while (_isLiveTime)
         {
-            Console.WriteLine("startLoop");
             var now = GetDateTimeNow(InputPickerType);
             var dateTimeFormat = await _datePicker.Convert(now, Format);
             var dateTime = await _datePicker.Convert(now, DATE_TIME_FORMAT);
             await InputDate(dateTime, dateTimeFormat);
             this.StateHasChanged();
-            Console.WriteLine("endLoop");
-            Console.WriteLine("startDelay");
             await Task.Delay(LiveTimeDelay);
-            Console.WriteLine("endDelay");
-
         }
-        Console.WriteLine("ExitLoop");
     }
 
     private void SetFormat(string format)
@@ -199,6 +197,7 @@ public partial class ZDateTimePicker : ComponentBase
     {
         return _datePickerTypes.Single(q => q.Key == value).Value;
     }
+
     private async Task InputDate(string dateTime, string dateTimeFormat)
     {
         var result = await _datePicker.Convert(dateTime);
@@ -223,24 +222,29 @@ public partial class ZDateTimePicker : ComponentBase
         _isLiveTime = false;
         _datePickerCardDisplay = _datePickerCardDisplay == "block" ? "none" : "block";
     }
+
     private void OpenPanel_Onclick()
     {
         _panelDisplay = "block";
     }
+
     private async Task Year_Onclick(int value)
     {
         PickerDateTime = _datePicker.ChangeYear(PickerDateTime, value);
         await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
+
     private async Task Month_Onclick(int value)
     {
         PickerDateTime = _datePicker.ChangeMonth(PickerDateTime, value);
         await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
+
     private void ChangeDateInPanel_Onclick()
     {
         _panelDisplay = "none";
     }
+
     private async Task ChangeDateTimePicker_Onclick(string value)
     {
         var selectedDatePicker = DateTime.Parse(value);
@@ -248,21 +252,25 @@ public partial class ZDateTimePicker : ComponentBase
         PickerDateTime = selectedDatePicker;
         _displayMonth = _datePicker.GetMonthName(PickerDateTime);
     }
+
     private async Task NextMonth_Onclick()
     {
         PickerDateTime = _datePicker.GetNextMonth(PickerDateTime);
         await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
+
     private async Task PrevMonth_Onclick()
     {
         PickerDateTime = _datePicker.GetPrevMonth(PickerDateTime);
         await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
+
     private async Task SetToday_Onclick()
     {
         PickerDateTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, PickerDateTime.Hour, PickerDateTime.Minute, 0);
         await ChangeDateTimePicker_Onclick(PickerDateTime.ToString(DATE_TIME_FORMAT));
     }
+
     private async Task Ok_Onclick()
     {
         var dateTimeFormat = await _datePicker.Convert(PickerDateTime, Format);
@@ -270,6 +278,7 @@ public partial class ZDateTimePicker : ComponentBase
         await InputDate(dateTime, dateTimeFormat);
         _datePickerCardDisplay = "none";
     }
+
     public async Task Refresh()
     {
         var dateTimeFormat = await _datePicker.Convert(CurrentDateTime, Format);
