@@ -16,12 +16,10 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         private const string HOUR_TEXT = "Hour";
         private const string MINUTE_TEXT = "Minute";
 
-        public GregorianDatePicker(int createNumberOfYears)
+        public GregorianDatePicker()
         {
-            CreateNumberOfYears = createNumberOfYears;
         }
 
-        internal override int CreateNumberOfYears { get; set; }
         internal override string Direction { get => DIRECTION; }
         internal override string NextMonthText { get => NEXT_MONTH_TEXT; }
         internal override string PrevMonthText { get => PREV_MONTH_TEXT; }
@@ -98,9 +96,9 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return newDateTime;
         }
 
-        internal override int GetYearItem(int index)
+        internal override int GetYearItem(int createNumberOfYears, int index)
         {
-            return DateTime.Now.Year - CreateNumberOfYears / 2 + index;
+            return DateTime.Now.Year - createNumberOfYears / 2 + index;
         }
 
         internal override string GetYearDisplayItem(int year)

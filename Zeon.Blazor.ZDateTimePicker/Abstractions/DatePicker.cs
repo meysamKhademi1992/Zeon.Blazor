@@ -9,7 +9,6 @@ namespace Zeon.Blazor.ZDateTimePicker.Abstractions
 {
     public abstract class DatePicker
     {
-        internal abstract int CreateNumberOfYears { get; set; }
         internal abstract string Direction { get; }
         internal abstract string NextMonthText { get; }
         internal abstract string PrevMonthText { get; }
@@ -31,7 +30,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Abstractions
         internal abstract DateTime ChangeMinute(DateTime dateTime, int minute);
         internal abstract int GetCountDayOfMonth(DateTime dateTime);
         internal abstract int GetYear(DateTime dateTime);
-        internal abstract int GetYearItem(int index);
+        internal abstract int GetYearItem(int createNumberOfYears, int index);
         internal abstract string GetYearDisplayItem(int year);
         internal abstract string GetMonthDisplayItem(int month);
         internal abstract string GetDayDisplayItem(int day);

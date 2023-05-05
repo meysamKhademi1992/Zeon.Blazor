@@ -1,184 +1,185 @@
 ﻿@using Zeon.Blazor.ZButton
 @using Zeon.Blazor.ZDateTimePicker.Constants
 @namespace Zeon.Blazor.ZDateTimePicker
-
-<div class="row m-auto p-0">
-    <div class="col-12 p-0">
-        <input class="form-control w-100 zeon zeon-dateTimePicker-input" style="--zeon-font-family:@FontFamily;" readonly @bind-value="@_dateTimeDisplay" @onmousedown="@(()=>OpenClose_Onclick())" />
+<div style="position:relative !important">
+    <div class="row m-auto p-0">
+        <div class="col-12 p-0">
+            <input class="form-control w-100 zeon zeon-dateTimePicker-input" style="--zeon-font-family:@FontFamily;" readonly @bind-value="@_dateTimeDisplay" @onmousedown="@(()=>OpenClose_Onclick())" />
+        </div>
     </div>
-</div>
 
-@if (_datePickerCardDisplay != "none")
-{
-    <div class="card text-white mb-3 zeon zeon-dateTimePicker-datePickerCard" style="--zeon-font-family:@FontFamily;--datePickerCard-display:@_datePickerCardDisplay;--datePickerCard-direction:@_datePicker.Direction">
-        @if (_panelDisplay != "none")
-        {
-            <div class="zeon-dateTimePicker-datePickerCard-panel" style="--panel-display:@_panelDisplay">
-                <div class="row m-auto p-3 w-100 zeon-dateTimePicker-datePickerCard-panel-header">
-                    @if (@InputPickerType == InputType.DateTime || @InputPickerType == InputType.Date)
-                    {
-                        <div class="row m-auto p-2 zeon-dateTimePicker-datePickerCard-panel-header-date">
-                            <div class="col">
+    @if (_datePickerCardDisplay != "none")
+    {
+        <div class="card text-white mb-3 zeon zeon-dateTimePicker-datePickerCard" style="--zeon-font-family:@FontFamily;--datePickerCard-display:@_datePickerCardDisplay;--datePickerCard-direction:@_datePicker.Direction">
+            @if (_panelDisplay != "none")
+            {
+                <div class="zeon-dateTimePicker-datePickerCard-panel" style="--panel-display:@_panelDisplay">
+                    <div class="row m-auto p-3 w-100 zeon-dateTimePicker-datePickerCard-panel-header">
+                        @if (@InputPickerType == InputType.DateTime || @InputPickerType == InputType.Date)
+                        {
+                            <div class="row m-auto p-2 zeon-dateTimePicker-datePickerCard-panel-header-date">
                                 <div class="col">
-                                    @_datePicker.YearText
-                                </div>
-                                <div class="col">
-                                    <div class="zeon-dateTimePicker-datePickerCard-panel-box">
-                                        <ul style="list-style:none;padding: 0px;">
-                                            @{
-                                                var currentYear = _datePicker.GetYear(PickerDateTime);
-                                            }
-                                            @for (int i = 0; i <= CreateNumberOfYears; i++)
-                                            {
-                                                string selected = "";
-                                                var year = _datePicker.GetYearItem(i);
-                                                if (@year == @currentYear)
-                                                {
-                                                    selected = "selected";
+                                    <div class="col">
+                                        @_datePicker.YearText
+                                    </div>
+                                    <div class="col">
+                                        <div class="zeon-dateTimePicker-datePickerCard-panel-box">
+                                            <ul style="list-style:none;padding: 0px;">
+                                                @{
+                                                    var currentYear = _datePicker.GetYear(PickerDateTime);
                                                 }
-                                                <li class="@selected" @onclick="@(()=>Year_Onclick(year))">@_datePicker.GetYearDisplayItem(year)</li>
-                                            }
-                                        </ul>
+                                                @for (int i = 0; i <= CreateNumberOfYears; i++)
+                                                {
+                                                    string selected = "";
+                                                    var year = _datePicker.GetYearItem(CreateNumberOfYears,i);
+                                                    if (@year == @currentYear)
+                                                    {
+                                                        selected = "selected";
+                                                    }
+                                                    <li class="@selected" @onclick="@(()=>Year_Onclick(year))">@_datePicker.GetYearDisplayItem(year)</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="col">
+                                        @_datePicker.MonthText
+                                    </div>
+                                    <div class="col">
+                                        <div class="zeon-dateTimePicker-datePickerCard-panel-box">
+                                            <ul style="list-style:none;padding:0px;">
+                                                @{
+                                                    var currentMonth = _datePicker.GetMonth(PickerDateTime);
+                                                }
+                                                @for (int i = 1; i <= 12; i++)
+                                                {
+                                                    string selected = "";
+                                                    var month = i;
+                                                    if (@month == @currentMonth)
+                                                    {
+                                                        selected = "selected";
+                                                    }
+                                                    <li class="@selected" @onclick="@(()=> Month_Onclick(month))">@_datePicker.GetMonthDisplayItem(month)</li>
+                                                }
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col">
-                                <div class="col">
-                                    @_datePicker.MonthText
+                        }
+                        @if (@InputPickerType == InputType.DateTime)
+                        {
+                            <div class="row m-auto p-2 zeon-dateTimePicker-datePickerCard-panel-header-time">
+                                <div class="col-2 p-1">
                                 </div>
-                                <div class="col">
-                                    <div class="zeon-dateTimePicker-datePickerCard-panel-box">
-                                        <ul style="list-style:none;padding:0px;">
-                                            @{
-                                                var currentMonth = _datePicker.GetMonth(PickerDateTime);
-                                            }
-                                            @for (int i = 1; i <= 12; i++)
-                                            {
-                                                string selected = "";
-                                                var month = i;
-                                                if (@month == @currentMonth)
-                                                {
-                                                    selected = "selected";
-                                                }
-                                                <li class="@selected" @onclick="@(()=> Month_Onclick(month))">@_datePicker.GetMonthDisplayItem(month)</li>
-                                            }
-                                        </ul>
+                                <div class="col-4 p-1">
+                                    <span>@_datePicker.HourText</span>
+                                    <div>
+                                        <input type="number" maxlength="2" @bind="@CurrentHourPicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-h">
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    }
-                    @if (@InputPickerType == InputType.DateTime)
-                    {
-                        <div class="row m-auto p-2 zeon-dateTimePicker-datePickerCard-panel-header-time">
-                            <div class="col-2 p-1">
-                            </div>
-                            <div class="col-4 p-1">
-                                <span>@_datePicker.HourText</span>
-                                <div>
-                                    <input type="number" maxlength="2" @bind="@CurrentHourPicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-h">
+
+                                <div class="col-4 p-1">
+                                    <span>@_datePicker.MinuteText</span>
+
+                                    <div>
+                                        <input type="number" maxlength="2" @bind="@CurrentMinutePicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-m">
+                                    </div>
+                                </div>
+                                <div class="col-2 p-1">
                                 </div>
                             </div>
-
-                            <div class="col-4 p-1">
-                                <span>@_datePicker.MinuteText</span>
-
-                                <div>
-                                    <input type="number" maxlength="2" @bind="@CurrentMinutePicker" class="form-control w-100 p-0 m-auto zeon-dateTimePicker-datePickerCard-panel-header-time-input-m">
-                                </div>
-                            </div>
-                            <div class="col-2 p-1">
+                        }
+                    </div>
+                    <div class="card-footer w-100 p-1 position-absolute zeon-dateTimePicker-datePickerCard-panel-footer ">
+                        <div class="row m-auto w-100 text-center ">
+                            <div class="col p-1 w-100">
+                                <ZButton CssClass="btn  zeon-dateTimePicker-btn-ok" Width="100%" CssIcon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
-                <div class="card-footer w-100 p-1 position-absolute zeon-dateTimePicker-datePickerCard-panel-footer ">
+            }
+
+            <div class="card-header w-100 p-1 zeon-dateTimePicker-datePickerCard-header">
+                <div class="row p-o m-auto">
+                    <div class="col-4 p-0 ">
+                        <button type="button" class="btn zeon-dateTimePicker-btn-prev-month  w-100 h-100 p-0" style="font-size: inherit;" value="" @onclick="@(async()=> await PrevMonth_Onclick())">
+                            <span class="p-0 zf zf-arrow-alt-left"></span>
+                            <span class="p-0">@_datePicker.PrevMonthText</span>
+                        </button>
+                    </div>
+                    <div class="col-4" style="display:inline-grid; align-content:center; text-align:center;padding-left:2px;padding-right:2px">
+                        <span class="w-100 h-100 fw-bold zeon-dateTimePicker-month-label">@_displayMonth</span>
+                    </div>
+                    <div class="col-4 p-0">
+                        <button class="btn zeon-dateTimePicker-btn-next-month  w-100 h-100 p-0" type="button" style="font-size: inherit;" value="" @onclick="@(async()=> await NextMonth_Onclick())">
+                            <span class="p-0">@_datePicker.NextMonthText</span>
+                            <span class="p-0 zf zf-arrow-alt-right "></span>
+                        </button>
+                    </div>
+                    <div class="p-0" style="margin-top:2px;">
+                        <button type="button" class="w-100 btn zeon-dateTimePicker-btn-show-panel p-0" style="padding:2px;direction:ltr ;font-size: inherit;" @onclick="@(()=> OpenPanel_Onclick())">@SelectedDateTime</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body w-100 p-0">
+                <div class="container p-0 w-100  zeon-dateTimePicker-datePickerCard-body">
+                    <div class="row m-auto w-100 text-center ">
+                        @for (int i = 0; i < 7; i++)
+                        {
+                            var week = _datePicker.GetWeekChar(i);
+                            <div class="col m-1" style="padding:1px;">@week</div>
+                        }
+
+                    </div>
+                </div>
+
+                <table class="w-100 p-0" style="min-height: 170px;">
+                    @{
+                        var firstDayOfMonth = _datePicker.GetFirstDayOfMonth(PickerDateTime);
+                        var addDay = _datePicker.GetCountDayOfMonth(PickerDateTime);
+                        var lastDayOfMonth = firstDayOfMonth.AddDays(addDay);
+                        int day = 1;
+                    }
+                    @while (firstDayOfMonth < lastDayOfMonth)
+                    {
+                        var dayofWeek = DayOfWeek.Saturday;
+                        <tr>
+                            @for (int i = 0; i < 7 && firstDayOfMonth < lastDayOfMonth; i++)
+                            {
+                                <td>
+                                    @if (firstDayOfMonth.DayOfWeek == dayofWeek)
+                                    {
+                                        string date = @firstDayOfMonth.ToString(DATE_TIME_FORMAT);
+                                        string borderColor = "";
+                                        borderColor = firstDayOfMonth.Date == PickerDateTime.Date ? "#0081ff !important" : firstDayOfMonth.Date.Date == DateTime.Now.Date ? "red !important" : "lightgray !important";
+                                        <button type="button" class="btn zeon-dateTimePicker-btn-day" value="@date" @onclick="@(() => ChangeDateTimePicker_Onclick(date))" style="--btn-border-color:@borderColor;">
+                                            @_datePicker.GetDayDisplayItem(@day)
+                                        </button>
+                                        firstDayOfMonth = firstDayOfMonth.AddDays(1);
+                                        day++;
+                                    }
+                                </td>
+                                dayofWeek = (DayOfWeek)i;
+                            }
+                        </tr>
+                    }
+                </table>
+                <div class="card-footer w-100 p-1 zeon-dateTimePicker-datePickerCard-footer">
                     <div class="row m-auto w-100 text-center ">
                         <div class="col p-1 w-100">
-                            <ZButton CssClass="btn  zeon-dateTimePicker-btn-ok" Width="100%" CssIcon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(()=>ChangeDateInPanel_Onclick())"></ZButton>
+                            <ZButton CssClass="btn zeon-dateTimePicker-btn-ok" Width="100%" CssIcon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
+                        </div>
+                        <div class="col p-1 w-100">
+                            <ZButton CssClass="btn zeon-dateTimePicker-btn-today" Width="100%" CssIcon="zf-circle-arrow" Text="@_datePicker.TodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
                         </div>
                     </div>
                 </div>
             </div>
-        }
 
-        <div class="card-header w-100 p-1 zeon-dateTimePicker-datePickerCard-header">
-            <div class="row p-o m-auto">
-                <div class="col-4 p-0 ">
-                    <button type="button" class="btn zeon-dateTimePicker-btn-prev-month  w-100 h-100 p-0" style="font-size: inherit;" value="" @onclick="@(async()=> await PrevMonth_Onclick())">
-                        <span class="p-0 zf zf-arrow-alt-left"></span>
-                        <span class="p-0">@_datePicker.PrevMonthText</span>
-                    </button>
-                </div>
-                <div class="col-4" style="display:inline-grid; align-content:center; text-align:center;padding-left:2px;padding-right:2px">
-                    <span class="w-100 h-100 fw-bold zeon-dateTimePicker-month-label">@_displayMonth</span>
-                </div>
-                <div class="col-4 p-0">
-                    <button class="btn zeon-dateTimePicker-btn-next-month  w-100 h-100 p-0" type="button" style="font-size: inherit;" value="" @onclick="@(async()=> await NextMonth_Onclick())">
-                        <span class="p-0">@_datePicker.NextMonthText</span>
-                        <span class="p-0 zf zf-arrow-alt-right "></span>
-                    </button>
-                </div>
-                <div class="p-0" style="margin-top:2px;">
-                    <button type="button" class="w-100 btn zeon-dateTimePicker-btn-show-panel p-0" style="padding:2px;direction:ltr ;font-size: inherit;" @onclick="@(()=> OpenPanel_Onclick())">@SelectedDateTime</button>
-                </div>
-            </div>
         </div>
-        <div class="card-body w-100 p-0">
-            <div class="container p-0 w-100  zeon-dateTimePicker-datePickerCard-body">
-                <div class="row m-auto w-100 text-center ">
-                    @for (int i = 0; i < 7; i++)
-                    {
-                        var week = _datePicker.GetWeekChar(i);
-                        <div class="col m-1" style="padding:1px;">@week</div>
-                    }
-
-                </div>
-            </div>
-
-            <table class="w-100 p-0" style="min-height: 170px;">
-                @{
-                    var firstDayOfMonth = _datePicker.GetFirstDayOfMonth(PickerDateTime);
-                    var addDay = _datePicker.GetCountDayOfMonth(PickerDateTime);
-                    var lastDayOfMonth = firstDayOfMonth.AddDays(addDay);
-                    int day = 1;
-                }
-                @while (firstDayOfMonth < lastDayOfMonth)
-                {
-                    var dayofWeek = DayOfWeek.Saturday;
-                    <tr>
-                        @for (int i = 0; i < 7 && firstDayOfMonth < lastDayOfMonth; i++)
-                        {
-                            <td>
-                                @if (firstDayOfMonth.DayOfWeek == dayofWeek)
-                                {
-                                    string date = @firstDayOfMonth.ToString(DATE_TIME_FORMAT);
-                                    string borderColor = "";
-                                    borderColor = firstDayOfMonth.Date == PickerDateTime.Date ? "#0081ff !important" : firstDayOfMonth.Date.Date == DateTime.Now.Date ? "red !important" : "lightgray !important";
-                                    <button type="button" class="btn zeon-dateTimePicker-btn-day" value="@date" @onclick="@(() => ChangeDateTimePicker_Onclick(date))" style="--btn-border-color:@borderColor;">
-                                        @_datePicker.GetDayDisplayItem(@day)
-                                    </button>
-                                    firstDayOfMonth = firstDayOfMonth.AddDays(1);
-                                    day++;
-                                }
-                            </td>
-                            dayofWeek = (DayOfWeek)i;
-                        }
-                    </tr>
-                }
-            </table>
-            <div class="card-footer w-100 p-1 zeon-dateTimePicker-datePickerCard-footer">
-                <div class="row m-auto w-100 text-center ">
-                    <div class="col p-1 w-100">
-                        <ZButton CssClass="btn zeon-dateTimePicker-btn-ok" Width="100%" CssIcon="zf zf-check" Text="@_datePicker.OkText" Onclick="@(async()=> await Ok_Onclick())"></ZButton>
-                    </div>
-                    <div class="col p-1 w-100">
-                        <ZButton CssClass="btn zeon-dateTimePicker-btn-today" Width="100%" CssIcon="zf-circle-arrow" Text="@_datePicker.TodayText" Onclick="@(async()=> await SetToday_Onclick())"></ZButton>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-}
+    }
+</div>

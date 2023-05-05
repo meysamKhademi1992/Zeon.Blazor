@@ -28,11 +28,9 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         private const string TIME_TYPE_tt = "tt";
         private const char DATE_SPLITER = '-';
 
-        public JalaliDatePicker(int createNumberOfYears)
+        public JalaliDatePicker()
         {
-            CreateNumberOfYears = createNumberOfYears;
         }
-
 
         private string Hour24Label(int hour)
         {
@@ -164,7 +162,6 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         }
 
-        internal override int CreateNumberOfYears { get; set; }
         internal override string Direction { get => DIRECTION; }
         internal override string NextMonthText { get => NEXT_MONTH_TEXT; }
         internal override string PrevMonthText { get => PREV_MONTH_TEXT; }
@@ -334,9 +331,9 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return newDateTime;
         }
 
-        internal override int GetYearItem(int index)
+        internal override int GetYearItem(int createNumberOfYears, int index)
         {
-            return GetYear(DateTime.Now) - CreateNumberOfYears / 2 + index;
+            return GetYear(DateTime.Now) - createNumberOfYears / 2 + index;
         }
 
         internal override string GetYearDisplayItem(int year)
