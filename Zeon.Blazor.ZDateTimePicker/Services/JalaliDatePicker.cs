@@ -28,18 +28,20 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         private const string TIME_TYPE_tt = "tt";
         private const char DATE_SPLITER = '-';
 
+        private static readonly DateTime _firstJalaliDateTime = new(0622, 03, 22, 0, 0, 0);
+
         public JalaliDatePicker()
         {
         }
 
-        private string Hour24Label(int hour)
+        private static string Hour24Label(int hour)
         {
             string am = "ق.ظ";
             string pm = "ب.ظ";
             return hour <= 12 ? am : pm;
         }
 
-        private string Hour24To12(int hour)
+        private static string Hour24To12(int hour)
         {
             return hour > 12 ? (hour - 12).ToString().PadLeft(2, '0') : hour.ToString().PadLeft(2, '0');
         }
@@ -49,46 +51,46 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return (jalaliDateTime[0..4], jalaliDateTime[5..7], jalaliDateTime[8..10], jalaliDateTime[11..13], jalaliDateTime[14..16], jalaliDateTime[17..19], jalaliDateTime[20..22]);
         }
 
-        private string GregorianToJalali(DateTime value, char dateSpliter, DateType toType)
+        private static string GregorianToJalali(DateTime value, char dateSpliter, DateType toType)
         {
             string stringValue = "-";
             try
             {
-                if (value > new DateTime().AddYears(623))
+                value = value > _firstJalaliDateTime ? value : GetMinimumJalaliDate();
+
+                switch (toType)
                 {
-                    switch (toType)
-                    {
-                        case DateType.DateTime:
-                            {
-                                int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0, ss = 0;
-                                double fff = 0;
-                                PersianCalendar pc = new PersianCalendar();
-                                yyyy = pc.GetYear(value);
-                                MM = pc.GetMonth(value);
-                                dd = pc.GetDayOfMonth(value);
-                                HH = pc.GetHour(value);
-                                mm = pc.GetMinute(value);
-                                ss = pc.GetSecond(value);
-                                fff = pc.GetMilliseconds(value);
-                                stringValue = $"{yyyy}{dateSpliter}{MM.ToString().PadLeft(2, '0')}{dateSpliter}{dd.ToString().PadLeft(2, '0')} {HH.ToString().PadLeft(2, '0')}:{mm.ToString().PadLeft(2, '0')}:{ss.ToString().PadLeft(2, '0')}:{fff.ToString().PadLeft(3, '0')}".Trim();
-                                break;
-                            }
-                        case DateType.Date:
-                            {
-                                int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0;
+                    case DateType.DateTime:
+                        {
+                            int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0, ss = 0;
+                            double fff = 0;
+                            PersianCalendar pc = new PersianCalendar();
+                            yyyy = pc.GetYear(value);
+                            MM = pc.GetMonth(value);
+                            dd = pc.GetDayOfMonth(value);
+                            HH = pc.GetHour(value);
+                            mm = pc.GetMinute(value);
+                            ss = pc.GetSecond(value);
+                            fff = pc.GetMilliseconds(value);
+                            stringValue = $"{yyyy.ToString().PadLeft(4, '0')}{dateSpliter}{MM.ToString().PadLeft(2, '0')}{dateSpliter}{dd.ToString().PadLeft(2, '0')} {HH.ToString().PadLeft(2, '0')}:{mm.ToString().PadLeft(2, '0')}:{ss.ToString().PadLeft(2, '0')}:{fff.ToString().PadLeft(3, '0')}".Trim();
+                            break;
+                        }
+                    case DateType.Date:
+                        {
+                            int yyyy = 0, MM = 0, dd = 0, HH = 0, mm = 0;
 
-                                PersianCalendar pc = new PersianCalendar();
-                                yyyy = pc.GetYear(value);
-                                MM = pc.GetMonth(value);
-                                dd = pc.GetDayOfMonth(value);
-                                HH = pc.GetHour(value);
-                                mm = pc.GetMinute(value);
+                            PersianCalendar pc = new PersianCalendar();
+                            yyyy = pc.GetYear(value);
+                            MM = pc.GetMonth(value);
+                            dd = pc.GetDayOfMonth(value);
+                            HH = pc.GetHour(value);
+                            mm = pc.GetMinute(value);
 
-                                stringValue = $"{yyyy.ToString()}{dateSpliter}{MM.ToString().PadLeft(2, '0')}{dateSpliter}{dd.ToString().PadLeft(2, '0')}".Trim();
-                                break;
-                            }
-                    }
+                            stringValue = $"{yyyy.ToString()}{dateSpliter}{MM.ToString().PadLeft(2, '0')}{dateSpliter}{dd.ToString().PadLeft(2, '0')}".Trim();
+                            break;
+                        }
                 }
+
                 return stringValue;
             }
             catch (ArgumentOutOfRangeException)
@@ -98,7 +100,7 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         }
 
-        private DateTime JalaliToGregorian(string value, DateType toType, char dateSpliter, ref bool isValid)
+        private static DateTime JalaliToGregorian(string value, DateType toType, char dateSpliter, ref bool isValid)
         {
             var outDateTime = new DateTime();
             try
@@ -162,6 +164,11 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         }
 
+        private static DateTime GetMinimumJalaliDate()
+        {
+            return _firstJalaliDateTime;
+        }
+
         internal override string Direction { get => DIRECTION; }
         internal override string NextMonthText { get => NEXT_MONTH_TEXT; }
         internal override string PrevMonthText { get => PREV_MONTH_TEXT; }
@@ -200,8 +207,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override string GetMonthName(DateTime dateTime)
         {
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             PersianCalendar pc = new PersianCalendar();
             int jalaliMonth = pc.GetMonth(dateTime);
@@ -211,8 +218,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override DateTime GetPrevMonth(DateTime dateTime)
         {
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             PersianCalendar pc = new PersianCalendar();
             int yyyy = pc.GetMonth(dateTime) == 1 ? pc.GetYear(dateTime) - 1 : pc.GetYear(dateTime);
@@ -227,10 +234,11 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
             return prevMonth;
         }
 
+
         internal override DateTime GetNextMonth(DateTime dateTime)
         {
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             PersianCalendar pc = new PersianCalendar();
             int yyyy = pc.GetMonth(dateTime) == 12 ? pc.GetYear(dateTime) + 1 : pc.GetYear(dateTime);
@@ -248,8 +256,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         internal override DateTime ChangeMonth(DateTime dateTime, int month)
         {
             month = int.Parse(month.ToString());
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
             if (month > 12 || month < 1)
                 throw new ArgumentOutOfRangeException(nameof(month));
 
@@ -264,8 +272,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         {
             year = int.Parse(year.ToString());
 
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
             if (year > 9999 || year < 623)
                 throw new ArgumentOutOfRangeException(nameof(year));
 
@@ -278,8 +286,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override int GetCountDayOfMonth(DateTime dateTime)
         {
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             PersianCalendar pc = new PersianCalendar();
             int yyyy = pc.GetYear(dateTime);
@@ -292,8 +300,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override int GetYear(DateTime dateTime)
         {
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             PersianCalendar pc = new PersianCalendar();
             int jalaliYear = pc.GetYear(dateTime);
@@ -302,8 +310,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override int GetMonth(DateTime dateTime)
         {
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
             PersianCalendar pc = new PersianCalendar();
             int jalaliMonth = pc.GetMonth(dateTime);
             return jalaliMonth;
@@ -313,8 +321,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         {
             hour = int.Parse(hour.ToString());
 
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             var newDateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, hour, dateTime.Minute, dateTime.Second);
             return newDateTime;
@@ -324,8 +332,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
         {
             minute = int.Parse(minute.ToString());
 
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             var newDateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, minute, dateTime.Second);
             return newDateTime;
@@ -367,8 +375,8 @@ namespace Zeon.Blazor.ZDateTimePicker.Services
 
         internal override DateTime GetFirstDayOfMonth(DateTime dateTime)
         {
-            if (dateTime < new DateTime().AddYears(623))
-                throw new ArgumentOutOfRangeException(nameof(dateTime));
+            if (dateTime < _firstJalaliDateTime)
+                dateTime = GetMinimumJalaliDate();
 
             PersianCalendar pc = new PersianCalendar();
             int yyyy = pc.GetYear(dateTime);

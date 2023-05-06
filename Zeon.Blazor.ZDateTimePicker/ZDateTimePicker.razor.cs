@@ -22,7 +22,7 @@ public partial class ZDateTimePicker : ComponentBase
     private string _currentMinutePicker = string.Empty;
     private string _dateTimeDisplay = string.Empty;
     private string _displayMonth = string.Empty;
-    private string _format = "yyyy-MM-dd HH:mm";
+    private string _format = "yyyy-MM-dd";
 
     private DateTime CurrentDateTime { get; set; }
     private DateTime PickerDateTime { get; set; }
