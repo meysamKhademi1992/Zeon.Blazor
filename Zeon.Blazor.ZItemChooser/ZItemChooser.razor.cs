@@ -222,6 +222,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     {
         _displayValue = "";
     }
+
     public void SetDisplayValue(string value)
     {
         _displayValue = value;
