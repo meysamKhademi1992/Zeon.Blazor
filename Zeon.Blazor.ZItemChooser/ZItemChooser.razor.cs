@@ -1,24 +1,25 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Zeon.Blazor.ZItemChooser.Constants;
 
 namespace Zeon.Blazor.ZItemChooser;
 
 public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEquatable<KeyType>
 {
+    private readonly Dictionary<BehaviorModeAfterItemSelection, SelectedItemTypesDelegate> _setSelectedItemTypes;
+
     private bool _typingStarted = false;
     private bool _showItems = false;
     private bool _isWaiting = false;
     private int _requestCount = 0;
-    private string _displayValue = "";
-    private string _value = "";
-    private string _inputId = "";
-    private string _listId = "";
+    private string _displayValue = string.Empty;
+    private string _value = string.Empty;
+    private string _inputId = string.Empty;
+    private string _listId = string.Empty;
     private TimeSpan _span;
     private Dictionary<KeyType, string> _dataSource;
-    private readonly Dictionary<BehaviorModeAfterItemSelection, SelectedItemTypesDelegate> _setSelectedItemTypes;
-    private delegate Task SelectedItemTypesDelegate(int index);
 
-    public bool SearchByEnter { get => WaitingTimeTyping == 0; }
+    public bool SearchByEnter { get => WaitingTimeTyping <= 0; }
 
     /// <summary>
     /// Component Name 
@@ -26,17 +27,17 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     [Parameter, EditorRequired]
     public string Name { get; set; } = null!;
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public Func<string, Task<Dictionary<KeyType, string>>> FetchData { get; set; } = null!;
+
     /// <summary>
     /// Event Callback After Selected Item Or Changed
     /// </summary>
-    [Parameter]
+    [Parameter, EditorRequired]
     public EventCallback<KeyType> OnKeyChanged { get; set; }
 
     [Parameter]
     public string NotFoundRecordText { get; set; } = "رکوردی یافت نشد!";
-
 
     /// <summary>
     ///  Waiting Time To Receive Data After Typing Default = 600 ms
@@ -44,12 +45,14 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     [Parameter]
     public UInt16 WaitingTimeTyping { get; set; } = 600;
 
-
     [Parameter]
     public BehaviorModeAfterItemSelection BehaviorModeAfterItemSelection { get; set; } = BehaviorModeAfterItemSelection.Normal;
 
     [Inject]
     protected JSRuntime.ElementHelper ElementHelper { get; set; } = null!;
+
+
+    private delegate Task SelectedItemTypesDelegate(int index);
 
     public ZItemChooser()
     {
@@ -121,11 +124,6 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     {
         await OnKeyChanged.InvokeAsync(key);
     }
-    private void SetDisplayValue(string value)
-    {
-        _displayValue = value;
-    }
-
     private async Task ItemOnKeyPress(KeyboardEventArgs e, int index)
     {
         if (e.Key == "Enter")
@@ -148,6 +146,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
             _showItems = false;
 
     }
+
     private async Task InputOnKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
@@ -174,6 +173,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
 
         }
     }
+
     private async Task ItemOnDblClick(MouseEventArgs e, int index)
     {
         await SetSelectedIndex(index);
@@ -183,6 +183,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     {
         await _setSelectedItemTypes.Single(q => q.Key == BehaviorModeAfterItemSelection).Value.Invoke(index);
     }
+
     private async Task SetSelectedItemNormal(int index)
     {
         var key = default(KeyType);
@@ -197,6 +198,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         SetDisplayValue(value);
         _showItems = false;
     }
+
     private async Task SetSelectedItemEventable(int index)
     {
         var key = default(KeyType);
@@ -215,14 +217,14 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         await ElementHelper.FocusElementById(_inputId);
 
     }
+
     private void Clear()
     {
         _displayValue = "";
     }
-}
+    public void SetDisplayValue(string value)
+    {
+        _displayValue = value;
+    }
 
-public enum BehaviorModeAfterItemSelection
-{
-    Normal = 1,
-    Eventable = 2,
 }

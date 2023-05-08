@@ -279,6 +279,8 @@ public partial class ZDateTimePicker : ComponentBase
         _datePickerCardDisplay = "none";
     }
 
+    public void ChangeDatePickerType(DatePickerType datePickerType) => DatePickerType = datePickerType;
+
     public async Task Refresh()
     {
         var dateTimeFormat = await _datePicker.Convert(CurrentDateTime, Format);
