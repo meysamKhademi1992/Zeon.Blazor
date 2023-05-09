@@ -8,6 +8,10 @@
     position: relative;
 }
 
+.zeon-item-chooser-input {
+    padding: 3px;
+}
+
 .zeon-item-chooser-listItems {
     height: 200px;
     background-color: #fcfcfc;
@@ -55,6 +59,7 @@
     display: block;
     margin: auto;
     padding: 1px;
+    color: #333;
     background-color: lightpink;
 }
 

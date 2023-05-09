@@ -17,7 +17,7 @@ namespace Zeon.Blazor.JSRuntime
         }
         public async Task ScrollToElementById(string elementId)
         {
-            await _jsRuntime.InvokeVoidAsync("zeonScrollToElementById", elementId);
+            await _jsRuntime.InvokeVoidAsync("zeonScrollIntoViewById", elementId);
         }
 
         public async Task ScrollToElementById(string elementId, string itemId)

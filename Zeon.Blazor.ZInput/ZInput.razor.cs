@@ -99,4 +99,13 @@ public partial class ZInput<Type> : ComponentBase where Type : IEquatable<Type>
         _validation = await _input.Validate(Validate, value);
     }
 
+    public async void SetValue(string value)
+    {
+        OnInput = value;
+        Refresh();
+    }
+    public void Refresh()
+    {
+        this.StateHasChanged();
+    }
 }

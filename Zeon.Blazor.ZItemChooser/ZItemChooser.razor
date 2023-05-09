@@ -1,11 +1,10 @@
-﻿@using Zeon.Blazor.ZInputContainer
-@namespace Zeon.Blazor.ZItemChooser
+﻿@namespace Zeon.Blazor.ZItemChooser
 @typeparam KeyType
 
 <div class="zeon-item-chooser-content">
     <div class="row m-auto p-0">
         <div class="col m-auto p-0">
-            <input id="@_inputId" class="form-control container-fluid p-0" type="text" @onkeydown="(e)=> InputOnKeyDown(e)" @bind="_displayValue" @oninput="OnInput" />
+            <input id="@_inputId" class="form-control container-fluid zeon-item-chooser-input" type="text" @onkeydown="(e)=> InputOnKeyDown(e)" @bind="_displayValue" @oninput="OnInput" />
         </div>
     </div>
 
