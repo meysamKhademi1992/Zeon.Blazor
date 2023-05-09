@@ -11,12 +11,14 @@ namespace Zeon.Blazor.ZTreeView
         [Inject]
         protected JSRuntime.ElementHelper ElementHelper { get; set; } = null!;
 
+
         public ZTreeView()
         {
             DataSource = new List<TValue>();
             _data = new List<TreeViewModel>();
             _fieldsSetting = new Dictionary<string, string>();
         }
+
 
         [Parameter]
         public string Name { get; set; } = "TreeView1";
@@ -25,12 +27,14 @@ namespace Zeon.Blazor.ZTreeView
         public IEnumerable<TValue> DataSource { get; set; }
 
         [Parameter]
-        public bool AutoCheckedChildren { get; set; }
+        public bool AutoCheckChildren { get; set; } = true;
 
         [Parameter]
         public FieldsMapSettings? FieldsMapSettings { get; set; }
 
+
         private IEnumerable<TreeViewModel> _data;
+
         private IEnumerable<TreeViewModel> Data { get => MapData(); set => _data = value; }
 
         private IEnumerable<TreeViewModel> MapData()
@@ -53,7 +57,7 @@ namespace Zeon.Blazor.ZTreeView
 
         private string GetCheckBoxClassMode(IEnumerable<TreeViewModel> data, TreeViewModel item)
         {
-            if (AutoCheckedChildren)
+            if (AutoCheckChildren)
             {
                 return item.IsChecked && AllChildrenIsChecked(data, item) ? "zeon-tree-view-item-checked" : ChildrenHasCheckedItem(data, item) ? "zeon-tree-view-item-children-checked-any" : "zeon-tree-view-item-box";
             }
@@ -62,6 +66,7 @@ namespace Zeon.Blazor.ZTreeView
                 return item.IsChecked ? "zeon-tree-view-item-checked" : "zeon-tree-view-item-box";
             }
         }
+
         private string GetExpandedClassMode(IEnumerable<TreeViewModel> data, TreeViewModel item)
         {
             return Data.Where(q => q.ParentId == item.Id).Any() ? item.Expanded ? "zeon-tree-view-item-collapsible" : "zeon-tree-view-item-expandable" : "zeon-tree-view-item-noChildren";
@@ -113,41 +118,6 @@ namespace Zeon.Blazor.ZTreeView
             base.OnInitialized();
         }
 
-        public int[] GetCheckedItems()
-        {
-            return Data.Where(q => q.IsChecked).Select(q => q.Id).ToArray();
-        }
-
-        public int[] GetExpandedItems()
-        {
-            return Data.Where(q => q.Expanded).Select(q => q.Id).ToArray();
-        }
-
-        public void SetCheckedItems(int[] checkedIds)
-        {
-            Data.Where(q => !checkedIds.Contains(q.Id) && q.IsChecked == true).ToList().ForEach(q => q.IsChecked = false);
-            Data.Where(q => checkedIds.Contains(q.Id) && q.IsChecked == false).ToList().ForEach(q => q.IsChecked = true);
-        }
-
-        public void SetExpandedItems(int[] expandedIds)
-        {
-            Data.Where(q => !expandedIds.Contains(q.Id) && q.Expanded == true).ToList().ForEach(q => q.Expanded = false);
-            Data.Where(q => expandedIds.Contains(q.Id) && q.Expanded == false).ToList().ForEach(q => q.Expanded = true);
-        }
-
-        public string GetDataJson()
-        {
-            var idName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Id)).FirstOrDefault().Value ?? nameof(TreeViewModel.Id);
-            var isCheckedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.IsChecked)).FirstOrDefault().Value ?? nameof(TreeViewModel.IsChecked);
-            var expandedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Expanded)).FirstOrDefault().Value ?? nameof(TreeViewModel.Expanded);
-            foreach (var item in Data)
-            {
-                GenericListChangeValue<TValue>(DataSource, idName, item.Id, isCheckedName, item.IsChecked);
-                GenericListChangeValue<TValue>(DataSource, idName, item.Id, expandedName, item.Expanded);
-            }
-            return System.Text.Json.JsonSerializer.Serialize(DataSource);
-        }
-
         private static void GenericListChangeValue<T>(IEnumerable<T> dataSource, string idName, object idValue, string propertyName, object value)
         {
             PropertyInfo idProp = typeof(T).GetProperty(idName)!;
@@ -169,7 +139,7 @@ namespace Zeon.Blazor.ZTreeView
             var isChecked = !(Data.Where(q => q.Id == id).First().IsChecked);
             Data.Where(q => q.Id == id).First().IsChecked = isChecked;
 
-            if (AutoCheckedChildren)
+            if (AutoCheckChildren)
             {
                 var childData = Data.Where(q => q.ParentId == id).ToList();
                 CheckedChildren(childData, Data, isChecked);
@@ -221,6 +191,42 @@ namespace Zeon.Blazor.ZTreeView
                 CheckedChildren(dataSource.Where(q => q.ParentId == item.Id), dataSource, isChecked);
             }
         }
+
+        public int[] GetCheckedItems()
+        {
+            return Data.Where(q => q.IsChecked).Select(q => q.Id).ToArray();
+        }
+
+        public int[] GetExpandedItems()
+        {
+            return Data.Where(q => q.Expanded).Select(q => q.Id).ToArray();
+        }
+
+        public void SetCheckedItems(int[] checkedIds)
+        {
+            Data.Where(q => !checkedIds.Contains(q.Id) && q.IsChecked == true).ToList().ForEach(q => q.IsChecked = false);
+            Data.Where(q => checkedIds.Contains(q.Id) && q.IsChecked == false).ToList().ForEach(q => q.IsChecked = true);
+        }
+
+        public void SetExpandedItems(int[] expandedIds)
+        {
+            Data.Where(q => !expandedIds.Contains(q.Id) && q.Expanded == true).ToList().ForEach(q => q.Expanded = false);
+            Data.Where(q => expandedIds.Contains(q.Id) && q.Expanded == false).ToList().ForEach(q => q.Expanded = true);
+        }
+
+        public string GetData()
+        {
+            var idName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Id)).FirstOrDefault().Value ?? nameof(TreeViewModel.Id);
+            var isCheckedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.IsChecked)).FirstOrDefault().Value ?? nameof(TreeViewModel.IsChecked);
+            var expandedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Expanded)).FirstOrDefault().Value ?? nameof(TreeViewModel.Expanded);
+            foreach (var item in Data)
+            {
+                GenericListChangeValue<TValue>(DataSource, idName, item.Id, isCheckedName, item.IsChecked);
+                GenericListChangeValue<TValue>(DataSource, idName, item.Id, expandedName, item.Expanded);
+            }
+            return System.Text.Json.JsonSerializer.Serialize(DataSource);
+        }
+
     }
 
 }

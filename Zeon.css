@@ -395,6 +395,7 @@
     border: 1px;
     border-radius: 6px;
     padding: 4px;
+    text-align: start !important;
 }
 
     .zeon-tree-view-content > ul, li {
@@ -408,6 +409,7 @@
     width: fit-content;
     margin-inline: 1px;
     padding-inline: 1px;
+    color: black;
 }
 
 .zeon-tree-view-item-box::before {
