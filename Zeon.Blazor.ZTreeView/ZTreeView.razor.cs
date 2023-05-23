@@ -12,10 +12,10 @@ namespace Zeon.Blazor.ZTreeView
         [Inject]
         protected JSRuntime.ElementHelper ElementHelper { get; set; } = null!;
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public string Name { get; set; } = "TreeView1";
 
-        [Parameter]
+        [Parameter, EditorRequired]
         public IEnumerable<TValue> DataSource { get; set; }
 
         [Parameter]
@@ -23,6 +23,12 @@ namespace Zeon.Blazor.ZTreeView
 
         [Parameter]
         public FieldsMapSettings? FieldsMapSettings { get; set; }
+
+        [Parameter]
+        public string BackgroundColor { get; set; } = "whiteSmoke";
+
+        [Parameter]
+        public bool ShowCheckedBox { get; set; } = true;
 
         public ZTreeView()
         {

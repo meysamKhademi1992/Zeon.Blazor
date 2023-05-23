@@ -391,7 +391,7 @@
 }
 
 .zeon-tree-view-content {
-    background-color: whitesmoke;
+    background-color: var(--background-color);
     border: 1px;
     border-radius: 6px;
     padding: 4px;

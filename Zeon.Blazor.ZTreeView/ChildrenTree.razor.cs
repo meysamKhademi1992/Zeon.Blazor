@@ -24,10 +24,13 @@ namespace Zeon.Blazor.ZTreeView
         public EventCallback<int> ExpandedOnClick { get; set; }
 
         [Parameter]
-        public IEnumerable<TreeViewModel> DataSource { get; set; }
+        public IEnumerable<TreeViewModel> DataSource { get; set; } = null!;
 
         [Parameter]
-        public IEnumerable<TreeViewModel> Items { get; set; }
+        public IEnumerable<TreeViewModel> Items { get; set; } = null!;
+
+        [Parameter]
+        public bool ShowCheckedBox { get; set; } = true;
 
     }
 }

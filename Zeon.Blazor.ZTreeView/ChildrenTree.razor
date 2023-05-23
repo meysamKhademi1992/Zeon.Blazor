@@ -7,12 +7,15 @@
         <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
             <div class="zeon-tree-view-item-row">
                 <span @onclick:stopPropagation=true @onclick="()=> ExpandedOnClick.InvokeAsync(item.Id)" class="@expandedClass"></span>
-                <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" class="@checkBoxClass"></span>
+                @if (ShowCheckedBox)
+                {
+                    <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" class="@checkBoxClass"></span>
+                }
                 <span class="zeon-tree-view-item-text">@item.Text</span>
             </div>
             @if (item.Expanded)
             {
-                <ChildrenTree GetItemId="GetItemId" Filter="Filter" GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" DataSource="DataSource" Items="DataSource.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick"></ChildrenTree>
+                <ChildrenTree GetItemId="GetItemId" Filter="Filter" GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" DataSource="DataSource" Items="DataSource.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick" ShowCheckedBox="ShowCheckedBox"></ChildrenTree>
             }
         </li>
     </ul>
