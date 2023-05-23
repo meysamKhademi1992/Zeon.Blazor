@@ -69,6 +69,18 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         base.OnInitialized();
     }
 
+
+    public void SetDisplayValue(string value)
+    {
+        _displayValue = value;
+        Refresh();
+    }
+
+    public void Refresh()
+    {
+        this.StateHasChanged();
+    }
+
     private async Task OnInput(ChangeEventArgs e)
     {
         string value = e.Value?.ToString()?.Trim() ?? "";
@@ -124,6 +136,7 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
     {
         await OnKeyChanged.InvokeAsync(key);
     }
+
     private async Task ItemOnKeyPress(KeyboardEventArgs e, int index)
     {
         if (e.Key == "Enter")
@@ -223,15 +236,5 @@ public partial class ZItemChooser<KeyType> : ComponentBase where KeyType : IEqua
         _displayValue = "";
     }
 
-    public void SetDisplayValue(string value)
-    {
-        _displayValue = value;
-        Refresh();
-    }
-
-    public void Refresh()
-    {
-        this.StateHasChanged();
-    }
 
 }

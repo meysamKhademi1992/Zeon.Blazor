@@ -2,18 +2,20 @@
 @typeparam TValue
 
 <div class="zeon-tree-view-content">
-    @foreach (var item in Data.Where(q => q.ParentId == null).ToList())
+    @foreach (var item in Data.Where(q => q.ParentId is null).Where(_filter).ToList())
     {
         string checkBoxClass = GetCheckBoxClassMode(Data, item);
         string expandedClass = GetExpandedClassMode(Data, item);
         <ul>
             <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
-                <span @onclick="()=> ExpandedOnClick(item.Id)" class="@expandedClass"></span>
-                <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick(item.Id)" class="@checkBoxClass"></span>
-                <span>@item.Text</span>
+                <div class="zeon-tree-view-item-row">
+                    <span @onclick="()=> ExpandedOnClick(item.Id)" class="@expandedClass"></span>
+                    <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick(item.Id)" class="@checkBoxClass"></span>
+                    <span class="zeon-tree-view-item-text">@item.Text</span>
+                </div>
                 @if (item.Expanded)
                 {
-                    <ChildrenTree GetItemId="GetItemId" GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" DataSource="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick"></ChildrenTree>
+                    <ChildrenTree GetItemId="GetItemId" Filter="_filter" GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" DataSource="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick"></ChildrenTree>
                 }
             </li>
         </ul>

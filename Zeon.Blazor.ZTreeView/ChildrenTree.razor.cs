@@ -6,6 +6,9 @@ namespace Zeon.Blazor.ZTreeView
     public partial class ChildrenTree : ComponentBase
     {
         [Parameter]
+        public Func<TreeViewModel, bool> Filter { get; set; } = null!;
+
+        [Parameter]
         public Func<int, string> GetItemId { get; set; } = null!;
 
         [Parameter]

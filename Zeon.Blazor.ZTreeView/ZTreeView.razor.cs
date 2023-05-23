@@ -7,18 +7,10 @@ namespace Zeon.Blazor.ZTreeView
     {
         private readonly Dictionary<string, string> _fieldsSetting;
         private bool _dataIsMapped = false;
+        private Func<TreeViewModel, bool> _filter = q => true;
 
         [Inject]
         protected JSRuntime.ElementHelper ElementHelper { get; set; } = null!;
-
-
-        public ZTreeView()
-        {
-            DataSource = new List<TValue>();
-            _data = new List<TreeViewModel>();
-            _fieldsSetting = new Dictionary<string, string>();
-        }
-
 
         [Parameter]
         public string Name { get; set; } = "TreeView1";
@@ -32,9 +24,103 @@ namespace Zeon.Blazor.ZTreeView
         [Parameter]
         public FieldsMapSettings? FieldsMapSettings { get; set; }
 
+        public ZTreeView()
+        {
+            DataSource = new List<TValue>();
+            _data = new List<TreeViewModel>();
+            _fieldsSetting = new Dictionary<string, string>();
+        }
+
+        protected override void OnInitialized()
+        {
+            if (FieldsMapSettings is not null)
+            {
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.Id))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.Id), FieldsMapSettings.Id);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.ParentId))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.ParentId), FieldsMapSettings.ParentId);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.Text))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.Text), FieldsMapSettings.Text);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.IsChecked))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.IsChecked), FieldsMapSettings.IsChecked);
+                if (false == string.IsNullOrEmpty(FieldsMapSettings.Expanded))
+                    _fieldsSetting.Add(nameof(FieldsMapSettings.Expanded), FieldsMapSettings.Expanded);
+
+            }
+
+            base.OnInitialized();
+        }
+
+        public int[] GetCheckedItems()
+        {
+            return Data.Where(q => q.IsChecked).Select(q => q.Id).ToArray();
+        }
+
+        public int[] GetExpandedItems()
+        {
+            return Data.Where(q => q.Expanded).Select(q => q.Id).ToArray();
+        }
+
+        public void SetCheckedItems(int[] checkedIds)
+        {
+            Data.Where(q => !checkedIds.Contains(q.Id) && q.IsChecked == true).ToList().ForEach(q => q.IsChecked = false);
+            Data.Where(q => checkedIds.Contains(q.Id) && q.IsChecked == false).ToList().ForEach(q => q.IsChecked = true);
+        }
+
+        public void SetExpandedItems(int[] expandedIds)
+        {
+            Data.Where(q => !expandedIds.Contains(q.Id) && q.Expanded == true).ToList().ForEach(q => q.Expanded = false);
+            Data.Where(q => expandedIds.Contains(q.Id) && q.Expanded == false).ToList().ForEach(q => q.Expanded = true);
+        }
+
+        public string GetData()
+        {
+            var idName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Id)).FirstOrDefault().Value ?? nameof(TreeViewModel.Id);
+            var isCheckedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.IsChecked)).FirstOrDefault().Value ?? nameof(TreeViewModel.IsChecked);
+            var expandedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Expanded)).FirstOrDefault().Value ?? nameof(TreeViewModel.Expanded);
+            foreach (var item in Data)
+            {
+                GenericListChangeValue<TValue>(DataSource, idName, item.Id, isCheckedName, item.IsChecked);
+                GenericListChangeValue<TValue>(DataSource, idName, item.Id, expandedName, item.Expanded);
+            }
+            return System.Text.Json.JsonSerializer.Serialize(DataSource);
+        }
+
+        public void SetFilter(Func<TValue, bool>? value)
+        {
+            if (value is not null)
+            {
+                var idName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Id)).FirstOrDefault().Value ?? nameof(TreeViewModel.Id);
+                PropertyInfo idProp = typeof(TValue).GetProperty(idName)!;
+
+                List<int> filterIds = DataSource.Where(value).Select(q => int.Parse(idProp.GetValue(q)!.ToString()!)).ToList();
+                List<int> parentIds = new();
+                List<int> childIds = new();
+
+                for (int i = 0; i < filterIds.Count; i++)
+                {
+                    GetParentIds(ref parentIds, Data, Data.First(q => q.Id == filterIds[i]).ParentId);
+                    GetChildIds(ref childIds, Data, Data.Where(q => q.ParentId == filterIds[i]).Select(q => q.Id).ToList());
+                }
+
+                List<int> filterIdsWithChildAndParent = new();
+                filterIdsWithChildAndParent.AddRange(filterIds);
+                filterIdsWithChildAndParent.AddRange(parentIds);
+                filterIdsWithChildAndParent.AddRange(childIds);
+
+                var distinctFilterIds = filterIdsWithChildAndParent.Distinct().ToList();
+
+                _filter = q => distinctFilterIds.Contains(q.Id);
+                Refresh();
+            }
+            else
+            {
+                _filter = q => true;
+            }
+        }
+
 
         private IEnumerable<TreeViewModel> _data;
-
         private IEnumerable<TreeViewModel> Data { get => MapData(); set => _data = value; }
 
         private IEnumerable<TreeViewModel> MapData()
@@ -98,26 +184,6 @@ namespace Zeon.Blazor.ZTreeView
             return true;
         }
 
-        protected override void OnInitialized()
-        {
-            if (FieldsMapSettings is not null)
-            {
-                if (false == string.IsNullOrEmpty(FieldsMapSettings.Id))
-                    _fieldsSetting.Add(nameof(FieldsMapSettings.Id), FieldsMapSettings.Id);
-                if (false == string.IsNullOrEmpty(FieldsMapSettings.ParentId))
-                    _fieldsSetting.Add(nameof(FieldsMapSettings.ParentId), FieldsMapSettings.ParentId);
-                if (false == string.IsNullOrEmpty(FieldsMapSettings.Text))
-                    _fieldsSetting.Add(nameof(FieldsMapSettings.Text), FieldsMapSettings.Text);
-                if (false == string.IsNullOrEmpty(FieldsMapSettings.IsChecked))
-                    _fieldsSetting.Add(nameof(FieldsMapSettings.IsChecked), FieldsMapSettings.IsChecked);
-                if (false == string.IsNullOrEmpty(FieldsMapSettings.Expanded))
-                    _fieldsSetting.Add(nameof(FieldsMapSettings.Expanded), FieldsMapSettings.Expanded);
-
-            }
-
-            base.OnInitialized();
-        }
-
         private static void GenericListChangeValue<T>(IEnumerable<T> dataSource, string idName, object idValue, string propertyName, object value)
         {
             PropertyInfo idProp = typeof(T).GetProperty(idName)!;
@@ -174,6 +240,28 @@ namespace Zeon.Blazor.ZTreeView
             }
         }
 
+        private void GetParentIds(ref List<int> ids, IEnumerable<TreeViewModel> data, int? parentId)
+        {
+            if (parentId.HasValue)
+            {
+                ids.Add(parentId.Value);
+                var item = data.Where(q => q.Id == parentId).First();
+                GetParentIds(ref ids, data, item.ParentId);
+            }
+        }
+
+        private void GetChildIds(ref List<int> ids, IEnumerable<TreeViewModel> data, List<int> childIds)
+        {
+            if (childIds.Any())
+            {
+                ids.AddRange(childIds);
+                for (int i = 0; i < childIds.Count; i++)
+                {
+                    GetChildIds(ref ids, data, Data.Where(q => q.ParentId == childIds[i]).Select(q => q.Id).ToList());
+                }
+            }
+        }
+
         private void ExpandedOnClick(int id)
         {
             var expanded = !(Data.Where(q => q.Id == id).First().Expanded);
@@ -192,41 +280,10 @@ namespace Zeon.Blazor.ZTreeView
             }
         }
 
-        public int[] GetCheckedItems()
+        private void Refresh()
         {
-            return Data.Where(q => q.IsChecked).Select(q => q.Id).ToArray();
+            StateHasChanged();
         }
-
-        public int[] GetExpandedItems()
-        {
-            return Data.Where(q => q.Expanded).Select(q => q.Id).ToArray();
-        }
-
-        public void SetCheckedItems(int[] checkedIds)
-        {
-            Data.Where(q => !checkedIds.Contains(q.Id) && q.IsChecked == true).ToList().ForEach(q => q.IsChecked = false);
-            Data.Where(q => checkedIds.Contains(q.Id) && q.IsChecked == false).ToList().ForEach(q => q.IsChecked = true);
-        }
-
-        public void SetExpandedItems(int[] expandedIds)
-        {
-            Data.Where(q => !expandedIds.Contains(q.Id) && q.Expanded == true).ToList().ForEach(q => q.Expanded = false);
-            Data.Where(q => expandedIds.Contains(q.Id) && q.Expanded == false).ToList().ForEach(q => q.Expanded = true);
-        }
-
-        public string GetData()
-        {
-            var idName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Id)).FirstOrDefault().Value ?? nameof(TreeViewModel.Id);
-            var isCheckedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.IsChecked)).FirstOrDefault().Value ?? nameof(TreeViewModel.IsChecked);
-            var expandedName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Expanded)).FirstOrDefault().Value ?? nameof(TreeViewModel.Expanded);
-            foreach (var item in Data)
-            {
-                GenericListChangeValue<TValue>(DataSource, idName, item.Id, isCheckedName, item.IsChecked);
-                GenericListChangeValue<TValue>(DataSource, idName, item.Id, expandedName, item.Expanded);
-            }
-            return System.Text.Json.JsonSerializer.Serialize(DataSource);
-        }
-
     }
 
 }

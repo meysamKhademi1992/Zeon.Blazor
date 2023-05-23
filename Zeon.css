@@ -396,6 +396,7 @@
     border-radius: 6px;
     padding: 4px;
     text-align: start !important;
+    width: 100%;
 }
 
     .zeon-tree-view-content > ul, li {
@@ -406,10 +407,24 @@
 
 .zeon-tree-view-item {
     cursor: default;
-    width: fit-content;
+    width: 100%;
     margin-inline: 1px;
     padding-inline: 1px;
     color: black;
+}
+
+.zeon-tree-view-item-row {
+    display: inline-flex;
+    width: 100%;
+}
+
+.zeon-tree-view-item-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    padding-inline: 5px;
 }
 
 .zeon-tree-view-item-box::before {
@@ -424,7 +439,7 @@
     vertical-align: middle;
     border: 1px solid black;
     text-align: center;
-    font-size: 16px;
+    font-size: 12px;
     align-content: center;
 }
 
@@ -440,7 +455,7 @@
     vertical-align: middle;
     border: 1px solid #0060b5;
     text-align: center;
-    font-size: 16px;
+    font-size: 12px;
     align-content: center;
 }
 
@@ -461,29 +476,33 @@
 }
 
 .zeon-tree-view-item-expandable:before {
-    content: "\276f";
+    content: "\271A";
     color: dimgray;
-    display: inline-block;
-    font-size: 16px;
+    display: inline-flex;
+    width: 14px;
+    justify-content: center;
     font-weight: bold;
     margin-inline: 5px;
     cursor: pointer;
+    transition-duration: 0.5s;
+    transform: rotate(360deg);
 }
 
 .zeon-tree-view-item-collapsible:before {
-    content: "\276f";
-    display: inline-block;
+    content: "\2500";
+    display: inline-flex;
+    width: 14px;
+    justify-content: center;
     color: dimgray;
     font-size: 16px;
     font-weight: bold;
     margin-inline: 5px;
     cursor: pointer;
-    transform: rotate(-90deg);
     transition-duration: 0.5s;
 }
 
 .zeon-tree-view-item-noChildren:before {
-    content: "\276f";
+    content: "\271A";
     display: inline-block;
     color: transparent;
     font-size: 16px;
