@@ -414,8 +414,39 @@
 }
 
 .zeon-tree-view-item-row {
+    position: relative !important;
     display: inline-flex;
     width: 100%;
+    padding: 2px;
+    align-items: center;
+}
+
+    .zeon-tree-view-item-row:hover {
+        background-color: lightblue;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+.zeon-tree-view-item-selected {
+    background-color: dodgerblue !important;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+    .zeon-tree-view-item-selected:hover .zeon-tree-view-item-actions {
+        display: inline-flex;
+    }
+
+.zeon-tree-view-item-actions {
+    display: none;
+    background-color: transparent;
+    position: absolute !important;
+    width: 100%;
+    height: fit-content;
+    margin: auto;
+    padding-inline: 5px;
+    float: inherit;
+    justify-content: flex-end;
 }
 
 .zeon-tree-view-item-text {

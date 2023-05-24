@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
 
 namespace Zeon.Blazor.ZTreeView
@@ -7,6 +8,7 @@ namespace Zeon.Blazor.ZTreeView
     {
         private readonly Dictionary<string, string> _fieldsSetting;
         private bool _dataIsMapped = false;
+        private int _selectedId = 0;
         private Func<TreeViewModel, bool> _filter = q => true;
 
         [Inject]
@@ -164,6 +166,11 @@ namespace Zeon.Blazor.ZTreeView
             return Data.Where(q => q.ParentId == item.Id).Any() ? item.Expanded ? "zeon-tree-view-item-collapsible" : "zeon-tree-view-item-expandable" : "zeon-tree-view-item-noChildren";
         }
 
+        private string GetSelectedClassMode(int id)
+        {
+            return id == _selectedId ? "zeon-tree-view-item-selected" : "";
+        }
+
         private bool ChildrenHasCheckedItem(IEnumerable<TreeViewModel> data, TreeViewModel item)
         {
             foreach (var childItem in data.Where(q => q.ParentId == item.Id).ToList())
@@ -223,6 +230,8 @@ namespace Zeon.Blazor.ZTreeView
                     UnCheckedParent(Data, parentId, isChecked);
             }
         }
+
+        private void SelectedOnClick(int id) => _selectedId = id;
 
         private void UnCheckedParent(IEnumerable<TreeViewModel> data, int? parentId, bool isChecked)
         {
@@ -284,6 +293,11 @@ namespace Zeon.Blazor.ZTreeView
 
                 CheckedChildren(dataSource.Where(q => q.ParentId == item.Id), dataSource, isChecked);
             }
+        }
+
+        private void OndropUl(DragEventArgs e)
+        {
+
         }
 
         private void Refresh()

@@ -3,19 +3,33 @@
 {
     string checkBoxClass = GetCheckBoxClassMode(DataSource, item);
     string expandedClass = GetExpandedClassMode(DataSource, item);
+    string selectedClass = GetSelectedClassMode(item.Id);
     <ul>
         <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
-            <div class="zeon-tree-view-item-row">
+            <div draggable="true" class="zeon-tree-view-item-row @selectedClass" @onclick:stopPropagation=true @onclick="()=> SelectedOnClick.InvokeAsync(item.Id)">
                 <span @onclick:stopPropagation=true @onclick="()=> ExpandedOnClick.InvokeAsync(item.Id)" class="@expandedClass"></span>
                 @if (ShowCheckedBox)
                 {
                     <span @onclick:stopPropagation=true @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" class="@checkBoxClass"></span>
                 }
                 <span class="zeon-tree-view-item-text">@item.Text</span>
+                @if (@*ShowActionButtons &&*@ selectedClass.Any())
+                {
+                    <div class="zeon-tree-view-item-actions">
+                        <span class="zeon-tree-view-item-actions-"></span>
+                        <span class="zf zf-question"></span>
+                        <span class="zf zf-check"></span>
+                    </div>
+                }
             </div>
             @if (item.Expanded)
             {
-                <ChildrenTree GetItemId="GetItemId" Filter="Filter" GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" DataSource="DataSource" Items="DataSource.Where(q=> q.ParentId == item.Id).ToList()" CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick" ShowCheckedBox="ShowCheckedBox"></ChildrenTree>
+                <ChildrenTree GetItemId="GetItemId" Filter="Filter"
+                      GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" GetSelectedClassMode="GetSelectedClassMode"
+                      DataSource="DataSource" Items="DataSource.Where(q=> q.ParentId == item.Id).ToList()"
+                      CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick" SelectedOnClick="SelectedOnClick"
+                      ShowCheckedBox="ShowCheckedBox">
+                </ChildrenTree>
             }
         </li>
     </ul>

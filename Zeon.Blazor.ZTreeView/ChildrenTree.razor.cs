@@ -18,10 +18,16 @@ namespace Zeon.Blazor.ZTreeView
         public Func<IEnumerable<TreeViewModel>, TreeViewModel, string> GetExpandedClassMode { get; set; } = null!;
 
         [Parameter]
+        public Func<int, string> GetSelectedClassMode { get; set; } = null!;
+
+        [Parameter]
         public EventCallback<int> CheckedOnClick { get; set; }
 
         [Parameter]
         public EventCallback<int> ExpandedOnClick { get; set; }
+
+        [Parameter]
+        public EventCallback<int> SelectedOnClick { get; set; }
 
         [Parameter]
         public IEnumerable<TreeViewModel> DataSource { get; set; } = null!;
