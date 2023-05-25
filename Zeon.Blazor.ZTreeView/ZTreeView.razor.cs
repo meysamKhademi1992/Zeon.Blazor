@@ -12,6 +12,7 @@ namespace Zeon.Blazor.ZTreeView
         private int _selectedId = 0;
         private int _dragEnteredToTopItemId = 0;
         private int _dragEnteredToBottomItemId = 0;
+        private TreeViewModel? _dragedItem = null;
         private Func<TreeViewModel, bool> _filter = q => true;
 
         [Inject]
@@ -309,11 +310,15 @@ namespace Zeon.Blazor.ZTreeView
 
         private void OnDrop(DragEventArgs e, TreeViewModel item)
         {
-
+            if (_dragedItem is not null)
+            {
+                _dragedItem.ParentId = item.ParentId;
+                _dragedItem = null;
+            }
         }
         private void OnDrag(DragEventArgs e, TreeViewModel item)
         {
-
+            _dragedItem = item;
         }
         private void HandleOnDragEnter((DragEventArgs e, DragToPosation posation, int itemId) parameters)
         {

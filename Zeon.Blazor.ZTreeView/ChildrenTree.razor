@@ -3,42 +3,45 @@
 
 <ul>
 
-    @foreach (var item in Items.Where(Filter))
-    {
-        string checkBoxClass = GetCheckBoxClassMode(Data, item);
-        string expandedClass = GetExpandedClassMode(Data, item);
-        string selectedClass = GetSelectedClassMode(item.Id);
-        string dragOnEnterTopClass = GetDragOnEnterTopClass(item.Id);
-        string dragOnEnterBottomClass = GetDragOnEnterBottomClass(item.Id);
+    @{
+        var dataFiltered = Items.Where(Filter).ToArray();
+        @for (int index = 0; index < dataFiltered.Length; index++)
+        {
+            var item = dataFiltered[index];
+            string checkBoxClass = GetCheckBoxClassMode(Data, item);
+            string expandedClass = GetExpandedClassMode(Data, item);
+            string selectedClass = GetSelectedClassMode(item.Id);
+            string dragOnEnterTopClass = GetDragOnEnterTopClass(item.Id);
+            string dragOnEnterBottomClass = GetDragOnEnterBottomClass(item.Id);
 
-        <div class="zeon-tree-view-item-drop @dragOnEnterTopClass"
-         @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosation.Top, item.Id))"
-         @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync()"
-         @ondrop="(e)=> OnDrop(e,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
-        </div>
-
-        <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
-            <div class="zeon-tree-view-item-row @selectedClass"
-             @onclick:stopPropagation=true @onclick="()=> SelectedOnClick.InvokeAsync(item.Id)"
-             draggable="true" @ondragstart="(e)=> OnDrag(e,item)" @ondragstart:stopPropagation=true>
-                <span class="@expandedClass" @onclick="()=> ExpandedOnClick.InvokeAsync(item.Id)" @onclick:stopPropagation=true></span>
-                @if (ShowCheckedBox)
-                {
-                    <span class="@checkBoxClass" @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" @onclick:stopPropagation=true></span>
-                }
-                <span class="zeon-tree-view-item-text">@item.Text</span>
-                @if (@*ShowActionButtons &&*@ selectedClass.Any())
-                {
-                    <div class="zeon-tree-view-item-actions">
-                        <span class="zeon-tree-view-item-actions-"></span>
-                        <span class="zf zf-question"></span>
-                        <span class="zf zf-check"></span>
-                    </div>
-                }
+            <div class="zeon-tree-view-item-drop @dragOnEnterTopClass"
+             @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosation.Top, item.Id))"
+             @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync()"
+             @ondrop="(e)=> OnDrop(e,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
             </div>
-            @if (item.Expanded && Data.Where(q => q.ParentId == item.Id).Any())
-            {
-                <ChildrenTree GetItemId="GetItemId" Filter="Filter"
+
+            <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
+                <div class="zeon-tree-view-item-row @selectedClass"
+                 @onclick:stopPropagation=true @onclick="()=> SelectedOnClick.InvokeAsync(item.Id)"
+             draggable="true" @ondragstart="(e)=> OnDrag(e,item)" @ondragstart:stopPropagation=true>
+                    <span class="@expandedClass" @onclick="()=> ExpandedOnClick.InvokeAsync(item.Id)" @onclick:stopPropagation=true></span>
+                    @if (ShowCheckedBox)
+                    {
+                        <span class="@checkBoxClass" @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" @onclick:stopPropagation=true></span>
+                    }
+                    <span class="zeon-tree-view-item-text">@item.Text</span>
+                    @if (@*ShowActionButtons &&*@ selectedClass.Any())
+                    {
+                        <div class="zeon-tree-view-item-actions">
+                            <span class="zeon-tree-view-item-actions-"></span>
+                            <span class="zf zf-question"></span>
+                            <span class="zf zf-check"></span>
+                        </div>
+                    }
+                </div>
+                @if (item.Expanded && Data.Where(q => q.ParentId == item.Id).Any())
+                {
+                    <ChildrenTree GetItemId="GetItemId" Filter="Filter"
                       GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" GetSelectedClassMode="GetSelectedClassMode"
                       Data="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()"
                       CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick" SelectedOnClick="SelectedOnClick"
@@ -47,15 +50,17 @@
                       GetDragOnEnterTopClass="GetDragOnEnterTopClass"
                       GetDragOnEnterBottomClass="GetDragOnEnterBottomClass"
                       OnDrop="OnDrop" OnDrag="OnDrag">
-                </ChildrenTree>
+                    </ChildrenTree>
+                }
+            </li>
+            @if (index == dataFiltered.Length - 1)
+            {
+                <div class="zeon-tree-view-item-drop @dragOnEnterBottomClass"
+             @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosation.Bottom,item.Id))"
+             @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync()"
+             @ondrop="(e)=> OnDrop(e,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
+                </div>
             }
-        </li>
-
-        <div class="zeon-tree-view-item-drop @dragOnEnterBottomClass"
-         @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosation.Bottom,item.Id))"
-         @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync()"
-         @ondrop="(e)=> OnDrop(e,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
-        </div>
+        }
     }
-
 </ul>
