@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
+using Zeon.Blazor.ZTreeView.Constants;
 
 namespace Zeon.Blazor.ZTreeView
 {
@@ -9,6 +10,8 @@ namespace Zeon.Blazor.ZTreeView
         private readonly Dictionary<string, string> _fieldsSetting;
         private bool _dataIsMapped = false;
         private int _selectedId = 0;
+        private int _dragEnteredToTopItemId = 0;
+        private int _dragEnteredToBottomItemId = 0;
         private Func<TreeViewModel, bool> _filter = q => true;
 
         [Inject]
@@ -168,7 +171,16 @@ namespace Zeon.Blazor.ZTreeView
 
         private string GetSelectedClassMode(int id)
         {
-            return id == _selectedId ? "zeon-tree-view-item-selected" : "";
+            return id == _selectedId ? "zeon-tree-view-item-selected" : string.Empty;
+        }
+
+        private string GetDragOnEnterTopClass(int itemId)
+        {
+            return _dragEnteredToTopItemId == itemId ? "zeon-tree-view-item-drag-enter-top" : string.Empty;
+        }
+        private string GetDragOnEnterBottomClass(int itemId)
+        {
+            return _dragEnteredToBottomItemId == itemId ? "zeon-tree-view-item-drag-enter-bottom" : string.Empty;
         }
 
         private bool ChildrenHasCheckedItem(IEnumerable<TreeViewModel> data, TreeViewModel item)
@@ -295,9 +307,32 @@ namespace Zeon.Blazor.ZTreeView
             }
         }
 
-        private void OndropUl(DragEventArgs e)
+        private void OnDrop(DragEventArgs e, TreeViewModel item)
         {
 
+        }
+        private void OnDrag(DragEventArgs e, TreeViewModel item)
+        {
+
+        }
+        private void HandleOnDragEnter((DragEventArgs e, DragToPosation posation, int itemId) parameters)
+        {
+            switch (parameters.posation)
+            {
+                case DragToPosation.Top:
+                    _dragEnteredToTopItemId = parameters.itemId;
+                    break;
+                case DragToPosation.Bottom:
+                    _dragEnteredToBottomItemId = parameters.itemId;
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void HandleOnDragLeave()
+        {
+            _dragEnteredToTopItemId = 0;
+            _dragEnteredToBottomItemId = 0;
         }
 
         private void Refresh()
