@@ -1,35 +1,50 @@
 ﻿@namespace Zeon.Blazor.ZTreeView
 @using Zeon.Blazor.ZTreeView.Constants
 
-<ul>
+@{
+    var dragOnEnterGroupClass = GetDragOnEnterGroupClass(ItemId);
+}
+
+<ul class="@dragOnEnterGroupClass">
 
     @{
         var dataFiltered = Items.Where(Filter).ToArray();
         @for (int index = 0; index < dataFiltered.Length; index++)
         {
             var item = dataFiltered[index];
+
             string checkBoxClass = GetCheckBoxClassMode(Data, item);
             string expandedClass = GetExpandedClassMode(Data, item);
             string selectedClass = GetSelectedClassMode(item.Id);
-            string dragOnEnterTopClass = GetDragOnEnterTopClass(item.Id);
-            string dragOnEnterBottomClass = GetDragOnEnterBottomClass(item.Id);
+            string dragOnEnterTopClass = GetDragOnEnterTopClass(item);
+            string dragOnEnterBottomClass = GetDragOnEnterBottomClass(item);
+            string dragOnEnterIntoClass = GetDragOnEnterIntoClass(item);
 
-            <div class="zeon-tree-view-item-drop @dragOnEnterTopClass"
-             @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosation.Top, item.Id))"
-             @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync()"
-             @ondrop="(e)=> OnDrop(e,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
+            <div class="zeon-tree-view-item-drop-line @dragOnEnterTopClass" style="--drop-elements-display:@DropElementsDisplay"
+             @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosition.Top, item))" @ondragenter:stopPropagation=true
+             @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync((e,DragToPosition.Top, item))" @ondragleave:stopPropagation=true
+             @ondrop="(e)=> OnDropStart(e,DragToPosition.Top,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
             </div>
 
             <li id="@GetItemId(item.Id)" class="zeon-tree-view-item">
-                <div class="zeon-tree-view-item-row @selectedClass"
+
+                <div class="zeon-tree-view-item-row @selectedClass @dragOnEnterIntoClass"
                  @onclick:stopPropagation=true @onclick="()=> SelectedOnClick.InvokeAsync(item.Id)"
-             draggable="true" @ondragstart="(e)=> OnDrag(e,item)" @ondragstart:stopPropagation=true>
+             draggable="true"
+                 @ondragstart="(e)=> OnDragStart(e,item)" @ondragstart:stopPropagation=true
+                 @ondragend="(e)=> OnDragEnd(e,item)" @ondragend:stopPropagation=true>
+
                     <span class="@expandedClass" @onclick="()=> ExpandedOnClick.InvokeAsync(item.Id)" @onclick:stopPropagation=true></span>
                     @if (ShowCheckedBox)
                     {
                         <span class="@checkBoxClass" @onclick="()=> CheckedOnClick.InvokeAsync(item.Id)" @onclick:stopPropagation=true></span>
                     }
                     <span class="zeon-tree-view-item-text">@item.Text</span>
+                    <span class="zeon-tree-view-item-drop-into" style="--drop-elements-display:@DropElementsDisplay"
+                      @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosition.Into,item))" @ondragenter:stopPropagation=true
+                      @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync((e,DragToPosition.Into,item))" @ondragleave:stopPropagation=true
+                      @ondrop="(e)=> OnDropStart(e,DragToPosition.Into,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();">
+                    </span>
                     @if (@*ShowActionButtons &&*@ selectedClass.Any())
                     {
                         <div class="zeon-tree-view-item-actions">
@@ -38,7 +53,9 @@
                             <span class="zf zf-check"></span>
                         </div>
                     }
+
                 </div>
+
                 @if (item.Expanded && Data.Where(q => q.ParentId == item.Id).Any())
                 {
                     <ChildrenTree GetItemId="GetItemId" Filter="Filter"
@@ -49,18 +66,25 @@
                       ShowCheckedBox="ShowCheckedBox"
                       GetDragOnEnterTopClass="GetDragOnEnterTopClass"
                       GetDragOnEnterBottomClass="GetDragOnEnterBottomClass"
-                      OnDrop="OnDrop" OnDrag="OnDrag">
+                      GetDragOnEnterIntoClass="GetDragOnEnterIntoClass"
+                      GetDragOnEnterGroupClass="GetDragOnEnterGroupClass"
+                      ItemId="item.Id"
+                      DropElementsDisplay="@DropElementsDisplay"
+                      OnDropStart="OnDropStart" OnDragStart="OnDragStart" OnDragEnd="OnDragEnd">
                     </ChildrenTree>
                 }
             </li>
+
+
             @if (index == dataFiltered.Length - 1)
             {
-                <div class="zeon-tree-view-item-drop @dragOnEnterBottomClass"
-             @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosation.Bottom,item.Id))"
-             @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync()"
-             @ondrop="(e)=> OnDrop(e,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
+                <div class="zeon-tree-view-item-drop-line @dragOnEnterBottomClass" style="--drop-elements-display:@DropElementsDisplay"
+             @ondragenter="(e)=> HandleOnDragEnter.InvokeAsync((e,DragToPosition.Bottom,item))" @ondragenter:stopPropagation=true
+             @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync((e,DragToPosition.Bottom,item))" @ondragleave:stopPropagation=true
+             @ondrop="(e)=> OnDropStart(e,DragToPosition.Bottom,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
                 </div>
             }
         }
+
     }
 </ul>

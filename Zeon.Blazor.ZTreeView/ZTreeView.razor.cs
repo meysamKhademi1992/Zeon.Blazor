@@ -12,11 +12,15 @@ namespace Zeon.Blazor.ZTreeView
         private int _selectedId = 0;
         private int _dragEnteredToTopItemId = 0;
         private int _dragEnteredToBottomItemId = 0;
-        private TreeViewModel? _dragedItem = null;
+        private int _dragEnteredToIntoItemId = 0;
+        private int? _dragEnteredToGroupParentId = -1;
+        private string _dropElementsDisplay = "none";
+        private TreeViewModel? _draggedItem = null;
         private Func<TreeViewModel, bool> _filter = q => true;
 
         [Inject]
         protected JSRuntime.ElementHelper ElementHelper { get; set; } = null!;
+
 
         [Parameter, EditorRequired]
         public string Name { get; set; } = "TreeView1";
@@ -175,13 +179,25 @@ namespace Zeon.Blazor.ZTreeView
             return id == _selectedId ? "zeon-tree-view-item-selected" : string.Empty;
         }
 
-        private string GetDragOnEnterTopClass(int itemId)
+        private string GetDragOnEnterTopClass(TreeViewModel droppedItem)
         {
-            return _dragEnteredToTopItemId == itemId ? "zeon-tree-view-item-drag-enter-top" : string.Empty;
+            var droppingIsAllowed = _draggedItem is null || DroppingIsAllowed(_draggedItem, droppedItem, DragToPosition.Top);
+
+            return _dragEnteredToTopItemId == droppedItem.Id && droppingIsAllowed ? "zeon-tree-view-item-drag-enter-top" : droppingIsAllowed == false ? "zeon-tree-view-item-drag-and-drop-not-allowed" : string.Empty;
         }
-        private string GetDragOnEnterBottomClass(int itemId)
+        private string GetDragOnEnterBottomClass(TreeViewModel droppedItem)
         {
-            return _dragEnteredToBottomItemId == itemId ? "zeon-tree-view-item-drag-enter-bottom" : string.Empty;
+            var droppingIsAllowed = _draggedItem is null || DroppingIsAllowed(_draggedItem, droppedItem, DragToPosition.Bottom);
+            return _dragEnteredToBottomItemId == droppedItem.Id && droppingIsAllowed ? "zeon-tree-view-item-drag-enter-bottom" : droppingIsAllowed == false ? "zeon-tree-view-item-drag-and-drop-not-allowed" : string.Empty;
+        }
+        private string GetDragOnEnterIntoClass(TreeViewModel droppedItem)
+        {
+            var droppingIsAllowed = _draggedItem is null || DroppingIsAllowed(_draggedItem, droppedItem, DragToPosition.Into);
+            return _dragEnteredToIntoItemId == droppedItem.Id && droppingIsAllowed ? "zeon-tree-view-item-drag-enter-into" : droppingIsAllowed == false ? "zeon-tree-view-item-drag-and-drop-not-allowed" : string.Empty;
+        }
+        private string GetDragOnEnterGroupClass(int? parentId)
+        {
+            return _dragEnteredToGroupParentId == parentId ? "zeon-tree-view-item-drop-group" : string.Empty;
         }
 
         private bool ChildrenHasCheckedItem(IEnumerable<TreeViewModel> data, TreeViewModel item)
@@ -308,36 +324,114 @@ namespace Zeon.Blazor.ZTreeView
             }
         }
 
-        private void OnDrop(DragEventArgs e, TreeViewModel item)
+        private bool DroppingIsAllowed(TreeViewModel draggedItem, TreeViewModel droppedItem, DragToPosition position)
         {
-            if (_dragedItem is not null)
+            List<int> childIds = new List<int>();
+            GetChildIds(ref childIds, Data, Data.Where(q => q.ParentId == draggedItem.Id).Select(q => q.Id).ToList());
+
+            switch (position)
             {
-                _dragedItem.ParentId = item.ParentId;
-                _dragedItem = null;
+                case DragToPosition.Top:
+                case DragToPosition.Bottom:
+                    {
+                        return !childIds.Contains(droppedItem.Id);
+                    }
+                case DragToPosition.Into:
+                    {
+                        return (draggedItem.Id != droppedItem.Id && !childIds.Contains(droppedItem.Id));
+
+                    }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(DragToPosition));
             }
         }
-        private void OnDrag(DragEventArgs e, TreeViewModel item)
+
+        private void OnDrop(DragEventArgs e, DragToPosition position, TreeViewModel item)
         {
-            _dragedItem = item;
-        }
-        private void HandleOnDragEnter((DragEventArgs e, DragToPosation posation, int itemId) parameters)
-        {
-            switch (parameters.posation)
+            if (_draggedItem is not null)
             {
-                case DragToPosation.Top:
-                    _dragEnteredToTopItemId = parameters.itemId;
+                switch (position)
+                {
+                    case DragToPosition.Top:
+                    case DragToPosition.Bottom:
+                        {
+                            _draggedItem.ParentId = item.ParentId;
+                            _draggedItem = null;
+                            break;
+                        }
+                    case DragToPosition.Into:
+                        {
+                            if (_draggedItem.Id == item.Id)
+                                return;
+                            else
+                            {
+                                _draggedItem.ParentId = item.Id;
+                                _draggedItem = null;
+                                break;
+                            }
+                        }
+                    default:
+                        break;
+                }
+            }
+            Refresh();
+        }
+        private void OnDragStart(DragEventArgs e, TreeViewModel item)
+        {
+            _dropElementsDisplay = "block";
+            _draggedItem = item;
+            Refresh();
+        }
+        private void OnDragEnd(DragEventArgs e, TreeViewModel item)
+        {
+            _dragEnteredToGroupParentId = -1;
+            _dropElementsDisplay = "none";
+            Refresh();
+        }
+        private void HandleOnDragEnter((DragEventArgs e, DragToPosition position, TreeViewModel item) parameters)
+        {
+            switch (parameters.position)
+            {
+                case DragToPosition.Top:
+                    _dragEnteredToTopItemId = parameters.item.Id;
+                    _dragEnteredToGroupParentId = parameters.item.ParentId;
                     break;
-                case DragToPosation.Bottom:
-                    _dragEnteredToBottomItemId = parameters.itemId;
+                case DragToPosition.Bottom:
+                    _dragEnteredToBottomItemId = parameters.item.Id;
+                    _dragEnteredToGroupParentId = parameters.item.ParentId;
                     break;
+                case DragToPosition.Into:
+                    _dragEnteredToIntoItemId = parameters.item.Id;
+                    _dragEnteredToGroupParentId = parameters.item.ParentId;
+                    break;
+
                 default:
                     break;
             }
         }
-        private void HandleOnDragLeave()
+        private void HandleOnDragLeave((DragEventArgs e, DragToPosition position, TreeViewModel item) parameters)
         {
-            _dragEnteredToTopItemId = 0;
-            _dragEnteredToBottomItemId = 0;
+            switch (parameters.position)
+            {
+                case DragToPosition.Top:
+                    {
+                        _dragEnteredToTopItemId = 0;
+                    }
+                    break;
+                case DragToPosition.Bottom:
+                    {
+                        _dragEnteredToBottomItemId = 0;
+                    }
+                    break;
+                case DragToPosition.Into:
+                    {
+                        _dragEnteredToIntoItemId = 0;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         private void Refresh()

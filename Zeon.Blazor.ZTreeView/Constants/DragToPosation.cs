@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Zeon.Blazor.ZTreeView.Constants
 {
-    public enum DragToPosation
+    public enum DragToPosition
     {
         Top = 1,
-        Bottom = 2
+        Bottom = 2,
+        Into = 3,
     }
 }
