@@ -16,6 +16,7 @@ namespace Zeon.Blazor.ZTreeView
         private int? _dragEnteredToGroupParentId = -1;
         private string _dropElementsDisplay = "none";
         private TreeViewModel? _draggedItem = null;
+        private List<int> _draggedItemdChildIds = new();
         private Func<TreeViewModel, bool> _filter = q => true;
 
         [Inject]
@@ -182,7 +183,6 @@ namespace Zeon.Blazor.ZTreeView
         private string GetDragOnEnterTopClass(TreeViewModel droppedItem)
         {
             var droppingIsAllowed = _draggedItem is null || DroppingIsAllowed(_draggedItem, droppedItem, DragToPosition.Top);
-
             return _dragEnteredToTopItemId == droppedItem.Id && droppingIsAllowed ? "zeon-tree-view-item-drag-enter-top" : droppingIsAllowed == false ? "zeon-tree-view-item-drag-and-drop-not-allowed" : string.Empty;
         }
         private string GetDragOnEnterBottomClass(TreeViewModel droppedItem)
@@ -326,19 +326,16 @@ namespace Zeon.Blazor.ZTreeView
 
         private bool DroppingIsAllowed(TreeViewModel draggedItem, TreeViewModel droppedItem, DragToPosition position)
         {
-            List<int> childIds = new List<int>();
-            GetChildIds(ref childIds, Data, Data.Where(q => q.ParentId == draggedItem.Id).Select(q => q.Id).ToList());
-
             switch (position)
             {
                 case DragToPosition.Top:
                 case DragToPosition.Bottom:
                     {
-                        return !childIds.Contains(droppedItem.Id);
+                        return !_draggedItemdChildIds.Contains(droppedItem.Id);
                     }
                 case DragToPosition.Into:
                     {
-                        return (draggedItem.Id != droppedItem.Id && !childIds.Contains(droppedItem.Id));
+                        return (draggedItem.Id != droppedItem.Id && !_draggedItemdChildIds.Contains(droppedItem.Id));
 
                     }
                 default:
@@ -346,46 +343,53 @@ namespace Zeon.Blazor.ZTreeView
             }
         }
 
-        private void OnDrop(DragEventArgs e, DragToPosition position, TreeViewModel item)
+        private void OnDrop(DragEventArgs e, DragToPosition position, TreeViewModel droppedItem)
         {
             if (_draggedItem is not null)
             {
+                if (false == DroppingIsAllowed(_draggedItem, droppedItem, position))
+                    return;
+
                 switch (position)
                 {
                     case DragToPosition.Top:
+                        {
+                            _draggedItem.ParentId = droppedItem.ParentId;
+                            break;
+                        }
                     case DragToPosition.Bottom:
                         {
-                            _draggedItem.ParentId = item.ParentId;
-                            _draggedItem = null;
+                            _draggedItem.ParentId = droppedItem.ParentId;
                             break;
                         }
                     case DragToPosition.Into:
                         {
-                            if (_draggedItem.Id == item.Id)
-                                return;
-                            else
-                            {
-                                _draggedItem.ParentId = item.Id;
-                                _draggedItem = null;
-                                break;
-                            }
+                            _draggedItem.ParentId = droppedItem.Id;
+                            break;
                         }
                     default:
                         break;
                 }
+                _draggedItem = null;
             }
             Refresh();
         }
-        private void OnDragStart(DragEventArgs e, TreeViewModel item)
+        private void OnDragStart(DragEventArgs e, TreeViewModel draggedItem)
         {
             _dropElementsDisplay = "block";
-            _draggedItem = item;
+            _draggedItem = draggedItem;
+            GetChildIds(ref _draggedItemdChildIds, Data, Data.Where(q => q.ParentId == draggedItem.Id).Select(q => q.Id).ToList());
             Refresh();
         }
         private void OnDragEnd(DragEventArgs e, TreeViewModel item)
         {
+            _draggedItem = null;
             _dragEnteredToGroupParentId = -1;
+            _dragEnteredToTopItemId = 0;
+            _dragEnteredToBottomItemId = 0;
+            _dragEnteredToIntoItemId = 0;
             _dropElementsDisplay = "none";
+            _draggedItemdChildIds.Clear();
             Refresh();
         }
         private void HandleOnDragEnter((DragEventArgs e, DragToPosition position, TreeViewModel item) parameters)
