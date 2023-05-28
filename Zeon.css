@@ -444,12 +444,13 @@
     pointer-events: none;
     background-color: transparent;
     position: absolute !important;
-    width: 99%;
-    height: fit-content;
+    height: 100%;
     margin: auto;
     padding-inline: 5px;
     float: inherit;
     justify-content: flex-end;
+    border-radius: 2px;
+    align-items: center;
 }
 
 .zeon-tree-view-item-drop-group {

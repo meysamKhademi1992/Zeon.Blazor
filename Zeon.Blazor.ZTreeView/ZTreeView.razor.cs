@@ -7,6 +7,8 @@ namespace Zeon.Blazor.ZTreeView
 {
     public partial class ZTreeView<TValue> : ComponentBase
     {
+        private const string DISPLAY_BLOCK = "block";
+        private const string DISPLAY_NONE = "none";
         private readonly Dictionary<string, string> _fieldsSetting;
         private bool _dataIsMapped = false;
         private int _selectedId = 0;
@@ -14,7 +16,7 @@ namespace Zeon.Blazor.ZTreeView
         private int _dragEnteredToBottomItemId = 0;
         private int _dragEnteredToIntoItemId = 0;
         private int? _dragEnteredToGroupParentId = -1;
-        private string _dropElementsDisplay = "none";
+        private string _dropElementsDisplay = DISPLAY_NONE;
         private TreeViewModel? _draggedItem = null;
         private List<int> _draggedItemdChildIds = new();
         private Func<TreeViewModel, bool> _filter = q => true;
@@ -354,70 +356,17 @@ namespace Zeon.Blazor.ZTreeView
                 {
                     case DragToPosition.Top:
                         {
-                            var parentLevelItems = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).ToList();
-                            var index = parentLevelItems.IndexOf(droppedItem);
-
-                            var itemsInTopDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).TakeWhile(item => item != droppedItem).ToList();
-                            var itemsInBottomDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).SkipWhile(item => item != droppedItem).ToList();
-
-                            for (int i = 0; i < itemsInTopDroppedItem.Count; i++)
-                            {
-                                TreeViewModel? item = itemsInTopDroppedItem[i];
-                                item.Order = index - 1 - i;
-                            }
-
-                            for (int i = 0; i < itemsInBottomDroppedItem.Count; i++)
-                            {
-                                TreeViewModel? item = itemsInBottomDroppedItem[i];
-                                item.Order = index + 2 + i;
-                            }
-
-                            _draggedItem.Order = index;
-                            _draggedItem.ParentId = droppedItem.ParentId;
-                            droppedItem.Order = index + 1;
-
-                            if (_draggedItem.ParentId != droppedItem.ParentId)
-                            {
-                                ReSortOrderNumberInParentLevel(_draggedItem);
-                            }
+                            SetDropTop(_draggedItem, droppedItem);
                             break;
                         }
                     case DragToPosition.Bottom:
                         {
-                            var parentLevelItems = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).ToList();
-                            var index = parentLevelItems.IndexOf(droppedItem);
-
-                            var itemsInTopDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).TakeWhile(item => item != droppedItem).ToList();
-                            var itemsInBottomDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).SkipWhile(item => item != droppedItem).ToList();
-
-                            for (int i = 0; i < itemsInTopDroppedItem.Count; i++)
-                            {
-                                TreeViewModel? item = itemsInTopDroppedItem[i];
-                                item.Order = index - 1 - i;
-                            }
-
-                            for (int i = 0; i < itemsInBottomDroppedItem.Count; i++)
-                            {
-                                TreeViewModel? item = itemsInBottomDroppedItem[i];
-                                item.Order = index + 2 + i;
-                            }
-
-                            _draggedItem.Order = index + 1;
-                            _draggedItem.ParentId = droppedItem.ParentId;
-
-                            if (_draggedItem.ParentId != droppedItem.ParentId)
-                            {
-                                ReSortOrderNumberInParentLevel(_draggedItem);
-                            }
-
+                            SetDropBottom(_draggedItem, droppedItem);
                             break;
                         }
                     case DragToPosition.Into:
                         {
-                            var parentLevelItemsCount = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).Count();
-                            _draggedItem.Order = parentLevelItemsCount;
-                            _draggedItem.ParentId = droppedItem.Id;
-                            ReSortOrderNumberInParentLevel(_draggedItem);
+                            SetDropInto(_draggedItem, droppedItem);
                             break;
                         }
                     default:
@@ -428,35 +377,107 @@ namespace Zeon.Blazor.ZTreeView
             Refresh();
         }
 
+        private void SetDropTop(TreeViewModel draggedItem, TreeViewModel droppedItem)
+        {
+            var parentLevelItems = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).ToList();
+            var index = parentLevelItems.IndexOf(droppedItem);
+
+            var itemsInTopDroppedItem = parentLevelItems.Where(q => q.Id != draggedItem.Id).TakeWhile(item => item != droppedItem).ToList();
+            var itemsInBottomDroppedItem = parentLevelItems.Where(q => q.Id != draggedItem.Id).SkipWhile(item => item != droppedItem).Skip(1).ToList();
+
+            for (int i = itemsInTopDroppedItem.Count; i > 0; i--)
+            {
+                var indexItem = (i - 1);
+                TreeViewModel? item = itemsInTopDroppedItem[indexItem];
+                item.Order = (index - 1) - (itemsInTopDroppedItem.Count - i);
+            }
+
+            for (int i = 0; i < itemsInBottomDroppedItem.Count; i++)
+            {
+                TreeViewModel? item = itemsInBottomDroppedItem[i];
+                item.Order = (index + 2) + i;
+            }
+
+            draggedItem.Order = index;
+            draggedItem.ParentId = droppedItem.ParentId;
+            droppedItem.Order = index + 1;
+
+            if (draggedItem.ParentId != droppedItem.ParentId)
+            {
+                ReSortOrderNumberInParentLevel(draggedItem);
+            }
+        }
+
+        private void SetDropBottom(TreeViewModel draggedItem, TreeViewModel droppedItem)
+        {
+            var parentLevelItems = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).ToList();
+            var index = parentLevelItems.IndexOf(droppedItem);
+
+            var itemsInTopDroppedItem = parentLevelItems.Where(q => q.Id != draggedItem.Id).TakeWhile(item => item != droppedItem).ToList();
+            var itemsInBottomDroppedItem = parentLevelItems.Where(q => q.Id != draggedItem.Id).SkipWhile(item => item != droppedItem).Skip(1).ToList();
+
+            for (int i = itemsInTopDroppedItem.Count; i > 0; i--)
+            {
+                var indexItem = (i - 1);
+                TreeViewModel? item = itemsInTopDroppedItem[indexItem];
+                item.Order = (index - 1) - (itemsInTopDroppedItem.Count - i);
+            }
+
+            for (int i = 0; i < itemsInBottomDroppedItem.Count; i++)
+            {
+                TreeViewModel? item = itemsInBottomDroppedItem[i];
+                item.Order = index + 2 + i;
+            }
+
+            draggedItem.Order = index + 1;
+            draggedItem.ParentId = droppedItem.ParentId;
+            droppedItem.Order = index;
+
+            if (draggedItem.ParentId != droppedItem.ParentId)
+            {
+                ReSortOrderNumberInParentLevel(draggedItem);
+            }
+        }
+
+        private void SetDropInto(TreeViewModel draggedItem, TreeViewModel droppedItem)
+        {
+            var parentLevelItemsCount = _data.Where(q => q.ParentId == droppedItem.Id).OrderBy(o => o.Order).Count();
+            draggedItem.Order = parentLevelItemsCount + 1;
+            draggedItem.ParentId = droppedItem.Id;
+            ReSortOrderNumberInParentLevel(draggedItem);
+        }
+
         private void ReSortOrderNumberInParentLevel(TreeViewModel _draggedItem)
         {
             var draggedItemParentLevelItems = _data.Where(q => q.ParentId == _draggedItem.ParentId).OrderBy(o => o.Order).ToList();
             for (int i = 0; i < draggedItemParentLevelItems.Count; i++)
             {
                 TreeViewModel? item = draggedItemParentLevelItems[i];
-                item.Order = i;
+                item.Order = i + 1;
             }
         }
 
-        private void OnDragStart(DragEventArgs e, TreeViewModel draggedItem)
+        private void OnDragStartHandler(DragEventArgs e, TreeViewModel draggedItem)
         {
-            _dropElementsDisplay = "block";
+            _dropElementsDisplay = ZTreeView<TValue>.DISPLAY_BLOCK;
             _draggedItem = draggedItem;
             GetChildIds(ref _draggedItemdChildIds, Data, Data.Where(q => q.ParentId == draggedItem.Id).Select(q => q.Id).ToList());
             Refresh();
         }
-        private void OnDragEnd(DragEventArgs e, TreeViewModel item)
+
+        private void OnDragEndHandler(DragEventArgs e, TreeViewModel item)
         {
             _draggedItem = null;
             _dragEnteredToGroupParentId = -1;
             _dragEnteredToTopItemId = 0;
             _dragEnteredToBottomItemId = 0;
             _dragEnteredToIntoItemId = 0;
-            _dropElementsDisplay = "none";
+            _dropElementsDisplay = ZTreeView<TValue>.DISPLAY_NONE;
             _draggedItemdChildIds.Clear();
             Refresh();
         }
-        private void HandleOnDragEnter((DragEventArgs e, DragToPosition position, TreeViewModel item) parameters)
+
+        private void OnDragEnterHandler((DragEventArgs e, DragToPosition position, TreeViewModel item) parameters)
         {
             switch (parameters.position)
             {
@@ -477,7 +498,8 @@ namespace Zeon.Blazor.ZTreeView
                     break;
             }
         }
-        private void HandleOnDragLeave((DragEventArgs e, DragToPosition position, TreeViewModel item) parameters)
+
+        private void OnDragLeaveHandler((DragEventArgs e, DragToPosition position, TreeViewModel item) parameters)
         {
             switch (parameters.position)
             {
@@ -500,6 +522,11 @@ namespace Zeon.Blazor.ZTreeView
                 default:
                     break;
             }
+        }
+
+        private void DeleteItemOnClick(TreeViewModel item)
+        {
+
         }
 
         private void Refresh()
