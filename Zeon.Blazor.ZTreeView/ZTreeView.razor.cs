@@ -143,7 +143,7 @@ namespace Zeon.Blazor.ZTreeView
         private IEnumerable<TreeViewModel> MapData()
         {
             if (_dataIsMapped)
-                return _data;
+                return _data.OrderBy(q => q.Order).ToList();
             else
             {
                 _data = new Mapper<TValue>(_fieldsSetting).CreateMap(DataSource);
@@ -354,17 +354,70 @@ namespace Zeon.Blazor.ZTreeView
                 {
                     case DragToPosition.Top:
                         {
+                            var parentLevelItems = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).ToList();
+                            var index = parentLevelItems.IndexOf(droppedItem);
+
+                            var itemsInTopDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).TakeWhile(item => item != droppedItem).ToList();
+                            var itemsInBottomDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).SkipWhile(item => item != droppedItem).ToList();
+
+                            for (int i = 0; i < itemsInTopDroppedItem.Count; i++)
+                            {
+                                TreeViewModel? item = itemsInTopDroppedItem[i];
+                                item.Order = index - 1 - i;
+                            }
+
+                            for (int i = 0; i < itemsInBottomDroppedItem.Count; i++)
+                            {
+                                TreeViewModel? item = itemsInBottomDroppedItem[i];
+                                item.Order = index + 2 + i;
+                            }
+
+                            _draggedItem.Order = index;
                             _draggedItem.ParentId = droppedItem.ParentId;
+                            droppedItem.Order = index + 1;
+
+                            if (_draggedItem.ParentId != droppedItem.ParentId)
+                            {
+                                ReSortOrderNumberInParentLevel(_draggedItem);
+                            }
                             break;
                         }
                     case DragToPosition.Bottom:
                         {
+                            var parentLevelItems = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).ToList();
+                            var index = parentLevelItems.IndexOf(droppedItem);
+
+                            var itemsInTopDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).TakeWhile(item => item != droppedItem).ToList();
+                            var itemsInBottomDroppedItem = parentLevelItems.Where(q => q.Id != _draggedItem.Id && q.Id != droppedItem.Id).SkipWhile(item => item != droppedItem).ToList();
+
+                            for (int i = 0; i < itemsInTopDroppedItem.Count; i++)
+                            {
+                                TreeViewModel? item = itemsInTopDroppedItem[i];
+                                item.Order = index - 1 - i;
+                            }
+
+                            for (int i = 0; i < itemsInBottomDroppedItem.Count; i++)
+                            {
+                                TreeViewModel? item = itemsInBottomDroppedItem[i];
+                                item.Order = index + 2 + i;
+                            }
+
+                            _draggedItem.Order = index + 1;
                             _draggedItem.ParentId = droppedItem.ParentId;
+
+                            if (_draggedItem.ParentId != droppedItem.ParentId)
+                            {
+                                ReSortOrderNumberInParentLevel(_draggedItem);
+                            }
+
                             break;
                         }
                     case DragToPosition.Into:
                         {
+                            var parentLevelItemsCount = _data.Where(q => q.ParentId == droppedItem.ParentId).OrderBy(o => o.Order).Count();
+                            _draggedItem.Order = parentLevelItemsCount;
                             _draggedItem.ParentId = droppedItem.Id;
+                            ReSortOrderNumberInParentLevel(_draggedItem);
                             break;
                         }
                     default:
@@ -374,6 +427,17 @@ namespace Zeon.Blazor.ZTreeView
             }
             Refresh();
         }
+
+        private void ReSortOrderNumberInParentLevel(TreeViewModel _draggedItem)
+        {
+            var draggedItemParentLevelItems = _data.Where(q => q.ParentId == _draggedItem.ParentId).OrderBy(o => o.Order).ToList();
+            for (int i = 0; i < draggedItemParentLevelItems.Count; i++)
+            {
+                TreeViewModel? item = draggedItemParentLevelItems[i];
+                item.Order = i;
+            }
+        }
+
         private void OnDragStart(DragEventArgs e, TreeViewModel draggedItem)
         {
             _dropElementsDisplay = "block";

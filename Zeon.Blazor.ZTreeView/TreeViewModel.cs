@@ -8,5 +8,6 @@ namespace Zeon.Blazor.ZTreeView
         public string Text { get; set; } = string.Empty;
         public bool IsChecked { get; set; }
         public bool Expanded { get; set; }
+        public int Order { get; set; }
     }
 }
