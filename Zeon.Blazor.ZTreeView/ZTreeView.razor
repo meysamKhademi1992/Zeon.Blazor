@@ -1,4 +1,5 @@
 ﻿@namespace Zeon.Blazor.ZTreeView
+@using Zeon.Blazor.ZInput
 @using Zeon.Blazor.ZTreeView.Constants
 @typeparam TValue
 
@@ -48,13 +49,18 @@
                         </span>
                         @if (@*ShowActionButtons &&*@ selectedClass.Any())
                         {
-                            <div class="zeon-tree-view-item-actions">
-                                <span class="zf zf-check"></span>
-                                <span class="zf zf-question" @onclick="(e)=> DeleteItemOnClick(item)"></span>
-                                <span class="zf zf-check"></span>
+                            <div class="zeon-tree-view-item-actions-group">
+                                <span class="zeon-tree-view-item-action fa fa-plus"></span>
+                                <span class="zeon-tree-view-item-action fa fa-edit"></span>
+                                <span class="zeon-tree-view-item-action fa fa-trash" @onclick="(e)=> RemoveItemOnClick(item)"></span>
                             </div>
                         }
-
+                        @if (((item.Id, Constants.ChangeState.Add) == _changeItemState) || ((item.Id, Constants.ChangeState.Edit) == _changeItemState))
+                        {
+                            <div class="zeon-tree-view-item-input-inline">
+                                <ZInput Type="string" OnValueChanged="(value) => OnDataChanged(item,value,_changeItemState.state)"></ZInput>
+                            </div>
+                        }
                     </div>
 
                     @if (item.Expanded && Data.Where(q => q.ParentId == item.Id).Any())
@@ -71,7 +77,9 @@
                           GetDragOnEnterGroupClass="GetDragOnEnterGroupClass"
                           ItemId="item.Id"
                           DropElementsDisplay="@_dropElementsDisplay"
-                          OnDropStart="OnDrop" OnDragStart="OnDragStartHandler" OnDragEnd="OnDragEndHandler">
+                          OnDropStart="OnDrop" OnDragStart="OnDragStartHandler" OnDragEnd="OnDragEndHandler"
+                          ChangeItemState="_changeItemState" OnDataChanged="OnDataChanged"
+                          DataChangeOnClick="DataChangeOnClick" RemoveItemOnClick="RemoveItemOnClick">
                         </ChildrenTree>
                     }
 

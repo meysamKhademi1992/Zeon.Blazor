@@ -1,4 +1,5 @@
 ﻿@namespace Zeon.Blazor.ZTreeView
+@using Zeon.Blazor.ZInput
 @using Zeon.Blazor.ZTreeView.Constants
 
 @{
@@ -30,7 +31,7 @@
 
                 <div class="zeon-tree-view-item-row @selectedClass @dragOnEnterIntoClass"
                  @onclick:stopPropagation=true @onclick="()=> SelectedOnClick.InvokeAsync(item.Id)"
-             draggable="true"
+                 draggable="true"
                  @ondragstart="(e)=> OnDragStart(e,item)" @ondragstart:stopPropagation=true
                  @ondragend="(e)=> OnDragEnd(e,item)" @ondragend:stopPropagation=true>
 
@@ -47,30 +48,37 @@
                     </span>
                     @if (@*ShowActionButtons &&*@ selectedClass.Any())
                     {
-                        <div class="zeon-tree-view-item-actions">
-                            <span class="zeon-tree-view-item-actions-"></span>
-                            <span class="zf zf-question"></span>
-                            <span class="zf zf-check"></span>
+                        <div class="zeon-tree-view-item-actions-group">
+                            <span class="zeon-tree-view-item-action fa fa-plus" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Add)"></span>
+                            <span class="zeon-tree-view-item-action fa fa-edit" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Edit)"></span>
+                            <span class="zeon-tree-view-item-action fa fa-trash" @onclick="(e)=> RemoveItemOnClick.InvokeAsync(item)"></span>
                         </div>
                     }
-
+                    @if (((item.Id, Constants.ChangeState.Add) == ChangeItemState) || ((item.Id, Constants.ChangeState.Edit) == ChangeItemState))
+                    {
+                        <div class="zeon-tree-view-item-input-inline">
+                            <ZInput Type="string" OnValueChanged="(value) => OnDataChanged(item,value,ChangeItemState.state)"></ZInput>
+                        </div>
+                    }
                 </div>
 
                 @if (item.Expanded && Data.Where(q => q.ParentId == item.Id).Any())
                 {
                     <ChildrenTree GetItemId="GetItemId" Filter="Filter"
-                      GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" GetSelectedClassMode="GetSelectedClassMode"
-                      Data="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()"
-                      CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick" SelectedOnClick="SelectedOnClick"
-                      HandleOnDragEnter="HandleOnDragEnter" HandleOnDragLeave="HandleOnDragLeave"
-                      ShowCheckedBox="ShowCheckedBox"
-                      GetDragOnEnterTopClass="GetDragOnEnterTopClass"
-                      GetDragOnEnterBottomClass="GetDragOnEnterBottomClass"
-                      GetDragOnEnterIntoClass="GetDragOnEnterIntoClass"
-                      GetDragOnEnterGroupClass="GetDragOnEnterGroupClass"
-                      ItemId="item.Id"
-                      DropElementsDisplay="@DropElementsDisplay"
-                      OnDropStart="OnDropStart" OnDragStart="OnDragStart" OnDragEnd="OnDragEnd">
+                          GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" GetSelectedClassMode="GetSelectedClassMode"
+                          Data="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()"
+                          CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick" SelectedOnClick="SelectedOnClick"
+                          HandleOnDragEnter="HandleOnDragEnter" HandleOnDragLeave="HandleOnDragLeave"
+                          ShowCheckedBox="ShowCheckedBox"
+                          GetDragOnEnterTopClass="GetDragOnEnterTopClass"
+                          GetDragOnEnterBottomClass="GetDragOnEnterBottomClass"
+                          GetDragOnEnterIntoClass="GetDragOnEnterIntoClass"
+                          GetDragOnEnterGroupClass="GetDragOnEnterGroupClass"
+                          ItemId="@item.Id"
+                          DropElementsDisplay="@DropElementsDisplay"
+                          OnDropStart="OnDropStart" OnDragStart="OnDragStart" OnDragEnd="OnDragEnd"
+                          ChangeItemState="ChangeItemState" OnDataChanged="OnDataChanged"
+                          DataChangeOnClick="DataChangeOnClick" RemoveItemOnClick="RemoveItemOnClick">
                     </ChildrenTree>
                 }
             </li>

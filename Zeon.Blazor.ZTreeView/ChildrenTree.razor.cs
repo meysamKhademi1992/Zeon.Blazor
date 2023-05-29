@@ -65,6 +65,18 @@ namespace Zeon.Blazor.ZTreeView
         public EventCallback<(DragEventArgs, DragToPosition, TreeViewModel)> HandleOnDragLeave { get; set; }
 
         [Parameter]
+        public Action<TreeViewModel, string, ChangeState> OnDataChanged { get; set; } = null!;
+
+        [Parameter]
+        public Action<TreeViewModel, ChangeState> DataChangeOnClick { get; set; } = null!;
+
+        [Parameter]
+        public EventCallback<TreeViewModel> RemoveItemOnClick { get; set; }
+
+        [Parameter]
+        public (int id, ChangeState state) ChangeItemState { get; set; }
+
+        [Parameter]
         public int ItemId { get; set; } = -1;
 
         [Parameter]

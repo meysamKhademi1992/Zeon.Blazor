@@ -20,6 +20,7 @@ namespace Zeon.Blazor.ZTreeView
         private TreeViewModel? _draggedItem = null;
         private List<int> _draggedItemdChildIds = new();
         private Func<TreeViewModel, bool> _filter = q => true;
+        private (int id, ChangeState state) _changeItemState = (0, ChangeState.Normal);
 
         [Inject]
         protected JSRuntime.ElementHelper ElementHelper { get; set; } = null!;
@@ -42,6 +43,17 @@ namespace Zeon.Blazor.ZTreeView
 
         [Parameter]
         public bool ShowCheckedBox { get; set; } = true;
+
+        [Parameter]
+        public EventCallback<(int parentId, string value)>? AddItemEvent { get; set; }
+
+        [Parameter]
+        public EventCallback<(int id, string newValue)>? EditItemEvent { get; set; }
+
+        [Parameter]
+        public EventCallback<int>? RemoveItemEvent { get; set; }
+
+
 
         public ZTreeView()
         {
@@ -524,9 +536,45 @@ namespace Zeon.Blazor.ZTreeView
             }
         }
 
-        private void DeleteItemOnClick(TreeViewModel item)
+        private void OnDataChanged(TreeViewModel item, string value, ChangeState state)
         {
+            _changeItemState = (id: 0, ChangeState.Normal);
 
+            switch (state)
+            {
+                case ChangeState.Add:
+                    {
+                        if (AddItemEvent.HasValue)
+                        {
+                            AddItemEvent.Value.InvokeAsync((parentId: item.Id, value));
+                        }
+
+                        break;
+                    }
+                case ChangeState.Edit:
+                    {
+                        if (EditItemEvent.HasValue)
+                        {
+                            EditItemEvent.Value.InvokeAsync((id: item.Id, newValue: value));
+                        }
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
+
+        private void DataChangeOnClick(TreeViewModel item, ChangeState state)
+        {
+            _changeItemState = (id: item.Id, state);
+        }
+
+        private void RemoveItemOnClick(TreeViewModel item)
+        {
+            if (RemoveItemEvent.HasValue)
+            {
+                RemoveItemEvent.Value.InvokeAsync(item.Id);
+            }
         }
 
         private void Refresh()

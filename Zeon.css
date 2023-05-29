@@ -3,6 +3,19 @@
     font-family: var(--zeon-font-family);
 }
 
+.zeon-action-add {
+    color: darkgreen !important;
+}
+
+.zeon-action-edit {
+    color: darkblue !important;
+}
+
+.zeon-action-delete {
+    color: darkred !important;
+}
+
+
 .zeon-item-chooser-content {
     border-radius: 8px;
     position: relative;
@@ -419,8 +432,11 @@
     position: relative !important;
     display: inline-flex;
     width: 100%;
+    min-height: 28px;
     padding: 2px;
     align-items: center;
+    justify-content: end;
+    padding: 0px;
 }
 
     .zeon-tree-view-item-row:hover {
@@ -435,23 +451,47 @@
     cursor: pointer;
 }
 
-    .zeon-tree-view-item-selected:hover .zeon-tree-view-item-actions {
+    .zeon-tree-view-item-selected:hover .zeon-tree-view-item-actions-group {
         display: inline-flex;
     }
 
-.zeon-tree-view-item-actions {
+.zeon-tree-view-item-actions-group {
     display: none;
-    pointer-events: none;
     background-color: transparent;
     position: absolute !important;
     height: 100%;
     margin: auto;
-    padding-inline: 5px;
-    float: inherit;
+    padding: 3px;
     justify-content: flex-end;
     border-radius: 2px;
     align-items: center;
 }
+
+.zeon-tree-view-item-action {
+    display: inline-flex;
+    background-color: transparent;
+    color: #EBEBEB !important;
+    padding: 5px;
+    width: 100%;
+    height: 100%;
+    margin-inline: 5px;
+    justify-content: center;
+    border-radius: 20px;
+    align-items: center;
+    align-content: center;
+}
+
+    .zeon-tree-view-item-action:hover {
+        color: #fff !important;
+    }
+
+.zeon-tree-view-item-input-inline {
+    position: absolute !important;
+    width: 100%;
+    height: 100%;
+    background-color: whitesmoke;
+}
+
 
 .zeon-tree-view-item-drop-group {
     display: block;
@@ -482,7 +522,7 @@
 }
 
 .zeon-tree-view-item-drag-enter-into {
-    background-color: darkblue;
+    background-color: darkblue !important;
     color: whitesmoke !important;
     border-radius: 3px;
 }
