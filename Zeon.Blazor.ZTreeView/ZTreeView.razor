@@ -47,18 +47,22 @@
                           @ondragleave="(e)=> OnDragLeaveHandler((e,DragToPosition.Into,item))" @ondragleave:stopPropagation=true
                           @ondrop="(e)=> OnDrop(e,DragToPosition.Into,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();">
                         </span>
-                        @if (@*ShowActionButtons &&*@ selectedClass.Any())
+                        @if (@*ShowActionButtons &&*@true)
                         {
                             <div class="zeon-tree-view-item-actions-group">
-                                <span class="zeon-tree-view-item-action fa fa-plus"></span>
-                                <span class="zeon-tree-view-item-action fa fa-edit"></span>
+                                <span class="zeon-tree-view-item-action fa fa-plus" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Add)"></span>
+                                <span class="zeon-tree-view-item-action fa fa-edit" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Edit)"></span>
                                 <span class="zeon-tree-view-item-action fa fa-trash" @onclick="(e)=> RemoveItemOnClick(item)"></span>
                             </div>
                         }
                         @if (((item.Id, Constants.ChangeState.Add) == _changeItemState) || ((item.Id, Constants.ChangeState.Edit) == _changeItemState))
                         {
-                            <div class="zeon-tree-view-item-input-inline">
-                                <ZInput Type="string" OnValueChanged="(value) => OnDataChanged(item,value,_changeItemState.state)"></ZInput>
+                            <div class="zeon-tree-view-item-ae-inline">
+                                <span class="zeon-tree-view-item-input">
+                                    <ZInput Type="string" DefaultValue="@(((item.Id, Constants.ChangeState.Edit) == _changeItemState)?item.Text:string.Empty)" OnValueChanged="(value) => OnDataChanged(item,value,_changeItemState.state)"></ZInput>
+                                </span>
+                                <span class="zeon-tree-view-item-input-cancel zf zf-arrow-alt-left">
+                                </span>
                             </div>
                         }
                     </div>
@@ -94,6 +98,7 @@
                  @ondrop="(e)=> OnDrop(e,DragToPosition.Bottom,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();" ondragstart="event.dataTransfer.setData('', event.target.id);">
                     </div>
                 }
+
             }
         }
     </ul>

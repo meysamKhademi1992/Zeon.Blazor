@@ -538,30 +538,36 @@ namespace Zeon.Blazor.ZTreeView
 
         private void OnDataChanged(TreeViewModel item, string value, ChangeState state)
         {
-            _changeItemState = (id: 0, ChangeState.Normal);
-
             switch (state)
             {
                 case ChangeState.Add:
                     {
+                        if (string.IsNullOrEmpty(value))
+                            return;
+
                         if (AddItemEvent.HasValue)
                         {
                             AddItemEvent.Value.InvokeAsync((parentId: item.Id, value));
                         }
-
+                        _changeItemState = (id: 0, ChangeState.Normal);
                         break;
                     }
                 case ChangeState.Edit:
                     {
+                        if (item.Text.Trim().Equals(value.Trim()))
+                            return;
+
                         if (EditItemEvent.HasValue)
                         {
                             EditItemEvent.Value.InvokeAsync((id: item.Id, newValue: value));
                         }
+                        _changeItemState = (id: 0, ChangeState.Normal);
                         break;
                     }
                 default:
                     break;
             }
+            Refresh();
         }
 
         private void DataChangeOnClick(TreeViewModel item, ChangeState state)
