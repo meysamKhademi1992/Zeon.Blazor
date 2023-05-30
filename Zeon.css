@@ -440,20 +440,22 @@
 }
 
     .zeon-tree-view-item-row:hover {
-        background-color: lightblue;
+        background-color: rgb(60, 180, 220);
+        color: whitesmoke;
         border-radius: 3px;
         cursor: pointer;
     }
 
+        .zeon-tree-view-item-row:hover .zeon-tree-view-item-actions-group {
+            display: inline-flex;
+        }
+
 .zeon-tree-view-item-selected {
     background-color: dodgerblue !important;
+    color: whitesmoke !important;
     border-radius: 3px;
     cursor: pointer;
 }
-
-    .zeon-tree-view-item-selected:hover .zeon-tree-view-item-actions-group {
-        display: inline-flex;
-    }
 
 .zeon-tree-view-item-actions-group {
     display: none;
@@ -485,12 +487,33 @@
         color: #fff !important;
     }
 
-.zeon-tree-view-item-input-inline {
+.zeon-tree-view-item-ae-inline {
     position: absolute !important;
     width: 100%;
     height: 100%;
-    background-color: whitesmoke;
+    background-color: var(--background-color);
+    display: inline-flex;
 }
+
+
+.zeon-tree-view-item-input {
+    width: 100%;
+}
+
+.zeon-tree-view-item-input-cancel {
+    width: 30px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    background-color: transparent !important;
+    color: darkred !important
+}
+
+    .zeon-tree-view-item-input-cancel:hover {
+        color: #c70000 !important
+    }
+
 
 
 .zeon-tree-view-item-drop-group {
