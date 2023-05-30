@@ -75,6 +75,9 @@ namespace Zeon.Blazor.ZTreeView
         public EventCallback<TreeViewModel> RemoveItemOnClick { get; set; }
 
         [Parameter]
+        public EventCallback CancelAddEditInlineClick { get; set; }
+
+        [Parameter]
         public (int id, ChangeState state) ChangeItemState { get; set; }
 
         [Parameter]

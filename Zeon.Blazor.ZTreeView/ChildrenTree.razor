@@ -49,9 +49,9 @@
                     @if (@*ShowActionButtons &&*@ true)
                     {
                         <div class="zeon-tree-view-item-actions-group">
-                            <span class="zeon-tree-view-item-action fa fa-plus" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Add)"></span>
-                            <span class="zeon-tree-view-item-action fa fa-edit" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Edit)"></span>
-                            <span class="zeon-tree-view-item-action fa fa-trash" @onclick="(e)=> RemoveItemOnClick.InvokeAsync(item)"></span>
+                            <span class="zeon-tree-view-item-action fa fa-plus" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Add)" @onclick:stopPropagation=true></span>
+                            <span class="zeon-tree-view-item-action fa fa-edit" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Edit)" @onclick:stopPropagation=true></span>
+                            <span class="zeon-tree-view-item-action fa fa-trash" @onclick="(e)=> RemoveItemOnClick.InvokeAsync(item)" @onclick:stopPropagation=true></span>
                         </div>
                     }
                     @if (((item.Id, Constants.ChangeState.Add) == ChangeItemState) || ((item.Id, Constants.ChangeState.Edit) == ChangeItemState))
@@ -60,7 +60,7 @@
                             <span class="zeon-tree-view-item-input">
                                 <ZInput Type="string" DefaultValue="@(((item.Id, Constants.ChangeState.Edit) == ChangeItemState)?item.Text:string.Empty)" OnValueChanged="(value) => OnDataChanged(item,value,ChangeItemState.state)"></ZInput>
                             </span>
-                            <span class="zeon-tree-view-item-input-cancel zf zf-arrow-alt-left">
+                            <span class="zeon-tree-view-item-input-cancel zf zf-ballot" @onclick="(e)=> CancelAddEditInlineClick.InvokeAsync()" @onclick:stopPropagation=true>
                             </span>
                         </div>
                     }
@@ -82,7 +82,8 @@
                       DropElementsDisplay="@DropElementsDisplay"
                       OnDropStart="OnDropStart" OnDragStart="OnDragStart" OnDragEnd="OnDragEnd"
                       ChangeItemState="ChangeItemState" OnDataChanged="OnDataChanged"
-                      DataChangeOnClick="DataChangeOnClick" RemoveItemOnClick="RemoveItemOnClick">
+                      DataChangeOnClick="DataChangeOnClick" RemoveItemOnClick="RemoveItemOnClick"
+                      CancelAddEditInlineClick="CancelAddEditInlineClick">
                     </ChildrenTree>
                 }
             </li>

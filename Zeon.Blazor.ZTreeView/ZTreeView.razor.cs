@@ -53,6 +53,8 @@ namespace Zeon.Blazor.ZTreeView
         [Parameter]
         public EventCallback<int>? RemoveItemEvent { get; set; }
 
+        [Parameter]
+        public EventCallback<int>? OnReOrderEvent { get; set; }
 
 
         public ZTreeView()
@@ -368,7 +370,14 @@ namespace Zeon.Blazor.ZTreeView
                 {
                     case DragToPosition.Top:
                         {
+                            var oldParentId = _draggedItem.ParentId is not null ? _draggedItem.ParentId : null;
                             SetDropTop(_draggedItem, droppedItem);
+                            var json = new Dto.ReorderTree()
+                            {
+                                ChangedNode = _draggedItem,
+                                NextParent = _draggedItem.ParentId is not null ? _data.First(q => q.Id == _draggedItem.ParentId) : null,
+                                OldParent = _draggedItem.ParentId is not null ? _data.First(q => q.Id == oldParentId) : null
+                            };
                             break;
                         }
                     case DragToPosition.Bottom:
@@ -573,6 +582,7 @@ namespace Zeon.Blazor.ZTreeView
         private void DataChangeOnClick(TreeViewModel item, ChangeState state)
         {
             _changeItemState = (id: item.Id, state);
+            Refresh();
         }
 
         private void RemoveItemOnClick(TreeViewModel item)
@@ -581,6 +591,12 @@ namespace Zeon.Blazor.ZTreeView
             {
                 RemoveItemEvent.Value.InvokeAsync(item.Id);
             }
+        }
+
+        private void CancelAddEditInlineClick()
+        {
+            _changeItemState = (id: 0, ChangeState.Normal);
+            Refresh();
         }
 
         private void Refresh()
