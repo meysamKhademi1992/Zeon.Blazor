@@ -31,7 +31,7 @@
 
                 <div class="zeon-tree-view-item-row @selectedClass @dragOnEnterIntoClass"
                  @onclick:stopPropagation=true @onclick="()=> SelectedOnClick.InvokeAsync(item.Id)"
-             draggable="true"
+             draggable="@DragAndDropIsEnabled.ToString().ToLower()"
                  @ondragstart="(e)=> OnDragStart(e,item)" @ondragstart:stopPropagation=true
                  @ondragend="(e)=> OnDragEnd(e,item)" @ondragend:stopPropagation=true>
 
@@ -46,14 +46,21 @@
                       @ondragleave="(e)=> HandleOnDragLeave.InvokeAsync((e,DragToPosition.Into,item))" @ondragleave:stopPropagation=true
                       @ondrop="(e)=> OnDropStart(e,DragToPosition.Into,item)" @ondrop:stopPropagation=true ondragover="event.preventDefault();">
                     </span>
-                    @if (@*ShowActionButtons &&*@ true)
-                    {
-                        <div class="zeon-tree-view-item-actions-group">
-                            <span class="zeon-tree-view-item-action fa fa-plus" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Add)" @onclick:stopPropagation=true></span>
-                            <span class="zeon-tree-view-item-action fa fa-edit" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Edit)" @onclick:stopPropagation=true></span>
-                            <span class="zeon-tree-view-item-action fa fa-trash" @onclick="(e)=> RemoveItemOnClick.InvokeAsync(item)" @onclick:stopPropagation=true></span>
-                        </div>
-                    }
+                    <div class="zeon-tree-view-item-actions-group">
+                        @if (ShowActionButtons.add)
+                        {
+                            <span class="zeon-tree-view-item-action zf zf-plus" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Add)" @onclick:stopPropagation=true></span>
+                        }
+                        @if (ShowActionButtons.edit)
+                        {
+                            <span class="zeon-tree-view-item-action zf zf-edit" @onclick="(e)=> DataChangeOnClick(item,ChangeState.Edit)" @onclick:stopPropagation=true></span>
+                        }
+                        @if (ShowActionButtons.remove)
+                        {
+                            <span class="zeon-tree-view-item-action zf zf-delete" @onclick="(e)=> RemoveItemOnClick.InvokeAsync(item)" @onclick:stopPropagation=true></span>
+                        }
+                    </div>
+
                     @if (((item.Id, Constants.ChangeState.Add) == ChangeItemState) || ((item.Id, Constants.ChangeState.Edit) == ChangeItemState))
                     {
                         <div class="zeon-tree-view-item-ae-inline">
@@ -68,7 +75,7 @@
 
                 @if (item.Expanded && Data.Where(q => q.ParentId == item.Id).Any())
                 {
-                    <ChildrenTree GetItemId="GetItemId" Filter="Filter"
+                    <ChildrenTree Name="@Name" GetItemId="GetItemId" Filter="Filter"
                       GetCheckBoxClassMode="GetCheckBoxClassMode" GetExpandedClassMode="GetExpandedClassMode" GetSelectedClassMode="GetSelectedClassMode"
                       Data="Data" Items="Data.Where(q=> q.ParentId == item.Id).ToList()"
                       CheckedOnClick="CheckedOnClick" ExpandedOnClick="ExpandedOnClick" SelectedOnClick="SelectedOnClick"
@@ -79,11 +86,11 @@
                       GetDragOnEnterIntoClass="GetDragOnEnterIntoClass"
                       GetDragOnEnterGroupClass="GetDragOnEnterGroupClass"
                       ItemId="@item.Id"
-                      DropElementsDisplay="@DropElementsDisplay"
+                      DragAndDropIsEnabled="DragAndDropIsEnabled" DropElementsDisplay="@DropElementsDisplay"
                       OnDropStart="OnDropStart" OnDragStart="OnDragStart" OnDragEnd="OnDragEnd"
                       ChangeItemState="ChangeItemState" OnDataChanged="OnDataChanged"
                       DataChangeOnClick="DataChangeOnClick" RemoveItemOnClick="RemoveItemOnClick"
-                      CancelAddEditInlineClick="CancelAddEditInlineClick">
+                      CancelAddEditInlineClick="CancelAddEditInlineClick" ShowActionButtons="ShowActionButtons">
                     </ChildrenTree>
                 }
             </li>

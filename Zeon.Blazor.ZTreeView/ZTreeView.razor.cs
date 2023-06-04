@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
 using Zeon.Blazor.ZTreeView.Constants;
+using Zeon.Blazor.ZTreeView.Dto;
 
 namespace Zeon.Blazor.ZTreeView
 {
@@ -45,16 +46,22 @@ namespace Zeon.Blazor.ZTreeView
         public bool ShowCheckedBox { get; set; } = true;
 
         [Parameter]
-        public EventCallback<(int parentId, string value)>? AddItemEvent { get; set; }
+        public (bool add, bool edit, bool remove) ShowActionButtons { get; set; } = (false, false, false);
 
         [Parameter]
-        public EventCallback<(int id, string newValue)>? EditItemEvent { get; set; }
+        public bool DragAndDropIsEnabled { get; set; } = false;
 
         [Parameter]
-        public EventCallback<int>? RemoveItemEvent { get; set; }
+        public EventCallback<(int parentId, string value)> AddItemEvent { get; set; }
 
         [Parameter]
-        public EventCallback<int>? OnReOrderEvent { get; set; }
+        public EventCallback<(int id, string newValue)> EditItemEvent { get; set; }
+
+        [Parameter]
+        public EventCallback<int> RemoveItemEvent { get; set; }
+
+        [Parameter]
+        public EventCallback<ReorderTree> OnReorderEvent { get; set; }
 
 
         public ZTreeView()
@@ -106,6 +113,13 @@ namespace Zeon.Blazor.ZTreeView
             Data.Where(q => expandedIds.Contains(q.Id) && q.Expanded == false).ToList().ForEach(q => q.Expanded = true);
         }
 
+        public int SelectedId { get => _selectedId; set => SetSelectedItem(value); }
+        private void SetSelectedItem(int value)
+        {
+            _selectedId = value;
+            Refresh();
+        }
+
         public string GetData()
         {
             var idName = _fieldsSetting.Where(q => q.Key == nameof(TreeViewModel.Id)).FirstOrDefault().Value ?? nameof(TreeViewModel.Id);
@@ -152,13 +166,17 @@ namespace Zeon.Blazor.ZTreeView
             }
         }
 
+        public void ReloadDataSource()
+        {
+            MapData(true);
+        }
 
         private IEnumerable<TreeViewModel> _data;
-        private IEnumerable<TreeViewModel> Data { get => MapData(); set => _data = value; }
+        private IEnumerable<TreeViewModel> Data { get => MapData(false); set => _data = value; }
 
-        private IEnumerable<TreeViewModel> MapData()
+        private IEnumerable<TreeViewModel> MapData(bool force)
         {
-            if (_dataIsMapped)
+            if (_dataIsMapped && false == force)
                 return _data.OrderBy(q => q.Order).ToList();
             else
             {
@@ -370,24 +388,30 @@ namespace Zeon.Blazor.ZTreeView
                 {
                     case DragToPosition.Top:
                         {
-                            var oldParentId = _draggedItem.ParentId is not null ? _draggedItem.ParentId : null;
+                            var draggedItemOldParentId = _draggedItem.ParentId;
+
                             SetDropTop(_draggedItem, droppedItem);
-                            var json = new Dto.ReorderTree()
-                            {
-                                ChangedNode = _draggedItem,
-                                NextParent = _draggedItem.ParentId is not null ? _data.First(q => q.Id == _draggedItem.ParentId) : null,
-                                OldParent = _draggedItem.ParentId is not null ? _data.First(q => q.Id == oldParentId) : null
-                            };
+                            ResortOrderNumberInParentLevel(draggedItemOldParentId);
+                            InvokeReorderEventTop(_draggedItem, droppedItem, draggedItemOldParentId);
                             break;
                         }
                     case DragToPosition.Bottom:
                         {
+                            var draggedItemOldParentId = _draggedItem.ParentId;
+
                             SetDropBottom(_draggedItem, droppedItem);
+                            ResortOrderNumberInParentLevel(draggedItemOldParentId);
+                            InvokeReorderEventBottom(_draggedItem, droppedItem, draggedItemOldParentId);
                             break;
                         }
                     case DragToPosition.Into:
                         {
+                            var draggedItemOldParentId = _draggedItem.ParentId;
+
                             SetDropInto(_draggedItem, droppedItem);
+                            ResortOrderNumberInParentLevel(droppedItem.Id);
+                            ResortOrderNumberInParentLevel(draggedItemOldParentId);
+                            InvokeReorderEventInto(_draggedItem, droppedItem, draggedItemOldParentId);
                             break;
                         }
                     default:
@@ -396,6 +420,75 @@ namespace Zeon.Blazor.ZTreeView
                 _draggedItem = null;
             }
             Refresh();
+        }
+
+        private void InvokeReorderEventTop(TreeViewModel draggedItem, TreeViewModel droppedItem, int? draggedItemOldParentId)
+        {
+            var reorderTree = new ReorderTree()
+            {
+                ChangedNode = draggedItem,
+                NewParent = droppedItem.ParentId is not null ? new Node()
+                {
+                    Item = _data.First(q => q.Id == droppedItem.ParentId),
+                    Children = _data.Where(q => q.ParentId == _data.First(q => q.Id == droppedItem.ParentId).Id).OrderBy(q => q.Order).ToList()
+                }
+                : null,
+                OldParent = draggedItemOldParentId is not null ? new Node()
+                {
+                    Item = _data.First(q => q.Id == draggedItemOldParentId),
+                    Children = _data.Where(q => q.ParentId == _data.First(q => q.Id == draggedItemOldParentId).Id).OrderBy(q => q.Order).ToList()
+                } : null
+
+            };
+            if (OnReorderEvent.HasDelegate)
+            {
+                OnReorderEvent.InvokeAsync(reorderTree);
+            }
+        }
+
+        private void InvokeReorderEventBottom(TreeViewModel draggedItem, TreeViewModel droppedItem, int? draggedItemOldParentId)
+        {
+            var reorderTree = new ReorderTree()
+            {
+                ChangedNode = draggedItem,
+                NewParent = droppedItem.ParentId is not null ? new Node()
+                {
+                    Item = _data.First(q => q.Id == droppedItem.ParentId),
+                    Children = _data.Where(q => q.ParentId == _data.First(q => q.Id == droppedItem.ParentId).Id).OrderBy(q => q.Order).ToList()
+                }
+                : null,
+                OldParent = draggedItemOldParentId is not null ? new Node()
+                {
+                    Item = _data.First(q => q.Id == draggedItemOldParentId),
+                    Children = _data.Where(q => q.ParentId == _data.First(q => q.Id == draggedItemOldParentId).Id).OrderBy(q => q.Order).ToList()
+                } : null
+            };
+            if (OnReorderEvent.HasDelegate)
+            {
+                OnReorderEvent.InvokeAsync(reorderTree);
+            }
+        }
+
+        private void InvokeReorderEventInto(TreeViewModel draggedItem, TreeViewModel droppedItem, int? draggedItemOldParentId)
+        {
+            var reorderTree = new ReorderTree()
+            {
+                ChangedNode = draggedItem,
+                NewParent = new Node()
+                {
+                    Item = _data.First(q => q.Id == droppedItem.Id),
+                    Children = _data.Where(q => q.ParentId == droppedItem.Id).OrderBy(q => q.Order).ToList()
+                },
+                OldParent = draggedItemOldParentId is not null ? new Node()
+                {
+                    Item = _data.First(q => q.Id == draggedItemOldParentId),
+                    Children = _data.Where(q => q.ParentId == _data.First(q => q.Id == draggedItemOldParentId).Id).OrderBy(q => q.Order).ToList()
+                } : null
+            };
+            if (OnReorderEvent.HasDelegate)
+            {
+                OnReorderEvent.InvokeAsync(reorderTree);
+            }
         }
 
         private void SetDropTop(TreeViewModel draggedItem, TreeViewModel droppedItem)
@@ -423,10 +516,6 @@ namespace Zeon.Blazor.ZTreeView
             draggedItem.ParentId = droppedItem.ParentId;
             droppedItem.Order = index + 1;
 
-            if (draggedItem.ParentId != droppedItem.ParentId)
-            {
-                ReSortOrderNumberInParentLevel(draggedItem);
-            }
         }
 
         private void SetDropBottom(TreeViewModel draggedItem, TreeViewModel droppedItem)
@@ -454,10 +543,6 @@ namespace Zeon.Blazor.ZTreeView
             draggedItem.ParentId = droppedItem.ParentId;
             droppedItem.Order = index;
 
-            if (draggedItem.ParentId != droppedItem.ParentId)
-            {
-                ReSortOrderNumberInParentLevel(draggedItem);
-            }
         }
 
         private void SetDropInto(TreeViewModel draggedItem, TreeViewModel droppedItem)
@@ -465,12 +550,11 @@ namespace Zeon.Blazor.ZTreeView
             var parentLevelItemsCount = _data.Where(q => q.ParentId == droppedItem.Id).OrderBy(o => o.Order).Count();
             draggedItem.Order = parentLevelItemsCount + 1;
             draggedItem.ParentId = droppedItem.Id;
-            ReSortOrderNumberInParentLevel(draggedItem);
         }
 
-        private void ReSortOrderNumberInParentLevel(TreeViewModel _draggedItem)
+        private void ResortOrderNumberInParentLevel(int? parentId)
         {
-            var draggedItemParentLevelItems = _data.Where(q => q.ParentId == _draggedItem.ParentId).OrderBy(o => o.Order).ToList();
+            var draggedItemParentLevelItems = _data.Where(q => q.ParentId == parentId).OrderBy(o => o.Order).ToList();
             for (int i = 0; i < draggedItemParentLevelItems.Count; i++)
             {
                 TreeViewModel? item = draggedItemParentLevelItems[i];
@@ -554,9 +638,9 @@ namespace Zeon.Blazor.ZTreeView
                         if (string.IsNullOrEmpty(value))
                             return;
 
-                        if (AddItemEvent.HasValue)
+                        if (AddItemEvent.HasDelegate)
                         {
-                            AddItemEvent.Value.InvokeAsync((parentId: item.Id, value));
+                            AddItemEvent.InvokeAsync((parentId: item.Id, value));
                         }
                         _changeItemState = (id: 0, ChangeState.Normal);
                         break;
@@ -566,9 +650,9 @@ namespace Zeon.Blazor.ZTreeView
                         if (item.Text.Trim().Equals(value.Trim()))
                             return;
 
-                        if (EditItemEvent.HasValue)
+                        if (EditItemEvent.HasDelegate)
                         {
-                            EditItemEvent.Value.InvokeAsync((id: item.Id, newValue: value));
+                            EditItemEvent.InvokeAsync((id: item.Id, newValue: value));
                         }
                         _changeItemState = (id: 0, ChangeState.Normal);
                         break;
@@ -579,17 +663,19 @@ namespace Zeon.Blazor.ZTreeView
             Refresh();
         }
 
-        private void DataChangeOnClick(TreeViewModel item, ChangeState state)
+        private async void DataChangeOnClick(TreeViewModel item, ChangeState state)
         {
             _changeItemState = (id: item.Id, state);
             Refresh();
+            await ElementHelper.FocusElementById(string.Concat("edit-inline", Name));
+
         }
 
         private void RemoveItemOnClick(TreeViewModel item)
         {
-            if (RemoveItemEvent.HasValue)
+            if (RemoveItemEvent.HasDelegate)
             {
-                RemoveItemEvent.Value.InvokeAsync(item.Id);
+                RemoveItemEvent.InvokeAsync(item.Id);
             }
         }
 

@@ -5,13 +5,23 @@
         public ReorderTree()
         {
             ChangedNode = new TreeViewModel();
-            OldParent = new TreeViewModel();
-            NextParent = new TreeViewModel();
         }
 
         public TreeViewModel ChangedNode { get; set; }
-        public TreeViewModel? OldParent { get; set; }
-        public TreeViewModel? NextParent { get; set; }
+        public Node? OldParent { get; set; }
+        public Node? NewParent { get; set; }
+    }
+
+    public class Node
+    {
+        public Node()
+        {
+            Children = new List<TreeViewModel>();
+        }
+        public TreeViewModel Item { get; set; } = null!;
+
+        public List<TreeViewModel> Children { get; set; }
+
     }
 
 }

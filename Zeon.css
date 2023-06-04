@@ -235,7 +235,7 @@
 
 .zeon-dateTimePicker-datePickerCard-panel-header {
     margin-top: 0px !important;
-    direction: var(--datePickerCard-direction) !important;
+    direction: ltr !important;
 }
 
 .zeon-dateTimePicker-datePickerCard-panel-box {
@@ -481,6 +481,7 @@
     border-radius: 20px;
     align-items: center;
     align-content: center;
+    font-size: medium !important;
 }
 
     .zeon-tree-view-item-action:hover {
@@ -693,4 +694,17 @@
 
 .zf-circle-arrow::before {
     content: '\21BB';
+}
+
+.zf-plus::before {
+    content: '\271A';
+}
+
+.zf-edit::before {
+    content: '\270E';
+    rotate: 90deg;
+}
+
+.zf-delete::before {
+    content: '\2718'
 }

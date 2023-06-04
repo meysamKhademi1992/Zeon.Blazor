@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using Zeon.Blazor.ZTreeView.Constants;
 
@@ -7,6 +6,9 @@ namespace Zeon.Blazor.ZTreeView
 {
     public partial class ChildrenTree : ComponentBase
     {
+
+        [Parameter]
+        public string Name { get; set; } = null!;
 
         [Parameter]
         public IEnumerable<TreeViewModel> Data { get; set; } = null!;
@@ -88,5 +90,11 @@ namespace Zeon.Blazor.ZTreeView
 
         [Parameter]
         public bool ShowCheckedBox { get; set; } = true;
+
+        [Parameter]
+        public (bool add, bool edit, bool remove) ShowActionButtons { get; set; } = (false, false, false);
+
+        [Parameter]
+        public bool DragAndDropIsEnabled { get; set; } = false;
     }
 }
