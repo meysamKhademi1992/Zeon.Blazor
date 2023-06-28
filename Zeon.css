@@ -432,6 +432,7 @@
     position: relative !important;
     display: inline-flex;
     width: 100%;
+    min-width: 200px;
     min-height: 28px;
     padding: 2px;
     align-items: center;
